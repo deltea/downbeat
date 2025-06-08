@@ -1,0 +1,12 @@
+@import "tailwindcss";
+
+@theme {
+  --color-bg: #000;
+  --color-fg: #fff;
+  --color-faded: #888;
+  --color-dark: #444;
+}
+
+body {
+  @apply bg-bg text-fg font-mono text-sm;
+}
