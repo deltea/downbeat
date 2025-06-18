@@ -35,15 +35,15 @@
 
 <main class="p-6">
   <div class="flex gap-2 items-center">
-    <img src="/favicon.svg" alt="logo" class="h-full" />
+    <img src="/favicon.svg" alt="logo" class="h-full aspect-square">
 
     <div>
       <h1 class="font-bold">downbeat</h1>
-      <p class="text-faded">the ultimate edit maker</p>
+      <p class="text-faded">the ultimate edit creator</p>
     </div>
   </div>
 
-  <div
+  <!-- <div
     class="mt-4 border-2 border-dark h-48 border-dashed flex justify-center items-center text-faded"
     role="none"
     on:drop|preventDefault={onDrop}
@@ -51,5 +51,5 @@
     on:dragleave|preventDefault={onDragEnd}
   >
     drop your mp3 file here!
-  </div>
+  </div> -->
 </main>
