@@ -1,41 +1,14 @@
 <script lang="ts">
-  const validFileTypes = ["audio/mpeg"];
+  import FilePicker from "$components/FilePicker.svelte";
 
-  function onDrop(e: DragEvent) {
-    onDragEnd(e);
-
-    let file: File | null = null;
-    if (e.dataTransfer?.items) {
-      const item = e.dataTransfer.items[0];
-      if (item.kind === "file") {
-        file = item.getAsFile();
-      }
-    } else {
-      file = e.dataTransfer?.files[0] ?? null;
-    }
-
-    if (file && validFileTypes.includes(file.type)) {
-      console.log(file.name);
-
-      const img = new Image();
-      img.src = URL.createObjectURL(file);
-    }
-  }
-
-  function onDragOver(e: DragEvent) {
-    const dropZone = document.getElementById("dropZone");
-    if (dropZone) dropZone.style.opacity = "100";
-  }
-
-  function onDragEnd(e: DragEvent) {
-    const dropZone = document.getElementById("dropZone");
-    if (dropZone) dropZone.style.opacity = "0";
+  function handleUpload(file: File) {
+    console.log("file uploaded:", file.name);
   }
 </script>
 
-<main class="p-6">
+<main class="p-6 space-y-10">
   <div class="flex gap-2 items-center">
-    <img src="/favicon.svg" alt="logo" class="h-full aspect-square">
+    <img src="/logo.svg" alt="logo" class="w-10 aspect-square">
 
     <div>
       <h1 class="font-bold">downbeat</h1>
@@ -43,13 +16,7 @@
     </div>
   </div>
 
-  <!-- <div
-    class="mt-4 border-2 border-dark h-48 border-dashed flex justify-center items-center text-faded"
-    role="none"
-    on:drop|preventDefault={onDrop}
-    on:dragover|preventDefault={onDragOver}
-    on:dragleave|preventDefault={onDragEnd}
-  >
-    drop your mp3 file here!
-  </div> -->
+  <div class="w-[40rem]">
+    <FilePicker upload={handleUpload} />
+  </div>
 </main>

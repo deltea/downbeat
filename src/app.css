@@ -8,5 +8,5 @@
 }
 
 body {
-  @apply bg-bg text-fg font-mono text-sm;
+  @apply bg-bg text-fg font-mono text-base;
 }
