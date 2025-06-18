@@ -1,6 +1,6 @@
 # downbeat
 
-the ultimate edit creator
+![Preview](preview.png)
 
 ## features
 
