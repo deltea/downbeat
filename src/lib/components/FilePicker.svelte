@@ -77,14 +77,14 @@
     onclick={() => fileInput.click()}
     ondrop={onDrop}
     ondragover={e => e.preventDefault()}
-    class="border-2 border-dark aspect-video border-dashed flex justify-center items-center text-faded rounded-sm w-full cursor-pointer p-6 outline-none"
+    class="dashed aspect-video flex justify-center items-center text-faded rounded-sm w-full cursor-pointer p-6 outline-none hover:scale-[101%] active:scale-100 duration-100"
   >
     {#if isLoadingPreview}
       <p>loading...</p>
     {:else if previewSrc}
-      <div class="bg-cover size-full bg-center" style:background-image="url('{previewSrc}')"></div>
+      <div class="bg-cover size-full bg-center rounded-sm" style:background-image="url('{previewSrc}')"></div>
     {:else}
-      <p>drop your video file here!</p>
+      <p>drop or select your video file here!</p>
     {/if}
   </button>
 

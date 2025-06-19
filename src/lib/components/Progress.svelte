@@ -1,0 +1,21 @@
+<script lang="ts">
+  const steps = ["video", "music", "fusion", "export!"];
+  const icons = ["mingcute:video-fill", "mingcute:music-2-fill", "mingcute:star-fill", "mingcute:share-forward-fill"]
+  let { currentStep }: { currentStep: number } = $props();
+</script>
+
+<header class="flex items-center pb-12">
+  {#each steps as step, i}
+    <span class="relative border-2 rounded-sm size-12 flex justify-center items-center font-bold hover:scale-105 active:scale-100 duration-100 {currentStep >= i ? "border-fg text-fg" : "border-dark text-dark"}">
+      <iconify-icon icon={icons[i]} class="text-xl"></iconify-icon>
+
+      <button class="absolute top-16 w-max text-center font-normal flex items-center gap-2 {currentStep >= i ? "text-fg" : "text-faded"}">
+        {step}
+      </button>
+    </span>
+
+    {#if i != steps.length - 1}
+      <hr class="border-1 w-24 {currentStep - 1 >= i ? "border-fg" : "border-dark"}" />
+    {/if}
+  {/each}
+</header>

@@ -1,22 +1,16 @@
 <script lang="ts">
   import FilePicker from "$components/FilePicker.svelte";
+  import Progress from "$components/Progress.svelte";
 
   function handleUpload(file: File) {
     console.log("file uploaded:", file.name);
   }
 </script>
 
-<main class="p-6 space-y-10">
-  <div class="flex gap-2 items-center">
-    <img src="/logo.svg" alt="logo" class="w-10 aspect-square">
+<div class="flex flex-col items-center pt-10 size-full">
+  <Progress currentStep={0} />
 
-    <div>
-      <h1 class="font-bold">downbeat</h1>
-      <p class="text-faded">the ultimate edit creator</p>
-    </div>
-  </div>
-
-  <div class="w-[40rem]">
+  <div class="w-[40rem] grow flex flex-col justify-center">
     <FilePicker upload={handleUpload} />
   </div>
-</main>
+</div>
