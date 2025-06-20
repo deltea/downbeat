@@ -11,11 +11,11 @@
   <title>downbeat</title>
 </svelte:head>
 
-<main class="flex items-center h-screen">
+<div class="min-h-screen flex flex-col items-center py-nav">
   <Nav />
 
-  <div class="grow h-full flex flex-col justify-center items-center">
+  <main class="flex justify-center items-center w-1/2 grow">
     {@render children()}
-  </div>
-</main>
+  </main>
+</div>
 

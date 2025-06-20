@@ -9,6 +9,7 @@
   --color-faded: #888;
   --color-dark: #444;
   --font-mono: "JetBrains Mono", monospace;
+  --spacing-nav: 6rem;
 }
 
 body {

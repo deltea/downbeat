@@ -1,5 +1,6 @@
 <script lang="ts">
   import FilePicker from "$components/FilePicker.svelte";
+  import Logo from "$components/Logo.svelte";
   import Progress from "$components/Progress.svelte";
 
   function handleUpload(file: File) {
@@ -7,10 +8,7 @@
   }
 </script>
 
-<div class="flex flex-col items-center pt-10 size-full">
+<div class="w-full grow flex flex-col justify-center items-center">
   <Progress currentStep={0} />
-
-  <div class="w-[40rem] grow flex flex-col justify-center">
-    <FilePicker upload={handleUpload} />
-  </div>
+  <FilePicker upload={handleUpload} />
 </div>
