@@ -1,10 +1,8 @@
 <script lang="ts">
-  import { parseBlob } from "music-metadata";
-  const VALID_FILE_TYPES = ["audio/mp3", "audio/wav", "audio/ogg", "audio/mpeg"];
+  const VALID_FILE_TYPES = ["video/mp4", "video/quicktime", "video/webm"];
 
   let { upload } = $props();
   let fileInput: HTMLInputElement;
-  let coverPreview: string | null = $state(null);
   let previewSrc: string | null = $state(null);
   let videoName: string | null = $state(null);
   let isLoadingPreview = $state(false);
@@ -44,20 +42,33 @@
     }
   }
 
-  async function setPreview(file: File) {
+  function setPreview(file: File) {
     isLoadingPreview = true;
 
-    previewSrc = URL.createObjectURL(file);
-    const parsed = await parseBlob(file);
-    if (parsed.common.picture && parsed.common.picture.length > 0) {
-      const picture = parsed.common.picture[0];
-      const blob = new Blob([picture.data], { type: picture.format });
-      coverPreview = URL.createObjectURL(blob);
-    } else {
-      console.log("no cover art found for track");
-    }
+    const url = URL.createObjectURL(file);
+    const video = document.createElement("video");
 
-    isLoadingPreview = false;
+    video.src = url;
+    video.crossOrigin = "anonymous";
+    video.preload = "metadata";
+    video.muted = true;
+
+    video.onloadeddata = () => {
+      video.currentTime = Math.random() * video.duration;
+    };
+
+    video.onseeked = () => {
+      const canvas = document.createElement("canvas");
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      const ctx = canvas.getContext("2d");
+      ctx?.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+      previewSrc = canvas.toDataURL("image/png");
+      URL.revokeObjectURL(url);
+
+      isLoadingPreview = false;
+    };
   }
 </script>
 
@@ -66,20 +77,16 @@
     onclick={() => fileInput.click()}
     ondrop={onDrop}
     ondragover={e => e.preventDefault()}
-    class="dashed size-[24rem] flex justify-center items-center text-faded rounded-sm cursor-pointer p-6 outline-none hover:scale-[101%] active:scale-100 duration-100"
+    class="dashed aspect-video flex justify-center items-center text-faded rounded-sm w-full cursor-pointer p-6 outline-none hover:scale-[101%] active:scale-100 duration-100"
   >
     {#if isLoadingPreview}
       <p>loading...</p>
-    {:else if coverPreview}
-      <div class="bg-cover size-full bg-center rounded-sm" style:background-image="url('{coverPreview}')"></div>
+    {:else if previewSrc}
+      <div class="bg-cover size-full bg-center rounded-sm" style:background-image="url('{previewSrc}')"></div>
     {:else}
-      <p class="p-10">drop or select your music file here!</p>
+      <p>drop or select your video file here!</p>
     {/if}
   </button>
-
-  {#if previewSrc}
-    <audio controls src={previewSrc} class="w-[24rem]"></audio>
-  {/if}
 
   {#if videoName}
     <p>{videoName}</p>
@@ -91,8 +98,8 @@
   bind:this={fileInput}
   accept={VALID_FILE_TYPES.join(",")}
   type="file"
-  name="music"
-  id="music"
+  name="video"
+  id="video"
   class="hidden"
   multiple={false}
 />

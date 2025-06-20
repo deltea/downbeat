@@ -11,7 +11,7 @@
   <title>downbeat</title>
 </svelte:head>
 
-<div class="min-h-screen flex flex-col items-center py-nav">
+<div class="min-h-screen flex flex-col items-center pb-nav pt-progress">
   <Nav />
 
   <main class="flex justify-center items-center w-1/2 grow">

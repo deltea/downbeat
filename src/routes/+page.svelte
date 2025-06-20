@@ -1,6 +1,5 @@
 <script lang="ts">
   import FilePicker from "$components/FilePicker.svelte";
-  import Logo from "$components/Logo.svelte";
   import Progress from "$components/Progress.svelte";
 
   function handleUpload(file: File) {
