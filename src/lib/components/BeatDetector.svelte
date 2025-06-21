@@ -7,6 +7,7 @@
   let audio: HTMLAudioElement;
   let audioCtx: AudioContext;
   let source: MediaElementAudioSourceNode;
+  let beatInterval: ReturnType<typeof setInterval> | null = null;
 
   let bpm = $state(0);
 
@@ -25,19 +26,26 @@
       audioCtx.decodeAudioData(buffer, resolve, reject);
     });
 
-    const detective = detect(data);
+    try {
+      const channelData = data.getChannelData(0);
+      const audioData = Array.from(channelData);
 
-    const channelData = data.getChannelData(0);
-    const audioData = Array.from(channelData);
+      const mt = new MusicTempo(audioData);
+      const tempo = Math.round(mt.tempo);
 
-    const mt = new MusicTempo(audioData);
-    const tempo = Math.round(mt.tempo);
+      console.log(`music-tempo: ${tempo}`);
 
-    console.log(`detective: ${detective}`);
-    console.log(`music-tempo: ${tempo}`);
+      bpm = tempo;
+    } catch (error) {
+      console.warn("music-tempo failed:", error);
 
-    bpm = tempo;
-    setInterval(beat, 60 / bpm * 1000);
+      const detective = detect(data);
+      console.log(`detective: ${detective}`);
+      bpm = detective;
+    }
+
+    if (beatInterval) clearInterval(beatInterval);
+    beatInterval = setInterval(beat, 60 / bpm * 1000);
   }
 
   onMount(() => {

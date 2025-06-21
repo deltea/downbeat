@@ -1,6 +1,6 @@
 <script lang="ts">
-  const steps = ["video", "music", "fusion", "export!"];
-  const icons = ["mingcute:video-fill", "mingcute:music-2-fill", "mingcute:star-fill", "mingcute:share-forward-fill"]
+  const steps = ["music", "images", "fusion", "result"];
+  const icons = ["mingcute:video-fill", "mingcute:pic-2-fill", "mingcute:star-fill", "mingcute:share-forward-fill"]
   let { currentStep }: { currentStep: number } = $props();
 </script>
 
