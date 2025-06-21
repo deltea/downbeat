@@ -45,6 +45,7 @@
   }
 
   function onBeat() {
+    if ($muted) return;
     $beat += 1;
   }
 </script>
