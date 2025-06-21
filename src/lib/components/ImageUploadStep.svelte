@@ -11,8 +11,10 @@
 
     if (files && files.length > 0) {
       const filtered = Array.from(files).filter(file => VALID_FILE_TYPES.includes(file.type));
-      images = [...filtered, ...images];
-      upload(filtered);
+      if (filtered.length > 0) {
+        images = [...filtered, ...images];
+        upload(filtered);
+      }
     } else {
       console.error("no file selected");
     }
@@ -23,8 +25,10 @@
     const files = e.dataTransfer?.files;
     if (files && files.length > 0) {
       const filtered = Array.from(files).filter(file => VALID_FILE_TYPES.includes(file.type));
-      images = [...filtered, ...images];
-      upload(filtered);
+      if (filtered.length > 0) {
+        images = [...filtered, ...images];
+        upload(filtered);
+      }
     } else {
       console.error("no file dropped");
     }

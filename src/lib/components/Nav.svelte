@@ -5,7 +5,9 @@
   let boombox: HTMLImageElement;
 
   onMount(() => {
-    beat.subscribe(() => {
+    beat.subscribe(value => {
+      if (value === 0) return;
+
       console.log("🎵 beat detected!");
       boombox.style.scale = "1.3";
       boombox.style.transitionDuration = "0ms";

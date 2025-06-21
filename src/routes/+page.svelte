@@ -1,33 +1,41 @@
 <script lang="ts">
-  import BeatDetector from "$components/BeatDetector.svelte";
-  import FilePicker from "$components/FilePicker.svelte";
-    import ImageUploadStep from "$components/ImageUploadStep.svelte";
+  import type { Config } from "$lib/types.ts";
+  import MusicUploader from "$components/MusicUploader.svelte";
+  import ImageUploadStep from "$components/ImageUploadStep.svelte";
   import Progress from "$components/Progress.svelte";
-  import { beat } from "$lib/stores";
+  import { beat, muted } from "$lib/stores";
+  import FusionStep from "$components/FusionStep.svelte";
 
-  let audioSrc: string | null = $state(null);
-  let currentStep = $state(1);
+  let audio: HTMLAudioElement;
+  let currentStep = $state(0);
   let stepFinished = $state(false);
-  let data = $state({
+  let beatInterval: ReturnType<typeof setInterval> | null = $state(null);
+  let config = $state({
     bpm: null,
     audioSrc: null,
     images: []
-  } as {
-    bpm: number | null,
-    audioSrc: string | null,
-    images: string[]
-  });
+  } as Config);
 
-  function handleMusicUpload(file: File) {
-    console.log("music uploaded:", file.name);
-    audioSrc = URL.createObjectURL(file);
-    data.audioSrc = audioSrc;
+  function handleGetBPM(bpm: number) {
+    console.log("bpm found: ", bpm);
+    config.bpm = bpm;
+
+    beatInterval = setInterval(onBeat, 60 / bpm * 1000);
+
     stepFinished = true;
   }
 
+  function handleUpload(file: File) {
+    console.log("music uploaded:", file.name);
+    if (beatInterval) clearInterval(beatInterval);
+    config.audioSrc = URL.createObjectURL(file);
+    audio.pause();
+  }
+
   function handleImagesUpload(files: File[]) {
-    console.log("images uploaded:", data.images);
-    data.images = files.map(file => URL.createObjectURL(file));
+    console.log("images uploaded:", config.images);
+    config.images = files.map(file => URL.createObjectURL(file));
+
     stepFinished = true;
   }
 
@@ -45,20 +53,22 @@
 
 <div class="w-full grow flex flex-col gap-6 justify-center items-center pt-progress">
   {#if currentStep === 0}
-    <FilePicker upload={handleMusicUpload} />
+    <MusicUploader getBPM={handleGetBPM} upload={handleUpload} />
   {:else if currentStep === 1}
     <ImageUploadStep upload={handleImagesUpload} />
+  {:else if currentStep === 2}
+    <FusionStep {config} />
   {/if}
 
   <div class="flex gap-6">
-    {#if currentStep > 0}
+    <!-- {#if currentStep > 0}
       <button
         onclick={() => (currentStep--)}
         class="rounded-sm px-4 py-2 bg-dark text-fg font-bold hover:cursor-pointer disabled:bg-dark disabled:cursor-auto"
       >
         {"< back"}
       </button>
-    {/if}
+    {/if} -->
 
     <button
       onclick={nextStep}
@@ -70,6 +80,4 @@
   </div>
 </div>
 
-{#if audioSrc}
-  <BeatDetector beat={onBeat} src={audioSrc} />
-{/if}
+<audio bind:this={audio} autoplay loop muted={$muted} src={config.audioSrc}></audio>

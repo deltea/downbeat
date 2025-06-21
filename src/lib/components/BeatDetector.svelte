@@ -1,6 +1,5 @@
 <script lang="ts">
   import { browser } from "$app/environment";
-  import { muted } from "$lib/stores";
   import MusicTempo from "music-tempo";
   import { onMount } from "svelte";
 
