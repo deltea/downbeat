@@ -4,7 +4,7 @@
 
   const VALID_FILE_TYPES = ["audio/mp3", "audio/wav", "audio/ogg", "audio/mpeg"];
 
-  let { upload } = $props();
+  let { upload }: { upload: (file: File) => void } = $props();
   let fileInput: HTMLInputElement;
   let coverPreview: string | null = $state(null);
   let previewSrc: string | null = $state(null);
