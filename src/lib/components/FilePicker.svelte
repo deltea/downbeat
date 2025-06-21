@@ -1,5 +1,7 @@
 <script lang="ts">
   import { parseBlob } from "music-metadata";
+  import { muted } from "$lib/stores";
+
   const VALID_FILE_TYPES = ["audio/mp3", "audio/wav", "audio/ogg", "audio/mpeg"];
 
   let { upload } = $props();
@@ -78,7 +80,7 @@
   </button>
 
   {#if previewSrc}
-    <audio controls src={previewSrc} class="w-[24rem]"></audio>
+    <audio autoplay loop muted={$muted} src={previewSrc}></audio>
   {/if}
 
   {#if videoName}

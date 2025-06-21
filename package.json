@@ -32,8 +32,10 @@
 	},
 	"dependencies": {
 		"@types/meyda": "^4.3.8",
+		"bpm-detective": "^2.0.5",
 		"iconify-icon": "^3.0.0",
 		"meyda": "^5.6.3",
-		"music-metadata": "^11.3.0"
+		"music-metadata": "^11.3.0",
+		"music-tempo": "^1.0.3"
 	}
 }
