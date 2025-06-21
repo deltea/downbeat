@@ -84,7 +84,7 @@
   {/if}
 
   {#if videoName}
-    <p>{videoName}</p>
+    <p class="text-center">{videoName}</p>
   {/if}
 </div>
 
