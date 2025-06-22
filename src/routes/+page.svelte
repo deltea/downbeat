@@ -1,17 +1,18 @@
 <script lang="ts">
-  import type { Config } from "$lib/types.ts";
+  import type { Config } from "$lib/types";
   import MusicUploader from "$components/MusicUploader.svelte";
   import ImageUploadStep from "$components/ImageUploadStep.svelte";
   import Progress from "$components/Progress.svelte";
   import { beat, muted } from "$lib/stores";
   import FusionStep from "$components/FusionStep.svelte";
+  import { parseGIF, decompressFrames } from "gifuct-js";
 
   let audio: HTMLAudioElement;
   let currentStep = $state(0);
   let stepFinished = $state(false);
   let beatInterval: ReturnType<typeof setInterval> | null = $state(null);
   let config = $state({
-    bpm: null,
+    bpm: 0,
     audioSrc: null,
     images: []
   } as Config);
@@ -20,7 +21,7 @@
     console.log("bpm found: ", bpm);
     config.bpm = bpm;
 
-    beatInterval = setInterval(onBeat, 60 / bpm * 1000);
+    beatInterval = setInterval(onBeat, 60 / bpm * 250);
 
     stepFinished = true;
   }
@@ -32,9 +33,19 @@
     audio.pause();
   }
 
-  function handleImagesUpload(files: File[]) {
+  async function handleImagesUpload(files: File[]) {
     console.log("images uploaded:", config.images);
-    config.images = files.map(file => URL.createObjectURL(file));
+    const gif = files.find(file => file.type === "image/gif");
+    if (gif) {
+      console.log("gif found, extracting");
+      const buffer = await gif.arrayBuffer();
+      const data = parseGIF(buffer);
+      const frames = decompressFrames(data, true);
+      // frames[0].
+      config.images = frames;
+    } else {
+      config.images = files.map(file => URL.createObjectURL(file));
+    }
 
     stepFinished = true;
   }
@@ -46,7 +57,7 @@
 
   function onBeat() {
     if ($muted) return;
-    $beat += 1;
+    $beat += 0.25;
   }
 </script>
 

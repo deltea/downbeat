@@ -1,5 +1,7 @@
+import type { ParsedFrame } from "gifuct-js";
+
 export interface Config {
-  bpm: number | null,
+  bpm: number,
   audioSrc: string | null,
-  images: string[]
+  images: string[] | ParsedFrame[]
 }

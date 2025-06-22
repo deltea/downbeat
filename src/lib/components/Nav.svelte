@@ -6,7 +6,7 @@
 
   onMount(() => {
     beat.subscribe(value => {
-      if (value === 0) return;
+      if (value === 0 || value % 1 !== 0) return;
 
       console.log("🎵 beat detected!");
       boombox.style.scale = "1.3";
