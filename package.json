@@ -32,6 +32,7 @@
 	},
 	"dependencies": {
 		"@types/meyda": "^4.3.8",
+		"bits-ui": "^2.8.8",
 		"bpm-detective": "^2.0.5",
 		"gifuct-js": "^2.1.2",
 		"iconify-icon": "^3.0.0",

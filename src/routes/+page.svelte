@@ -31,6 +31,7 @@
     if (beatInterval) clearInterval(beatInterval);
     config.audioSrc = URL.createObjectURL(file);
     audio.pause();
+    stepFinished = false;
   }
 
   async function handleImagesUpload(files: File[]) {

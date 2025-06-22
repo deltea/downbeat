@@ -54,7 +54,7 @@
       {/each}
     </div>
   {:else}
-    <p class="p-10">drop or select your image files here!</p>
+    <p class="px-10 py-24">drop or select your image files here!</p>
   {/if}
 </button>
 
