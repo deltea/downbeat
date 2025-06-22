@@ -25,7 +25,7 @@
     ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
 
     // time per beat in milliseconds
-    const beat = 1;
+    const beat = 2;
     const time_per_beat = 60 / config.bpm * 1000 * beat;
 
     if (interval) clearInterval(interval);
