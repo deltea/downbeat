@@ -6,7 +6,6 @@
   let { config }: { config: Config } = $props();
   let canvas: HTMLCanvasElement;
   let ctx: CanvasRenderingContext2D;
-  let currentFrame = $state(0);
   let interval: ReturnType<typeof setInterval> | null = $state(null);
 
   function showFrame(frame: ParsedFrame | string) {
@@ -26,7 +25,8 @@
     ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
 
     // time per beat in milliseconds
-    const time_per_beat = 60 / config.bpm * 1000;
+    const beat = 1;
+    const time_per_beat = 60 / config.bpm * 1000 * beat;
 
     if (interval) clearInterval(interval);
     interval = setInterval(() => {
@@ -40,5 +40,7 @@
   });
 </script>
 
-<canvas bind:this={canvas} class="object-cover rounded-sm"></canvas>
+<div class="w-full aspect-video flex justify-center items-center">
+  <canvas bind:this={canvas} class="object-cover rounded-sm"></canvas>
+</div>
 <!-- <img src={config.images[currentFrame]} alt="frame {currentFrame}" class="w-full h-full object-cover rounded-sm" /> -->
