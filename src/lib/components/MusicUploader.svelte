@@ -69,11 +69,6 @@
     const data = await audioCtx.decodeAudioData(buffer);
 
     try {
-      const detective = detect(data);
-      console.log(`detective: ${detective}`);
-      bpm = detective;
-    } catch (error) {
-      console.warn("detective failed:", error);
       const channelData = data.getChannelData(0);
       const audioData = Array.from(channelData);
 
@@ -82,6 +77,11 @@
       console.log(`music-tempo: ${tempo}`);
 
       bpm = tempo;
+    } catch (error) {
+      console.warn("music-tempo failed:", error);
+      const detective = detect(data);
+      console.log(`detective: ${detective}`);
+      bpm = detective;
     }
 
     return bpm;
