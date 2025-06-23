@@ -7,7 +7,7 @@
 <header class="fixed top-0 left-0 flex items-center justify-center h-progress w-full">
   {#each steps as step, i}
     <span class="relative border-2 rounded-sm size-12 flex justify-center items-center font-bold hover:scale-105 active:scale-100 duration-100 hover:cursor-pointer {currentStep >= i ? "border-fg text-fg" : "border-dark text-dark"}">
-      <iconify-icon icon={icons[i]} class="text-xl"></iconify-icon>
+      <iconify-icon icon={icons[i]} class="text-2xl"></iconify-icon>
 
       <button class="absolute top-16 w-max text-center font-normal flex items-center gap-2 {currentStep >= i ? "text-fg" : "text-faded"}">
         {step}
