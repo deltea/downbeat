@@ -87,22 +87,24 @@
     {#if currentStep > 0}
       <button
         onclick={() => (currentStep--)}
-        class="rounded-sm px-4 py-2 bg-dark text-fg font-bold hover:cursor-pointer disabled:bg-dark disabled:cursor-auto"
+        class="rounded-sm pr-4 pl-2 py-2 bg-dark text-fg font-bold hover:cursor-pointer disabled:bg-dark disabled:cursor-auto flex items-center gap-1"
       >
-        {"< back"}
+        <iconify-icon icon="line-md:chevron-small-left" class="text-2xl"></iconify-icon>
+        back
       </button>
     {/if}
 
     <button
       onclick={nextStep}
-      class="rounded-sm px-4 py-2 bg-fg text-bg font-bold hover:cursor-pointer disabled:bg-faded disabled:cursor-auto"
+      class="rounded-sm pl-4 pr-2 py-2 bg-fg text-bg font-bold hover:cursor-pointer disabled:bg-faded disabled:cursor-auto flex items-center gap-1"
       disabled={!(
         (currentStep === 0 && bpm) ||
         (currentStep === 1 && config.images.length > 0) ||
         (currentStep === 2 && !config.images.length)
       )}
     >
-      {"next >"}
+      next
+      <iconify-icon icon="line-md:chevron-small-right" class="text-2xl"></iconify-icon>
     </button>
   </div>
 </div>
