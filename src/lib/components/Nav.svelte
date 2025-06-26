@@ -1,13 +1,15 @@
 <script lang="ts">
-  import { beat, muted } from "$lib/stores";
-  import { onMount } from "svelte";
+  import { muted } from "$lib/stores";
 
+  let { bpm }: { bpm: number } = $props();
   let boombox: HTMLImageElement;
+  let beatInterval: ReturnType<typeof setInterval> | null = $state(null);
 
-  onMount(() => {
-    beat.subscribe(value => {
-      if (value === 0 || value % 1 !== 0) return;
+  $effect(() => {
+    if (bpm === 0) return;
 
+    if (beatInterval) clearInterval(beatInterval);
+    beatInterval = setInterval(() => {
       console.log("🎵 beat detected!");
       boombox.style.scale = "1.3";
       boombox.style.transitionDuration = "0ms";
@@ -15,8 +17,8 @@
         boombox.style.scale = "1";
         boombox.style.transitionDuration = "100ms";
       }, 100);
-    });
-  });
+    }, 60 / bpm * 1000);
+  })
 </script>
 
 <nav class="fixed flex items-center justify-between w-full h-nav bottom-0 left-0 pl-6 pr-10">

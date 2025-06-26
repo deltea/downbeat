@@ -6,40 +6,33 @@
 
   const VALID_FILE_TYPES = ["audio/mp3", "audio/wav", "audio/ogg", "audio/mpeg"];
 
-  let { getBPM, upload }: { getBPM: (bpm: number) => void, upload: (file: File) => void } = $props();
+  let { musicFile = $bindable(), bpm = $bindable() }: { musicFile: File | null, bpm: number } = $props();
   let fileInput: HTMLInputElement;
-  let coverPreview: string | null = $state(null);
-  let file: File | null = $state(null);
+  let coverSrc: string | null = $state(null);
   let isLoadingPreview = $state(false);
+  let isLoadingBPM = $state(false);
 
   // bpm getting stuff
   let audio: HTMLAudioElement;
   let audioCtx: AudioContext;
   let source: MediaElementAudioSourceNode;
-  let bpm = $state(0);
 
-  async function fileInputChange(e: Event) {
+  function fileInputChange(e: Event) {
     const target = e.target as HTMLInputElement;
     const files = target.files;
 
     if (files && files.length > 0) {
-      if (VALID_FILE_TYPES.includes(files[0].type)) {
-        file = files[0];
-        uploadTrack(files[0]);
-      } else {
-        console.error("invalid file type");
-      }
+      uploadTrack(files[0]);
     } else {
       console.error("no file selected");
     }
   }
 
-  async function onDrop(e: DragEvent) {
+  function onDrop(e: DragEvent) {
     e.preventDefault();
     const files = e.dataTransfer?.files;
     if (files && files.length > 0) {
       if (VALID_FILE_TYPES.includes(files[0].type)) {
-        file = files[0];
         uploadTrack(files[0]);
       } else {
         console.error("invalid file type");
@@ -50,21 +43,25 @@
   }
 
   async function uploadTrack(file: File) {
-    upload(file);
+    musicFile = file;
+    setPreview(file);
+
     await audioCtx.resume();
     audio.src = URL.createObjectURL(file);
-    setPreview(file);
-    const bpm = await extractBPM() ?? 0;
-    getBPM(bpm);
+
+    bpm = 0;
+    bpm = await extractBPM(file);
   }
 
-  async function extractBPM() {
-    if (!browser || !file) return;
+  async function extractBPM(track: File | null) {
+    if (!browser || !track) return 0;
+
+    isLoadingBPM = true;
 
     const obj = await import("bpm-detective");
     const detect = obj.default;
 
-    const buffer = await file.arrayBuffer();
+    const buffer = await track.arrayBuffer();
     const data = await audioCtx.decodeAudioData(buffer);
 
     try {
@@ -83,6 +80,8 @@
       bpm = detective;
     }
 
+    isLoadingBPM = false;
+
     return bpm;
   }
 
@@ -93,7 +92,7 @@
     if (parsed.common.picture && parsed.common.picture.length > 0) {
       const picture = parsed.common.picture[0];
       const blob = new Blob([picture.data], { type: picture.format });
-      coverPreview = URL.createObjectURL(blob);
+      coverSrc = URL.createObjectURL(blob);
     } else {
       console.log("no cover art found for track");
     }
@@ -106,10 +105,25 @@
     audioCtx = new AudioContext();
     source = audioCtx.createMediaElementSource(audio);
     source.connect(audioCtx.destination);
+
+    if (musicFile) {
+      setPreview(musicFile);
+    }
   });
 </script>
 
 <div class="flex flex-col gap-6 items-center w-full">
+  <p class="text-faded">
+    {#if isLoadingBPM}
+      <span class="flex items-center gap-2">
+        <iconify-icon icon="tdesign:loading" class="animate-spin text-xl"></iconify-icon>
+        loading bpm...
+      </span>
+    {:else if bpm > 0}
+      bpm = {bpm}
+    {/if}
+  </p>
+
   <button
     onclick={() => fileInput.click()}
     ondrop={onDrop}
@@ -118,15 +132,15 @@
   >
     {#if isLoadingPreview}
       <p>loading...</p>
-    {:else if coverPreview}
-      <div class="bg-cover size-full bg-center rounded-sm" style:background-image="url('{coverPreview}')"></div>
+    {:else if coverSrc}
+      <div class="bg-cover size-full bg-center rounded-sm" style:background-image="url('{coverSrc}')"></div>
     {:else}
       <p class="p-10">drop or select your music file here!</p>
     {/if}
   </button>
 
-  {#if file}
-    <p class="text-center">{file.name}</p>
+  {#if musicFile}
+    <p class="text-center">{musicFile.name}</p>
   {/if}
 </div>
 

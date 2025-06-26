@@ -1,44 +1,45 @@
 <script lang="ts">
-  import type { Config, Mode } from "$lib/types";
-  import MusicUploader from "$components/MusicUploadStep.svelte";
-  import ImageUploadStep from "$components/ImageUploadStep.svelte";
-  import Progress from "$components/Progress.svelte";
-  import { beat, muted } from "$lib/stores";
-  import FusionStep from "$components/FusionStep.svelte";
   import { parseGIF, decompressFrames } from "gifuct-js";
+  import type { Config, Mode } from "$lib/types";
+  import { muted } from "$lib/stores";
+
+  import MusicUploadStep from "$components/MusicUploadStep.svelte";
+  import ImageUploadStep from "$components/ImageUploadStep.svelte";
+  import FusionStep from "$components/FusionStep.svelte";
+  import Progress from "$components/Progress.svelte";
+  import Nav from "$components/Nav.svelte";
+
+  let currentStep = $state(0);
 
   let audio: HTMLAudioElement;
-  let currentStep = $state(0);
-  let stepFinished = $state(false);
-  let beatInterval: ReturnType<typeof setInterval> | null = $state(null);
   let config = $state({
-    bpm: 0,
-    audioSrc: null,
     images: [],
     mode: "gif",
   } as Config);
 
-  function handleGetBPM(bpm: number) {
-    console.log("bpm found: ", bpm);
-    config.bpm = bpm;
+  let musicFile: File | null = $state(null);
+  let bpm = $state(0);
 
-    beatInterval = setInterval(onBeat, 60 / bpm * 250);
+  // function handleGetBPM(bpm: number) {
+  //   console.log("bpm found: ", bpm);
+  //   config.bpm = bpm;
+  //   beatInterval = setInterval(onBeat, 60 / bpm * 250);
 
-    stepFinished = true;
-  }
+  //   stepFinished = true;
+  // }
 
-  function handleMusicUpload(file: File) {
-    console.log("music uploaded:", file.name);
-    if (beatInterval) clearInterval(beatInterval);
-    config.audioSrc = URL.createObjectURL(file);
-    audio.pause();
-    stepFinished = false;
-  }
+  // function handleMusicUpload(file: File) {
+  //   console.log("music uploaded:", file.name);
+  //   if (beatInterval) clearInterval(beatInterval);
+  //   config.audioSrc = URL.createObjectURL(file);
+  //   audio.pause();
+  //   stepFinished = false;
+  // }
+
 
   async function handleImagesUpload(files: File[], mode: Mode) {
     console.log("images uploaded:", config.images);
     if (files.length === 0) {
-      stepFinished = false;
       config.images = [];
       return;
     }
@@ -59,7 +60,6 @@
 
   function nextStep() {
     currentStep++;
-    stepFinished = false;
 
     switch (currentStep) {
       case 1:
@@ -70,18 +70,13 @@
         break;
     }
   }
-
-  function onBeat() {
-    if ($muted) return;
-    $beat += 0.25;
-  }
 </script>
 
-<Progress {currentStep} />
+<Progress bind:currentStep />
 
-<div class="w-full grow flex flex-col gap-6 justify-center items-center pt-progress">
+<div class="w-full grow flex flex-col gap-6 justify-center items-center pt-progress pb-nav">
   {#if currentStep === 0}
-    <MusicUploader getBPM={handleGetBPM} upload={handleMusicUpload} />
+    <MusicUploadStep bind:musicFile bind:bpm />
   {:else if currentStep === 1}
     <ImageUploadStep upload={handleImagesUpload} />
   {:else if currentStep === 2}
@@ -101,11 +96,23 @@
     <button
       onclick={nextStep}
       class="rounded-sm px-4 py-2 bg-fg text-bg font-bold hover:cursor-pointer disabled:bg-faded disabled:cursor-auto"
-      disabled={!stepFinished}
+      disabled={!(
+        (currentStep === 0 && bpm) ||
+        (currentStep === 1 && config.images.length > 0) ||
+        (currentStep === 2 && !config.images.length)
+      )}
     >
       {"next >"}
     </button>
   </div>
 </div>
 
-<audio bind:this={audio} autoplay loop muted={$muted} src={config.audioSrc}></audio>
+<Nav {bpm} />
+
+<audio
+  bind:this={audio}
+  autoplay
+  loop
+  muted={$muted}
+  src={URL.createObjectURL(musicFile ?? new Blob())}
+></audio>
