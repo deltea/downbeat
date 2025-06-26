@@ -33,14 +33,11 @@
     };
   }
 
-  function showGifFrame(frame: ParsedFrame) {
-    if (!frame.dims || !frame.patch) return;
+  async function showGifFrame(frame: ParsedFrame) {
+    if (!frame) return;
 
-    const imageData = new ImageData(
-      new Uint8ClampedArray(frame.patch),
-      frame.dims.width,
-      frame.dims.height
-    );
+    const imageData = ctx.createImageData(frame.dims.width, frame.dims.height);
+    imageData.data.set(frame.patch);
 
     canvas.width = frame.dims.width;
     canvas.height = frame.dims.height;

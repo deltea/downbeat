@@ -3,7 +3,7 @@
 
   let { bpm }: { bpm: number } = $props();
   let boombox: HTMLImageElement;
-  let beatInterval: ReturnType<typeof setInterval> | null = $state(null);
+  let beatInterval: ReturnType<typeof setInterval> | null = null;
 
   $effect(() => {
     if (bpm === 0) return;
