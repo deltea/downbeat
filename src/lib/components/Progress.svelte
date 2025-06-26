@@ -1,5 +1,5 @@
 <script lang="ts">
-  const steps = ["music", "images", "fusion", "result"];
+  const steps = ["music", "images", "fusion", "export"];
   const icons = ["mingcute:video-fill", "mingcute:pic-2-fill", "mingcute:star-fill", "mingcute:share-forward-fill"]
   let { currentStep = $bindable() }: { currentStep: number } = $props();
 </script>

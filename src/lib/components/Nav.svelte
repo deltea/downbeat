@@ -8,7 +8,7 @@
   $effect(() => {
     if (bpm === 0) return;
 
-    // if (beatInterval) clearInterval(beatInterval);
+    if (beatInterval) clearInterval(beatInterval);
     beatInterval = setInterval(() => {
       console.log("🎵 beat detected!");
       boombox.style.scale = "1.3";
