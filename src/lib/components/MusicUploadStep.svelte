@@ -9,7 +9,6 @@
   let { getBPM, upload }: { getBPM: (bpm: number) => void, upload: (file: File) => void } = $props();
   let fileInput: HTMLInputElement;
   let coverPreview: string | null = $state(null);
-  let src: string = $state("");
   let file: File | null = $state(null);
   let isLoadingPreview = $state(false);
 
@@ -90,7 +89,6 @@
   async function setPreview(file: File) {
     isLoadingPreview = true;
 
-    src = URL.createObjectURL(file);
     const parsed = await parseBlob(file);
     if (parsed.common.picture && parsed.common.picture.length > 0) {
       const picture = parsed.common.picture[0];
@@ -116,7 +114,7 @@
     onclick={() => fileInput.click()}
     ondrop={onDrop}
     ondragover={e => e.preventDefault()}
-    class="dashed size-[24rem] flex justify-center items-center text-faded rounded-sm cursor-pointer p-6 outline-none hover:scale-[101%] active:scale-100 duration-100"
+    class="dashed size-content flex justify-center items-center text-faded rounded-sm cursor-pointer p-6 outline-none hover:scale-[101%] active:scale-100 duration-100"
   >
     {#if isLoadingPreview}
       <p>loading...</p>

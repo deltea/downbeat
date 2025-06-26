@@ -5,3 +5,5 @@ export interface Config {
   audioSrc: string | null,
   images: string[] | ParsedFrame[]
 }
+
+export type Mode = "gif" | "slideshow";

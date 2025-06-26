@@ -1,6 +1,6 @@
 <script lang="ts">
-  import type { Config } from "$lib/types";
-  import MusicUploader from "$components/MusicUploader.svelte";
+  import type { Config, Mode } from "$lib/types";
+  import MusicUploader from "$components/MusicUploadStep.svelte";
   import ImageUploadStep from "$components/ImageUploadStep.svelte";
   import Progress from "$components/Progress.svelte";
   import { beat, muted } from "$lib/stores";
@@ -14,7 +14,8 @@
   let config = $state({
     bpm: 0,
     audioSrc: null,
-    images: []
+    images: [],
+    mode: "gif",
   } as Config);
 
   function handleGetBPM(bpm: number) {
@@ -26,7 +27,7 @@
     stepFinished = true;
   }
 
-  function handleUpload(file: File) {
+  function handleMusicUpload(file: File) {
     console.log("music uploaded:", file.name);
     if (beatInterval) clearInterval(beatInterval);
     config.audioSrc = URL.createObjectURL(file);
@@ -34,26 +35,40 @@
     stepFinished = false;
   }
 
-  async function handleImagesUpload(files: File[]) {
+  async function handleImagesUpload(files: File[], mode: Mode) {
     console.log("images uploaded:", config.images);
-    const gif = files.find(file => file.type === "image/gif");
-    if (gif) {
-      console.log("gif found, extracting");
-      const buffer = await gif.arrayBuffer();
-      const data = parseGIF(buffer);
-      const frames = decompressFrames(data, true);
-      // frames[0].
-      config.images = frames;
+    if (files.length === 0) {
+      stepFinished = false;
+      config.images = [];
+      return;
+    }
+
+    if (mode === "gif") {
+      const gif = files.find(file => file.type === "image/gif");
+      if (gif) {
+        console.log("gif found, extracting");
+        const buffer = await gif.arrayBuffer();
+        const data = parseGIF(buffer);
+        const frames = decompressFrames(data, true);
+        config.images = frames;
+      }
     } else {
       config.images = files.map(file => URL.createObjectURL(file));
     }
-
-    stepFinished = true;
   }
 
   function nextStep() {
     currentStep++;
     stepFinished = false;
+
+    switch (currentStep) {
+      case 1:
+        break;
+      case 2:
+        break;
+      case 3:
+        break;
+    }
   }
 
   function onBeat() {
@@ -66,7 +81,7 @@
 
 <div class="w-full grow flex flex-col gap-6 justify-center items-center pt-progress">
   {#if currentStep === 0}
-    <MusicUploader getBPM={handleGetBPM} upload={handleUpload} />
+    <MusicUploader getBPM={handleGetBPM} upload={handleMusicUpload} />
   {:else if currentStep === 1}
     <ImageUploadStep upload={handleImagesUpload} />
   {:else if currentStep === 2}
@@ -74,14 +89,14 @@
   {/if}
 
   <div class="flex gap-6">
-    <!-- {#if currentStep > 0}
+    {#if currentStep > 0}
       <button
         onclick={() => (currentStep--)}
         class="rounded-sm px-4 py-2 bg-dark text-fg font-bold hover:cursor-pointer disabled:bg-dark disabled:cursor-auto"
       >
         {"< back"}
       </button>
-    {/if} -->
+    {/if}
 
     <button
       onclick={nextStep}

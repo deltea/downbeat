@@ -1,70 +1,142 @@
 <script lang="ts">
-  const VALID_FILE_TYPES = ["image/jpeg", "image/png", "image/gif", "image/webp"];
+  import type { Mode } from "$lib/types";
+  import Radio from "./Radio.svelte";
 
-  let { upload }: { upload: (files: File[]) => void } = $props();
-  let fileInput: HTMLInputElement;
+  const VALID_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
+
+  let { upload }: { upload: (files: File[], mode: Mode) => void } = $props();
+  let imageFileInput: HTMLInputElement;
+  let gifFileInput: HTMLInputElement;
   let images = $state<File[]>([]);
+  let gif = $state<File | null>(null);
+  let mode: Mode = $state("gif");
 
   function fileInputChange(e: Event) {
     const target = e.target as HTMLInputElement;
     const files = target.files;
-
-    if (files && files.length > 0) {
-      const filtered = Array.from(files).filter(file => VALID_FILE_TYPES.includes(file.type));
-      if (filtered.length > 0) {
-        images = [...filtered, ...images];
-        upload(filtered);
-      }
-    } else {
-      console.error("no file selected");
-    }
+    uploadImages(files ?? new FileList());
   }
 
   function onDrop(e: DragEvent) {
     e.preventDefault();
     const files = e.dataTransfer?.files;
+    uploadImages(files ?? new FileList());
+  }
+
+  function changeMode(value: string) {
+    if (value === "gif") {
+      upload(gif ? [gif] : [], "gif");
+    } else {
+      upload(images, "slideshow");
+    }
+  }
+
+  function uploadImages(files: FileList) {
     if (files && files.length > 0) {
-      const filtered = Array.from(files).filter(file => VALID_FILE_TYPES.includes(file.type));
-      if (filtered.length > 0) {
-        images = [...filtered, ...images];
-        upload(filtered);
+      if (mode === "slideshow") {
+        const filtered = Array.from(files).filter(file => VALID_IMAGE_TYPES.includes(file.type));
+        if (filtered.length > 0) {
+          images = [...images, ...filtered];
+          upload(filtered, mode);
+        } else {
+          console.error("no images found in selected files");
+        }
+      } else {
+        const file = Array.from(files).find(file => file.type === "image/gif");
+        if (file) {
+          gif = null;
+          gif = file;
+          upload([gif], mode);
+        } else {
+          console.error("no gif found in selected files");
+        }
       }
     } else {
-      console.error("no file dropped");
+      console.error("no files selected");
     }
   }
 </script>
 
-<button
-  onclick={() => fileInput.click()}
-  ondrop={onDrop}
-  ondragover={e => e.preventDefault()}
-  class="dashed flex justify-center items-center text-faded rounded-sm cursor-pointer outline-none"
->
-  {#if images.length > 0}
-    <div class="grid grid-flow-col p-5 gap-5 rounded-sm max-w-[52rem] overflow-x-auto">
-      {#each images as image, i}
-        <div class="w-full flex flex-col gap-2">
-          <div
-            class="h-32 aspect-square rounded-sm bg-bg-0 bg-cover bg-center"
-            style:background-image="url('{URL.createObjectURL(image)}')"
-          ></div>
-          <p class="text-sm text-center text-faded">{i + 1}</p>
-        </div>
-      {/each}
-    </div>
+<div class="w-[24rem]">
+  <Radio items={[
+    { value: "gif", label: "gif" },
+    { value: "slideshow", label: "slideshow" }
+  ]} bind:value={mode} onValueChange={changeMode} />
+</div>
+
+<div class="dashed size-content rounded-sm outline-none">
+  {#if (mode === "slideshow" ? images.length > 0 : gif)}
+    {#if mode === "slideshow"}
+      <!-- images grid -->
+      <div class="grid grid-cols-3 items-start gap-6 w-full h-full overflow-y-auto p-6">
+        {#each images as image, i}
+          <div class="w-full flex justify-center items-center aspect-square rounded-sm relative group">
+            <div
+              class="size-full rounded-sm bg-bg-0 bg-cover bg-center hover:brightness-50 duration-100 absolute left-0 top-0"
+              style:background-image="url('{URL.createObjectURL(image)}')"
+            ></div>
+
+            <p class="group-hover:opacity-100 opacity-0 text-sm z-10 wrap-anywhere text-center p-2">{image.name}</p>
+
+            <button class="absolute top-2 left-2 group-hover:opacity-100 hover:cursor-pointer opacity-0 bg-bg-0 rounded-full flex justify-center items-center size-6 duration-100 z-10" aria-label="remove image">
+              <iconify-icon icon="mingcute:close-fill" class="text-base"></iconify-icon>
+            </button>
+          </div>
+        {/each}
+
+        <button
+          onclick={() => imageFileInput.click()}
+          ondrop={onDrop}
+          class="w-full aspect-square rounded-sm bg-bg-0 flex justify-center items-center hover:cursor-pointer"
+          aria-label="add image"
+        >
+          <iconify-icon icon="mingcute:add-fill" class="text-2xl"></iconify-icon>
+        </button>
+      </div>
+    {:else}
+      <!-- single gif image -->
+      <div class="p-6 size-full">
+        <div
+          class="size-full rounded-sm bg-bg-0 bg-cover bg-center"
+          style:background-image="url('{URL.createObjectURL(gif!)}')"
+        ></div>
+      </div>
+    {/if}
   {:else}
-    <p class="px-10 py-24">drop or select your image files here!</p>
+    <!-- upload area -->
+    <button
+      onclick={() => (mode === "slideshow" ? imageFileInput : gifFileInput).click()}
+      ondrop={onDrop}
+      ondragover={e => e.preventDefault()}
+      class="size-full flex justify-center items-center text-center text-faded p-16 hover:cursor-pointer"
+    >
+      {#if mode === "gif"}
+        drop or select your gif here!
+      {:else}
+        drop or select your images here!
+      {/if}
+    </button>
   {/if}
-</button>
+</div>
 
 <input
   onchange={fileInputChange}
-  bind:this={fileInput}
-  accept={VALID_FILE_TYPES.join(",")}
+  bind:this={imageFileInput}
+  accept={VALID_IMAGE_TYPES.join(",")}
   type="file"
   name="images"
   id="images"
   class="hidden"
   multiple
+/>
+
+<input
+  onchange={fileInputChange}
+  bind:this={gifFileInput}
+  accept="image/gif"
+  type="file"
+  name="gif"
+  id="gif"
+  class="hidden"
+  multiple={false}
 />
