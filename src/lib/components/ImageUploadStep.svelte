@@ -1,17 +1,21 @@
 <script lang="ts">
   import type { Mode } from "$lib/types";
+  import { decompressFrames, parseGIF, type ParsedFrame } from "gifuct-js";
   import Radio from "./Radio.svelte";
+    import { onMount } from "svelte";
 
   const VALID_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
 
-  let { mode = $bindable(), images = $bindable(), gif = $bindable() }: {
+  let { mode = $bindable(), images = $bindable(), gif = $bindable(), gifFile = $bindable() }: {
     mode: Mode,
     images: File[],
-    gif: File | null
+    gif: ParsedFrame[],
+    gifFile: File | null
   } = $props();
 
   let imageFileInput: HTMLInputElement;
   let gifFileInput: HTMLInputElement;
+  let previewSrc: string | null = $state(null);
 
   function fileInputChange(e: Event) {
     const target = e.target as HTMLInputElement;
@@ -36,17 +40,32 @@
         }
       } else {
         const file = Array.from(files).find(file => file.type === "image/gif");
-        if (file) {
-          gif = null;
-          gif = file;
-        } else {
+        if (!file) {
           console.error("no gif found in selected files");
+          return;
+        } else {
+          gifFile = file;
+          // convert gif to frames
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            const buffer = e.target?.result as ArrayBuffer;
+            const data = parseGIF(buffer);
+            const decompressed = decompressFrames(data, true);
+            gif = decompressed;
+          };
+          reader.readAsArrayBuffer(file);
         }
       }
     } else {
       console.error("no files selected");
     }
   }
+
+  $effect(() => {
+    if (gifFile) {
+      previewSrc = URL.createObjectURL(gifFile);
+    }
+  })
 </script>
 
 <div class="w-[24rem]">
@@ -95,7 +114,7 @@
       >
         <div
           class="size-full rounded-sm bg-bg-0 bg-cover bg-center"
-          style:background-image="url('{URL.createObjectURL(gif!)}')"
+          style:background-image="url('{previewSrc}')"
         ></div>
       </button>
     {/if}

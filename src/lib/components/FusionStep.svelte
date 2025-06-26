@@ -13,8 +13,12 @@
   ]
 
   let { frames, bpm, mode }: { frames: (File | ParsedFrame)[], bpm: number, mode: Mode } = $props();
+
   let canvas: HTMLCanvasElement;
   let ctx: CanvasRenderingContext2D;
+  let bufferCanvas: HTMLCanvasElement;
+  let bufferCtx: CanvasRenderingContext2D;
+
   let interval: ReturnType<typeof setInterval> | null = $state(null);
   let frameOffset = $state(0);
   let speed = $state("2");
@@ -36,12 +40,20 @@
   async function showGifFrame(frame: ParsedFrame) {
     if (!frame) return;
 
-    const imageData = ctx.createImageData(frame.dims.width, frame.dims.height);
-    imageData.data.set(frame.patch);
+    if (frame.disposalType === 2) {
+      bufferCtx.clearRect(
+        frame.dims.left,
+        frame.dims.top,
+        frame.dims.width,
+        frame.dims.height
+      );
+    }
 
-    canvas.width = frame.dims.width;
-    canvas.height = frame.dims.height;
-    ctx.putImageData(imageData, 0, 0);
+    const imageData = bufferCtx.createImageData(frame.dims.width, frame.dims.height);
+    imageData.data.set(frame.patch);
+    bufferCtx.putImageData(imageData, frame.dims.left, frame.dims.top);
+
+    ctx.drawImage(bufferCanvas, 0, 0);
   }
 
   function setBeatInterval() {
@@ -74,8 +86,27 @@
 
   onMount(() => {
     ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
+
+    bufferCanvas = document.createElement("canvas");
+    bufferCtx = bufferCanvas.getContext("2d") as CanvasRenderingContext2D;
+
     setBeatInterval();
+
+    if (frames[0] instanceof File) return;
+    canvas.width = bufferCanvas.width = frames[0].dims.width;
+    canvas.height = bufferCanvas.height = frames[0].dims.height;
   });
+
+  // $effect(() => {
+  //   if (frames.length === 0) return;
+  //   if (mode === "gif" && !(frames[0] instanceof File)) {
+  //     bufferCanvas.width = frames[0].dims.width;
+  //     bufferCanvas.height = frames[0].dims.height;
+  //     showGifFrame(frames[0] as ParsedFrame);
+  //   } else {
+  //     showImageFrame(frames[0] as File);
+  //   }
+  // })
 
   onDestroy(() => {
     if (interval) clearInterval(interval);

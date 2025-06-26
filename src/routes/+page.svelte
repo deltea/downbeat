@@ -17,25 +17,11 @@
   let bpm = $state(0);
   let mode: Mode = $state("gif");
   let images = $state<File[]>([]);
-  let gif = $state<File | null>(null);
-  let frames = $state<ParsedFrame[]>([]);
+  let gif = $state<ParsedFrame[]>([]);
+  let gifFile: File | null = $state(null);
 
   function nextStep() {
     currentStep++;
-
-    if (currentStep === 2) {
-      if (mode === "gif" && gif) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          const buffer = e.target?.result as ArrayBuffer;
-          const data = parseGIF(buffer);
-          const decompressed = decompressFrames(data, true);
-          // frames = decompressed.map(frame => new Blob([frame.patch], { type: "image/png" }));
-          frames = decompressed;
-        };
-        reader.readAsArrayBuffer(gif);
-      }
-    }
   }
 </script>
 
@@ -45,9 +31,9 @@
   {#if currentStep === 0}
     <MusicUploadStep bind:musicFile bind:bpm />
   {:else if currentStep === 1}
-    <ImageUploadStep bind:mode bind:images bind:gif />
+    <ImageUploadStep bind:mode bind:images bind:gif bind:gifFile />
   {:else if currentStep === 2}
-    <FusionStep frames={mode === "gif" ? frames : images} {bpm} {mode} />
+    <FusionStep frames={mode === "gif" ? gif : images} {bpm} {mode} />
   {/if}
 
   <div class="flex gap-6">
@@ -66,7 +52,7 @@
       class="rounded-sm pl-4 pr-2 py-2 bg-fg text-bg font-bold hover:cursor-pointer disabled:bg-faded disabled:cursor-auto flex items-center gap-1"
       disabled={!(
         (currentStep === 0 && bpm) ||
-        (currentStep === 1 && (mode === "gif" ? gif : images.length > 0)) ||
+        (currentStep === 1 && (mode === "gif" ? gif.length > 0 : images.length > 0)) ||
         (currentStep === 2)
       )}
     >
@@ -83,5 +69,5 @@
   autoplay
   loop
   muted={$muted}
-  src={URL.createObjectURL(musicFile ?? new Blob())}
+  src={musicFile ? URL.createObjectURL(musicFile) : ""}
 ></audio>
