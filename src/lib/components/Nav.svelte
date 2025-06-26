@@ -8,7 +8,7 @@
   $effect(() => {
     if (bpm === 0) return;
 
-    if (beatInterval) clearInterval(beatInterval);
+    // if (beatInterval) clearInterval(beatInterval);
     beatInterval = setInterval(() => {
       console.log("🎵 beat detected!");
       boombox.style.scale = "1.3";
@@ -27,7 +27,7 @@
 
     <div>
       <h1 class="font-bold group-hover:underline decoration-2 underline-offset-2">downbeat</h1>
-      <p class="text-faded">the ultimate beat-sync editor</p>
+      <p class="text-faded">the ultimate beat-syncer</p>
     </div>
   </a>
 

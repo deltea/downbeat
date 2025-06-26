@@ -1,8 +1,8 @@
 <script lang="ts">
-  import type { Config } from "$lib/types";
+  import type { Mode } from "$lib/types";
   import { Slider } from "bits-ui";
   import type { ParsedFrame } from "gifuct-js";
-  import { onMount } from "svelte";
+  import { onDestroy, onMount } from "svelte";
   import Radio from "./Radio.svelte";
 
   const SPEEDS = [
@@ -12,15 +12,30 @@
     { value: "4", label: "4x" },
   ]
 
-  let { config }: { config: Config } = $props();
+  let { frames, bpm, mode }: { frames: (File | ParsedFrame)[], bpm: number, mode: Mode } = $props();
   let canvas: HTMLCanvasElement;
   let ctx: CanvasRenderingContext2D;
   let interval: ReturnType<typeof setInterval> | null = $state(null);
   let frameOffset = $state(0);
   let speed = $state("2");
+  let imageIndex = $state(0);
 
-  function showFrame(frame: ParsedFrame | string) {
-    if (typeof frame === "string") return;
+  function showImageFrame(frame: File) {
+    if (!frame) return;
+
+    const img = new Image();
+    img.src = URL.createObjectURL(frame);
+    img.onload = () => {
+      canvas.width = img.width;
+      canvas.height = img.height;
+      ctx.drawImage(img, 0, 0);
+      URL.revokeObjectURL(img.src);
+    };
+  }
+
+  function showGifFrame(frame: ParsedFrame) {
+    if (!frame.dims || !frame.patch) return;
+
     const imageData = new ImageData(
       new Uint8ClampedArray(frame.patch),
       frame.dims.width,
@@ -33,25 +48,40 @@
   }
 
   function setBeatInterval() {
-    const time_per_beat = 60 / config.bpm * 1000 * +speed;
+    const time_per_beat = 60 / bpm * 1000 * +speed;
+
+    imageIndex = 0;
 
     if (interval) clearInterval(interval);
     interval = setInterval(() => {
-      if (config.images.length === 0) return;
-      const frameDelay = time_per_beat / config.images.length;
+      if (frames.length === 0) return;
+      if (mode === "gif") {
+        const frameDelay = time_per_beat / frames.length;
 
-      for (let i = 0; i < config.images.length; i++) {
-        const index = (i + frameOffset) % config.images.length;
-        const frame = config.images[index];
-        setTimeout(() => showFrame(frame), i * frameDelay);
+        for (let i = 0; i < frames.length; i++) {
+          const index = (i + frameOffset) % frames.length;
+          const frame = frames[index];
+          if (frame instanceof File) continue;
+          setTimeout(() => showGifFrame(frame), i * frameDelay);
+        }
+      } else {
+        const frame = frames[imageIndex];
+        if (frame instanceof File) {
+          showImageFrame(frame);
+        }
+
+        imageIndex = (imageIndex + 1) % frames.length;
       }
     }, time_per_beat);
   }
 
   onMount(() => {
     ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
-
     setBeatInterval();
+  });
+
+  onDestroy(() => {
+    if (interval) clearInterval(interval);
   });
 </script>
 
@@ -66,7 +96,7 @@
     type="single"
     bind:value={frameOffset}
     min={0}
-    max={config.images.length - 1}
+    max={frames.length - 1}
     class="relative flex items-center w-full hover:cursor-grab active:cursor-grabbing"
   >
     {#snippet children({ tickItems })}
@@ -79,7 +109,7 @@
         class="size-6 bg-fg outline-none rounded-full duration-100 z-10"
       />
 
-      {#if tickItems.length < 10}
+      {#if tickItems.length < 20}
         {#each tickItems as { index } (index)}
           <Slider.Tick
             index={index}
@@ -90,5 +120,3 @@
     {/snippet}
   </Slider.Root>
 </div>
-
-<!-- <img src={config.images[currentFrame]} alt="frame {currentFrame}" class="w-full h-full object-cover rounded-sm" /> -->

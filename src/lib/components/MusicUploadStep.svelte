@@ -22,7 +22,7 @@
     const files = target.files;
 
     if (files && files.length > 0) {
-      uploadTrack(files[0]);
+      upload(files[0]);
     } else {
       console.error("no file selected");
     }
@@ -33,7 +33,7 @@
     const files = e.dataTransfer?.files;
     if (files && files.length > 0) {
       if (VALID_FILE_TYPES.includes(files[0].type)) {
-        uploadTrack(files[0]);
+        upload(files[0]);
       } else {
         console.error("invalid file type");
       }
@@ -42,7 +42,7 @@
     }
   }
 
-  async function uploadTrack(file: File) {
+  async function upload(file: File) {
     musicFile = file;
     setPreview(file);
 

@@ -4,40 +4,33 @@
 
   const VALID_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
 
-  let { upload }: { upload: (files: File[], mode: Mode) => void } = $props();
+  let { mode = $bindable(), images = $bindable(), gif = $bindable() }: {
+    mode: Mode,
+    images: File[],
+    gif: File | null
+  } = $props();
+
   let imageFileInput: HTMLInputElement;
   let gifFileInput: HTMLInputElement;
-  let images = $state<File[]>([]);
-  let gif = $state<File | null>(null);
-  let mode: Mode = $state("gif");
 
   function fileInputChange(e: Event) {
     const target = e.target as HTMLInputElement;
     const files = target.files;
-    uploadImages(files ?? new FileList());
+    upload(files ?? new FileList());
   }
 
   function onDrop(e: DragEvent) {
     e.preventDefault();
     const files = e.dataTransfer?.files;
-    uploadImages(files ?? new FileList());
+    upload(files ?? new FileList());
   }
 
-  function changeMode(value: string) {
-    if (value === "gif") {
-      upload(gif ? [gif] : [], "gif");
-    } else {
-      upload(images, "slideshow");
-    }
-  }
-
-  function uploadImages(files: FileList) {
+  function upload(files: FileList) {
     if (files && files.length > 0) {
       if (mode === "slideshow") {
         const filtered = Array.from(files).filter(file => VALID_IMAGE_TYPES.includes(file.type));
         if (filtered.length > 0) {
           images = [...images, ...filtered];
-          upload(filtered, mode);
         } else {
           console.error("no images found in selected files");
         }
@@ -46,7 +39,6 @@
         if (file) {
           gif = null;
           gif = file;
-          upload([gif], mode);
         } else {
           console.error("no gif found in selected files");
         }
@@ -61,7 +53,7 @@
   <Radio items={[
     { value: "gif", label: "gif" },
     { value: "slideshow", label: "slideshow" }
-  ]} bind:value={mode} onValueChange={changeMode} />
+  ]} bind:value={mode} />
 </div>
 
 <div class="dashed size-content rounded-sm outline-none">
@@ -72,13 +64,13 @@
         {#each images as image, i}
           <div class="w-full flex justify-center items-center aspect-square rounded-sm relative group">
             <div
-              class="size-full rounded-sm bg-bg-0 bg-cover bg-center hover:brightness-50 duration-100 absolute left-0 top-0"
+              class="size-full rounded-sm bg-bg-0 bg-cover bg-center group-hover:brightness-50 duration-100 absolute left-0 top-0"
               style:background-image="url('{URL.createObjectURL(image)}')"
             ></div>
 
             <p class="group-hover:opacity-100 opacity-0 text-sm z-10 wrap-anywhere text-center p-2">{image.name}</p>
 
-            <button class="absolute top-2 left-2 group-hover:opacity-100 hover:cursor-pointer opacity-0 bg-bg-0 rounded-full flex justify-center items-center size-6 duration-100 z-10" aria-label="remove image">
+            <button class="absolute top-2 left-2 group-hover:opacity-100 hover:cursor-pointer opacity-0 bg-fg text-bg rounded-full flex justify-center items-center size-6 duration-100 z-10" aria-label="remove image">
               <iconify-icon icon="mingcute:close-fill" class="text-base"></iconify-icon>
             </button>
           </div>
@@ -95,12 +87,17 @@
       </div>
     {:else}
       <!-- single gif image -->
-      <div class="p-6 size-full">
+      <button
+        class="p-6 size-full hover:cursor-pointer rounded-sm"
+        onclick={() => gifFileInput.click()}
+        ondrop={onDrop}
+        aria-label="change gif"
+      >
         <div
           class="size-full rounded-sm bg-bg-0 bg-cover bg-center"
           style:background-image="url('{URL.createObjectURL(gif!)}')"
         ></div>
-      </div>
+      </button>
     {/if}
   {:else}
     <!-- upload area -->
