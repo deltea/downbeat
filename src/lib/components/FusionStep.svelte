@@ -41,7 +41,7 @@
   }
 
   async function showGifFrame(frame: ParsedFrame) {
-    if (!frame) return;
+    if (!frame || !canvas) return;
 
     if (lastFrame && lastFrame.disposalType === 2) {
       ctx.fillRect(0, 0, canvas.width, canvas.height);
