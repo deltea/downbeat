@@ -1,3 +1,3 @@
-import { writable } from "svelte/store";
+import { persistent } from "./persistent";
 
-export const muted = writable(false);
+export const muted = persistent("muted", false);
