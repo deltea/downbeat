@@ -111,8 +111,8 @@
   });
 </script>
 
-<div class="flex flex-col gap-6">
-  <div class="w-[24rem] aspect-video flex justify-center items-center">
+<div class="flex flex-col gap-6 w-full">
+  <div class="w-full aspect-video flex justify-center items-center">
     <canvas bind:this={canvas} class="object-cover rounded-sm"></canvas>
   </div>
 
