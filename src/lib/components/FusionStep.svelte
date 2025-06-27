@@ -10,6 +10,8 @@
     { value: "1", label: "1x" },
     { value: "2", label: "2x" },
     { value: "4", label: "4x" },
+    { value: "8", label: "8x" },
+    { value: "16", label: "16x" }
   ]
 
   let { frames, bpm, mode }: { frames: (File | ParsedFrame)[], bpm: number, mode: Mode } = $props();
@@ -23,6 +25,7 @@
   let frameOffset = $state(0);
   let speed = $state("2");
   let imageIndex = $state(0);
+  let lastFrame: ParsedFrame | null = $state(null);
 
   function showImageFrame(frame: File) {
     if (!frame) return;
@@ -40,12 +43,12 @@
   async function showGifFrame(frame: ParsedFrame) {
     if (!frame) return;
 
-    if (frame.disposalType === 2) {
+    if (lastFrame && lastFrame.disposalType === 2) {
       bufferCtx.clearRect(
-        frame.dims.left,
-        frame.dims.top,
-        frame.dims.width,
-        frame.dims.height
+        lastFrame.dims.left,
+        lastFrame.dims.top,
+        lastFrame.dims.width,
+        lastFrame.dims.height
       );
     }
 
@@ -54,6 +57,8 @@
     bufferCtx.putImageData(imageData, frame.dims.left, frame.dims.top);
 
     ctx.drawImage(bufferCanvas, 0, 0);
+
+    lastFrame = frame;
   }
 
   function setBeatInterval() {
@@ -71,6 +76,7 @@
           const index = (i + frameOffset) % frames.length;
           const frame = frames[index];
           if (frame instanceof File) continue;
+          imageIndex = index;
           setTimeout(() => showGifFrame(frame), i * frameDelay);
         }
       } else {
@@ -90,23 +96,15 @@
     bufferCanvas = document.createElement("canvas");
     bufferCtx = bufferCanvas.getContext("2d") as CanvasRenderingContext2D;
 
+    if (!(frames[0] instanceof File)) {
+      canvas.width = bufferCanvas.width = frames[0].dims.width;
+      canvas.height = bufferCanvas.height = frames[0].dims.height;
+
+      showGifFrame(frames[0]);
+    }
+
     setBeatInterval();
-
-    if (frames[0] instanceof File) return;
-    canvas.width = bufferCanvas.width = frames[0].dims.width;
-    canvas.height = bufferCanvas.height = frames[0].dims.height;
   });
-
-  // $effect(() => {
-  //   if (frames.length === 0) return;
-  //   if (mode === "gif" && !(frames[0] instanceof File)) {
-  //     bufferCanvas.width = frames[0].dims.width;
-  //     bufferCanvas.height = frames[0].dims.height;
-  //     showGifFrame(frames[0] as ParsedFrame);
-  //   } else {
-  //     showImageFrame(frames[0] as File);
-  //   }
-  // })
 
   onDestroy(() => {
     if (interval) clearInterval(interval);
