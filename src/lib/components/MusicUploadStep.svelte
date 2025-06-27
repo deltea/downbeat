@@ -67,8 +67,9 @@
     try {
       const channelData = data.getChannelData(0);
       const audioData = Array.from(channelData);
+      const hopSize = data.sampleRate / 100;
 
-      const mt = new MusicTempo(audioData);
+      const mt = new MusicTempo(audioData, { hopSize});
       const tempo = Math.round(mt.tempo);
       console.log(`music-tempo: ${tempo}`);
 
