@@ -44,18 +44,14 @@
     if (!frame) return;
 
     if (lastFrame && lastFrame.disposalType === 2) {
-      bufferCtx.clearRect(
-        lastFrame.dims.left,
-        lastFrame.dims.top,
-        lastFrame.dims.width,
-        lastFrame.dims.height
-      );
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      bufferCtx.fillRect(0, 0, bufferCanvas.width, bufferCanvas.height);
     }
 
     const imageData = bufferCtx.createImageData(frame.dims.width, frame.dims.height);
     imageData.data.set(frame.patch);
-    bufferCtx.putImageData(imageData, frame.dims.left, frame.dims.top);
 
+    bufferCtx.putImageData(imageData, frame.dims.left, frame.dims.top);
     ctx.drawImage(bufferCanvas, 0, 0);
 
     lastFrame = frame;
