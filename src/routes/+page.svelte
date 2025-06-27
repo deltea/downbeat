@@ -40,7 +40,7 @@
     {#if currentStep > 0}
       <button
         onclick={() => (currentStep--)}
-        class="rounded-sm pr-4 pl-2 py-2 bg-dark text-fg font-bold hover:cursor-pointer disabled:bg-dark disabled:cursor-auto flex items-center gap-1"
+        class="rounded-sm pr-4 pl-2 py-2 bg-surface-0 text-fg font-bold hover:cursor-pointer disabled:bg-surface-0 disabled:cursor-auto flex items-center gap-1"
       >
         <iconify-icon icon="line-md:chevron-small-left" class="text-2xl"></iconify-icon>
         back
@@ -49,7 +49,7 @@
 
     <button
       onclick={nextStep}
-      class="rounded-sm pl-4 pr-2 py-2 bg-fg text-bg font-bold hover:cursor-pointer disabled:bg-faded disabled:cursor-auto flex items-center gap-1"
+      class="rounded-sm pl-4 pr-2 py-2 bg-fg text-bg font-bold hover:cursor-pointer disabled:bg-muted disabled:cursor-auto flex items-center gap-1"
       disabled={!(
         (currentStep === 0 && bpm) ||
         (currentStep === 1 && (mode === "gif" ? gif.length > 0 : images.length > 0)) ||

@@ -4,14 +4,17 @@
 
 @theme {
   --color-bg: #000;
-  --color-bg-0: #252525;
+  --color-surface: #252525;
+  --color-surface-0: #444;
   --color-fg: #fff;
-  --color-faded: #888;
-  --color-dark: #444;
+  --color-muted: #888;
+
   --font-mono: "JetBrains Mono", monospace;
   --spacing-nav: 6rem;
   --spacing-progress: 8rem;
   --spacing-content: 32rem;
+
+  --dashed-border-src: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='4' ry='4' stroke='%23444' stroke-width='5' stroke-dasharray='10%2c 10' stroke-dashoffset='0' stroke-linecap='square'/%3e%3c/svg%3e");
 }
 
 body {
@@ -19,7 +22,7 @@ body {
 }
 
 .dashed {
-  background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='4' ry='4' stroke='%23333' stroke-width='5' stroke-dasharray='10%2c 10' stroke-dashoffset='0' stroke-linecap='square'/%3e%3c/svg%3e");
+  background-image: var(--dashed-border-src);
 }
 
 ::-webkit-scrollbar {

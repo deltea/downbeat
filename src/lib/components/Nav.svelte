@@ -1,5 +1,6 @@
 <script lang="ts">
-  import { muted } from "$lib/stores";
+  import { muted, theme } from "$lib/stores";
+    import { availableThemes } from "$lib/themes";
 
   let { bpm }: { bpm: number } = $props();
   let boombox: HTMLImageElement;
@@ -27,7 +28,7 @@
 
     <div>
       <h1 class="font-bold group-hover:underline decoration-2 underline-offset-2">downbeat</h1>
-      <p class="text-faded">the ultimate beat-syncer</p>
+      <p class="text-muted">the ultimate beat-syncer</p>
     </div>
   </a>
 
@@ -36,7 +37,11 @@
       <iconify-icon icon={$muted ? "mingcute:volume-off-fill" : "mingcute:volume-fill"} class="text-3xl group-hover:rotate-12 duration-100"></iconify-icon>
     </button>
 
-    <button class="hover:cursor-pointer hover:scale-110 active:scale-100 duration-100 group" aria-label="settings">
+    <button
+      onclick={() => ($theme = ($theme + 1) % (availableThemes.length - 1))}
+      class="hover:cursor-pointer hover:scale-110 active:scale-100 duration-100 group"
+      aria-label="settings"
+    >
       <iconify-icon icon="mingcute:palette-fill" class="text-3xl group-hover:rotate-30 duration-100"></iconify-icon>
     </button>
 

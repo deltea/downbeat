@@ -82,7 +82,7 @@
         {#each images as image, i}
           <div class="w-full flex justify-center items-center aspect-square rounded-sm relative group">
             <div
-              class="size-full rounded-sm bg-bg-0 bg-cover bg-center group-hover:brightness-50 duration-100 absolute left-0 top-0"
+              class="size-full rounded-sm bg-surface bg-cover bg-center group-hover:brightness-50 duration-100 absolute left-0 top-0"
               style:background-image="url('{URL.createObjectURL(image)}')"
             ></div>
 
@@ -97,7 +97,7 @@
         <button
           onclick={() => imageFileInput.click()}
           ondrop={onDrop}
-          class="w-full aspect-square rounded-sm bg-bg-0 flex justify-center items-center hover:cursor-pointer"
+          class="w-full aspect-square rounded-sm bg-surface flex justify-center items-center hover:cursor-pointer"
           aria-label="add image"
         >
           <iconify-icon icon="mingcute:add-fill" class="text-2xl"></iconify-icon>
@@ -112,7 +112,7 @@
         aria-label="change gif"
       >
         <div
-          class="w-full aspect-square rounded-sm bg-bg-0 bg-cover bg-center"
+          class="w-full aspect-square rounded-sm bg-surface bg-cover bg-center"
           style:background-image="url('{previewSrc}')"
         ></div>
       </button>
@@ -123,7 +123,7 @@
       onclick={() => (mode === "slideshow" ? imageFileInput : gifFileInput).click()}
       ondrop={onDrop}
       ondragover={e => e.preventDefault()}
-      class="w-full aspect-square flex justify-center items-center text-center text-faded p-16 hover:cursor-pointer"
+      class="w-full aspect-square flex justify-center items-center text-center text-muted p-16 hover:cursor-pointer"
     >
       {#if mode === "gif"}
         drop or select your gif here!

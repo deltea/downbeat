@@ -122,7 +122,7 @@
     class="relative flex items-center w-full hover:cursor-grab active:cursor-grabbing"
   >
     {#snippet children({ tickItems })}
-      <span class="h-2 w-full bg-dark rounded-sm duration-100">
+      <span class="h-2 w-full bg-surface-0 rounded-sm duration-100">
         <Slider.Range class="bg-fg h-full absolute rounded-sm duration-100" />
       </span>
 
