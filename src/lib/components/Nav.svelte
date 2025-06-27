@@ -18,7 +18,7 @@
         boombox.style.transitionDuration = "100ms";
       }, 100);
     }, 60 / bpm * 1000);
-  })
+  });
 </script>
 
 <nav class="fixed flex items-center justify-between w-full h-nav bottom-0 left-0 pl-6 pr-10">

@@ -27,7 +27,7 @@
 
 <Progress bind:currentStep />
 
-<div class="w-full grow flex flex-col gap-6 justify-center items-center pt-progress pb-nav">
+<div class="grow flex flex-col gap-6 justify-center items-center pt-progress pb-nav">
   {#if currentStep === 0}
     <MusicUploadStep bind:musicFile bind:bpm />
   {:else if currentStep === 1}

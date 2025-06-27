@@ -128,7 +128,7 @@
     onclick={() => fileInput.click()}
     ondrop={onDrop}
     ondragover={e => e.preventDefault()}
-    class="dashed size-content flex justify-center items-center text-faded rounded-sm cursor-pointer p-6 outline-none hover:scale-[101%] active:scale-100 duration-100"
+    class="dashed w-full aspect-square flex justify-center items-center text-faded rounded-sm cursor-pointer p-6 outline-none hover:scale-[101%] active:scale-100 duration-100"
   >
     {#if isLoadingPreview}
       <p>loading...</p>

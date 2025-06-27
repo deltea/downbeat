@@ -12,7 +12,7 @@
 </svelte:head>
 
 <div class="min-h-screen flex flex-col items-center">
-  <main class="flex justify-center items-center grow">
+  <main class="w-1/3 flex justify-center items-center grow">
     {@render children()}
   </main>
 </div>

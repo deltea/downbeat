@@ -67,18 +67,18 @@
   })
 </script>
 
-<div class="w-[24rem]">
+<div class="w-full">
   <Radio items={[
     { value: "gif", label: "gif" },
     { value: "slideshow", label: "slideshow" }
   ]} bind:value={mode} />
 </div>
 
-<div class="dashed size-content rounded-sm outline-none">
+<div class="dashed w-full rounded-sm outline-none">
   {#if (mode === "slideshow" ? images.length > 0 : gif.length > 0)}
     {#if mode === "slideshow"}
       <!-- images grid -->
-      <div class="grid grid-cols-3 items-start gap-6 w-full h-full overflow-y-auto p-6">
+      <div class="grid grid-cols-3 align-top gap-6 w-full aspect-square overflow-y-auto p-6">
         {#each images as image, i}
           <div class="w-full flex justify-center items-center aspect-square rounded-sm relative group">
             <div
@@ -88,7 +88,7 @@
 
             <p class="group-hover:opacity-100 opacity-0 text-sm z-10 wrap-anywhere text-center p-2">{image.name}</p>
 
-            <button class="absolute top-2 left-2 group-hover:opacity-100 hover:cursor-pointer opacity-0 bg-fg text-bg rounded-full flex justify-center items-center size-6 duration-100 z-10" aria-label="remove image">
+            <button class="absolute top-2 left-2 group-hover:opacity-100 hover:cursor-pointer opacity-0 bg-fg text-bg rounded-sm flex justify-center items-center size-6 duration-100 z-10" aria-label="remove image">
               <iconify-icon icon="mingcute:close-fill" class="text-base"></iconify-icon>
             </button>
           </div>
@@ -112,7 +112,7 @@
         aria-label="change gif"
       >
         <div
-          class="size-full rounded-sm bg-bg-0 bg-cover bg-center"
+          class="w-full aspect-square rounded-sm bg-bg-0 bg-cover bg-center"
           style:background-image="url('{previewSrc}')"
         ></div>
       </button>
@@ -123,7 +123,7 @@
       onclick={() => (mode === "slideshow" ? imageFileInput : gifFileInput).click()}
       ondrop={onDrop}
       ondragover={e => e.preventDefault()}
-      class="size-full flex justify-center items-center text-center text-faded p-16 hover:cursor-pointer"
+      class="w-full aspect-square flex justify-center items-center text-center text-faded p-16 hover:cursor-pointer"
     >
       {#if mode === "gif"}
         drop or select your gif here!
