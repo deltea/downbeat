@@ -1,6 +1,6 @@
 <script lang="ts">
   import { muted, theme } from "$lib/stores";
-    import { availableThemes } from "$lib/themes";
+  import { availableThemes } from "$lib/themes";
 
   let { bpm }: { bpm: number } = $props();
   let boombox: HTMLImageElement;
