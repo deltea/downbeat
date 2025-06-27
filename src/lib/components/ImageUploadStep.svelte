@@ -2,7 +2,6 @@
   import type { Mode } from "$lib/types";
   import { decompressFrames, parseGIF, type ParsedFrame } from "gifuct-js";
   import Radio from "./Radio.svelte";
-    import { onMount } from "svelte";
 
   const VALID_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
 
@@ -76,7 +75,7 @@
 </div>
 
 <div class="dashed size-content rounded-sm outline-none">
-  {#if (mode === "slideshow" ? images.length > 0 : gif)}
+  {#if (mode === "slideshow" ? images.length > 0 : gif.length > 0)}
     {#if mode === "slideshow"}
       <!-- images grid -->
       <div class="grid grid-cols-3 items-start gap-6 w-full h-full overflow-y-auto p-6">

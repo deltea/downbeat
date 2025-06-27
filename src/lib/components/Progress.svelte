@@ -1,12 +1,12 @@
 <script lang="ts">
-  const steps = ["music", "images", "fusion", "export"];
-  const icons = ["mingcute:video-fill", "mingcute:pic-2-fill", "mingcute:star-fill", "mingcute:share-forward-fill"]
+  const steps = ["music", "visuals", "sync", "export"];
+  const icons = ["mingcute:music-2-fill", "mingcute:eye-2-fill", "mingcute:star-fill", "mingcute:share-forward-fill"]
   let { currentStep = $bindable() }: { currentStep: number } = $props();
 </script>
 
 <header class="fixed top-0 left-0 flex items-center justify-center h-progress w-full">
   {#each steps as step, i}
-    <button onclick={() => (currentStep = i)} class="relative border-2 rounded-sm size-12 flex justify-center items-center font-bold hover:scale-105 active:scale-100 duration-100 hover:cursor-pointer {currentStep >= i ? "border-fg text-fg" : "border-dark text-dark"}">
+    <button onclick={() => (currentStep = i)} class="relative border-2 rounded-sm size-12 flex justify-center items-center font-bold hover:scale-105 active:scale-100 duration-100 hover:cursor-pointer {currentStep >= i ? "bg-fg border-fg text-bg" : "border-dark text-faded"}">
       <iconify-icon icon={icons[i]} class="text-2xl"></iconify-icon>
 
       <p class="absolute top-16 w-max text-center font-normal flex items-center gap-2 {currentStep >= i ? "text-fg" : "text-faded"}">
