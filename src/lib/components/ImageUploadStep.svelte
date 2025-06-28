@@ -1,15 +1,13 @@
 <script lang="ts">
   import type { Mode } from "$lib/types";
-  import { decompressFrames, parseGIF, type ParsedFrame } from "gifuct-js";
   import Radio from "./Radio.svelte";
 
   const VALID_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
 
-  let { mode = $bindable(), images = $bindable(), gif = $bindable(), gifFile = $bindable() }: {
+  let { mode = $bindable(), images = $bindable(), gif = $bindable() }: {
     mode: Mode,
     images: File[],
-    gif: ParsedFrame[],
-    gifFile: File | null
+    gif: File | null,
   } = $props();
 
   let imageFileInput: HTMLInputElement;
@@ -43,16 +41,7 @@
           console.error("no gif found in selected files");
           return;
         } else {
-          gifFile = file;
-          // convert gif to frames
-          const reader = new FileReader();
-          reader.onload = (e) => {
-            const buffer = e.target?.result as ArrayBuffer;
-            const data = parseGIF(buffer);
-            const decompressed = decompressFrames(data, true);
-            gif = decompressed;
-          };
-          reader.readAsArrayBuffer(file);
+          gif = file;
         }
       }
     } else {
@@ -61,8 +50,8 @@
   }
 
   $effect(() => {
-    if (gifFile) {
-      previewSrc = URL.createObjectURL(gifFile);
+    if (gif) {
+      previewSrc = URL.createObjectURL(gif);
     }
   })
 </script>
@@ -75,7 +64,7 @@
 </div>
 
 <div class="dashed w-full rounded-sm outline-none">
-  {#if (mode === "slideshow" ? images.length > 0 : gif.length > 0)}
+  {#if (mode === "slideshow" ? images.length > 0 : gif)}
     {#if mode === "slideshow"}
       <!-- images grid -->
       <div class="grid grid-cols-3 align-top gap-6 w-full aspect-square overflow-y-auto p-6">

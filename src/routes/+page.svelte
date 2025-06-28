@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { parseGIF, decompressFrames, type ParsedFrame } from "gifuct-js";
   import type { Mode } from "$lib/types";
   import { muted } from "$lib/stores";
 
@@ -17,8 +16,7 @@
   let bpm = $state(0);
   let mode: Mode = $state("gif");
   let images = $state<File[]>([]);
-  let gif = $state<ParsedFrame[]>([]);
-  let gifFile: File | null = $state(null);
+  let gif: File | null = $state(null);
 
   function nextStep() {
     currentStep++;
@@ -31,9 +29,9 @@
   {#if currentStep === 0}
     <MusicUploadStep bind:musicFile bind:bpm />
   {:else if currentStep === 1}
-    <ImageUploadStep bind:mode bind:images bind:gif bind:gifFile />
+    <ImageUploadStep bind:mode bind:images bind:gif />
   {:else if currentStep === 2}
-    <FusionStep frames={mode === "gif" ? gif : images} {bpm} {mode} />
+    <FusionStep {images} {gif} {bpm} {mode} />
   {/if}
 
   <div class="flex gap-6">
@@ -52,7 +50,7 @@
       class="rounded-sm pl-4 pr-2 py-2 bg-fg text-bg font-bold hover:cursor-pointer disabled:bg-muted disabled:cursor-auto flex items-center gap-1"
       disabled={!(
         (currentStep === 0 && bpm) ||
-        (currentStep === 1 && (mode === "gif" ? gif.length > 0 : images.length > 0)) ||
+        (currentStep === 1 && (mode === "gif" ? gif : images.length > 0)) ||
         (currentStep === 2)
       )}
     >
