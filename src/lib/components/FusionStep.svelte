@@ -25,7 +25,8 @@
   let frameOffset = $state(0);
   let speed = $state("2");
   let imageIndex = $state(0);
-  let lastFrame: ParsedFrame | null = $state(null);
+  let frameImageData: ImageData | null = $state(null);
+  let needsDisposal = $state(false);
 
   function showImageFrame(frame: File) {
     if (!frame) return;
@@ -41,20 +42,28 @@
   }
 
   async function showGifFrame(frame: ParsedFrame) {
-    if (!frame || !canvas) return;
+    if (!canvas) return;
 
-    if (lastFrame && lastFrame.disposalType === 2) {
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      bufferCtx.fillRect(0, 0, bufferCanvas.width, bufferCanvas.height);
+    if (needsDisposal) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      needsDisposal = false;
     }
 
-    const imageData = bufferCtx.createImageData(frame.dims.width, frame.dims.height);
-    imageData.data.set(frame.patch);
+    if (!frameImageData || frameImageData.width !== frame.dims.width || frameImageData.height !== frame.dims.height) {
+      bufferCanvas.width = frame.dims.width;
+      bufferCanvas.height = frame.dims.height;
+      frameImageData = bufferCtx.createImageData(frame.dims.width, frame.dims.height);
+    }
 
-    bufferCtx.putImageData(imageData, frame.dims.left, frame.dims.top);
-    ctx.drawImage(bufferCanvas, 0, 0);
+    frameImageData.data.set(frame.patch);
+    bufferCtx.putImageData(frameImageData, 0, 0);
 
-    lastFrame = frame;
+    // ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(bufferCanvas, frame.dims.left, frame.dims.top);
+
+    if (frame.disposalType === 2) {
+      needsDisposal = true
+    }
   }
 
   function setBeatInterval() {
@@ -68,6 +77,7 @@
       if (mode === "gif") {
         const frameDelay = time_per_beat / frames.length;
 
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
         for (let i = 0; i < frames.length; i++) {
           const index = (i + frameOffset) % frames.length;
           const frame = frames[index];
@@ -95,8 +105,6 @@
     if (!(frames[0] instanceof File)) {
       canvas.width = bufferCanvas.width = frames[0].dims.width;
       canvas.height = bufferCanvas.height = frames[0].dims.height;
-
-      showGifFrame(frames[0]);
     }
 
     setBeatInterval();
@@ -108,8 +116,8 @@
 </script>
 
 <div class="flex flex-col gap-6 w-full">
-  <div class="w-full aspect-video flex justify-center items-center">
-    <canvas bind:this={canvas} class="object-cover rounded-sm"></canvas>
+  <div class="w-full flex justify-center items-center">
+    <canvas bind:this={canvas} class="object-contain size-full max-h-[40rem] rounded-sm"></canvas>
   </div>
 
   <Radio items={SPEEDS} name="speed-multiplier" bind:value={speed} onValueChange={setBeatInterval} />
