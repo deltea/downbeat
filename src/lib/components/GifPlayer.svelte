@@ -64,34 +64,26 @@
   function readGif(): Promise<void> {
     return new Promise((resolve, reject) => {
       if (!gif) {
-        console.error("No gif file provided");
-        reject(new Error("No gif file provided"));
+        console.error("no gif file provided");
         return;
       }
 
       const reader = new FileReader();
       reader.onload = (e) => {
-        try {
-          const buffer = e.target?.result as ArrayBuffer;
-          const data = parseGIF(buffer);
-          frames = decompressFrames(data, true);
+        const buffer = e.target?.result as ArrayBuffer;
+        const data = parseGIF(buffer);
+        frames = decompressFrames(data, true);
 
-          canvas.width = bufferCanvas.width = frames[0].dims.width;
-          canvas.height = bufferCanvas.height = frames[0].dims.height;
+        canvas.width = bufferCanvas.width = frames[0].dims.width;
+        canvas.height = bufferCanvas.height = frames[0].dims.height;
 
-          gifFrameAmount = frames.length;
+        gifFrameAmount = frames.length;
 
-          isLoading = false;
-          resolve();
-        } catch (error) {
-          reject(error);
-        }
+        isLoading = false;
+        resolve();
       };
 
-      reader.onerror = (error) => {
-        reject(error);
-      };
-
+      reader.onerror = (e) => reject(e);
       reader.readAsArrayBuffer(gif);
     });
   }
@@ -102,15 +94,21 @@
     bufferCanvas = document.createElement("canvas");
     bufferCtx = bufferCanvas.getContext("2d") as CanvasRenderingContext2D;
 
+    if (timePerBeat === Infinity) return;
+
     await readGif();
     renderFrame();
   });
 </script>
 
 <div class="w-full flex justify-center items-center">
-  {#if isLoading}
-    <p class="h-[20rem] flex justify-center items-center">preview loading...</p>
-  {/if}
+  <p class="w-full aspect-square bg-surface rounded-sm flex justify-center items-center">
+    {#if !gif || timePerBeat === Infinity}
+      no preview
+    {:else if isLoading}
+      preview loading...
+    {/if}
+  </p>
 
   <canvas bind:this={canvas} class="object-contain max-h-[40rem] size-full rounded-sm" hidden={isLoading}></canvas>
 </div>

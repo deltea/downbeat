@@ -45,18 +45,20 @@
       </button>
     {/if}
 
-    <button
-      onclick={nextStep}
-      class="rounded-sm pl-4 pr-2 py-2 bg-fg text-bg font-bold hover:cursor-pointer disabled:bg-muted disabled:cursor-auto flex items-center gap-1"
-      disabled={!(
-        (currentStep === 0 && bpm) ||
-        (currentStep === 1 && (mode === "gif" ? gif : images.length > 0)) ||
-        (currentStep === 2)
-      )}
-    >
-      next
-      <iconify-icon icon="line-md:chevron-small-right" class="text-2xl"></iconify-icon>
-    </button>
+    {#if currentStep < 3}
+      <button
+        onclick={nextStep}
+        class="rounded-sm pl-4 pr-2 py-2 bg-fg text-bg font-bold hover:cursor-pointer disabled:bg-muted disabled:cursor-auto flex items-center gap-1"
+        disabled={!(
+          (currentStep === 0 && bpm) ||
+          (currentStep === 1 && (mode === "gif" ? gif : images.length > 0)) ||
+          (currentStep === 2)
+        )}
+      >
+        next
+        <iconify-icon icon="line-md:chevron-small-right" class="text-2xl"></iconify-icon>
+      </button>
+    {/if}
   </div>
 </div>
 
