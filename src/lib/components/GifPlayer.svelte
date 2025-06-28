@@ -19,45 +19,46 @@
   let frames = $state<ParsedFrame[]>([]);
   let frameIndex = $state(0);
   let isLoading = $state(true);
+  let lastFrameTime = performance.now();
+  let duration = $derived(timePerBeat / frames.length);
 
   function renderFrame() {
     if (!canvas) return;
 
     const frame = frames[(frameIndex + offset) % frames.length];
-    const start = new Date().getTime();
+    const now = performance.now();
+    const elapsed = now - lastFrameTime;
 
-    if (needsDisposal) {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      needsDisposal = false;
+    if (elapsed >= duration) {
+      lastFrameTime = now - (elapsed % duration);
+
+      if (needsDisposal) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        needsDisposal = false;
+      }
+
+      if (!frameImageData || frameImageData.width !== frame.dims.width || frameImageData.height !== frame.dims.height) {
+        bufferCanvas.width = frame.dims.width;
+        bufferCanvas.height = frame.dims.height;
+        frameImageData = bufferCtx.createImageData(frame.dims.width, frame.dims.height);
+      }
+
+      frameImageData.data.set(frame.patch);
+      bufferCtx.putImageData(frameImageData, 0, 0);
+
+      ctx.drawImage(bufferCanvas, frame.dims.left, frame.dims.top);
+
+      if (frame.disposalType === 2) {
+        needsDisposal = true;
+      }
+
+      frameIndex++
+      if (frameIndex >= frames.length) {
+        frameIndex = 0;
+      }
     }
 
-    if (!frameImageData || frameImageData.width !== frame.dims.width || frameImageData.height !== frame.dims.height) {
-      bufferCanvas.width = frame.dims.width;
-      bufferCanvas.height = frame.dims.height;
-      frameImageData = bufferCtx.createImageData(frame.dims.width, frame.dims.height);
-    }
-
-    frameImageData.data.set(frame.patch);
-    bufferCtx.putImageData(frameImageData, 0, 0);
-
-    ctx.drawImage(bufferCanvas, frame.dims.left, frame.dims.top);
-
-    if (frame.disposalType === 2) {
-      needsDisposal = true;
-    }
-
-    frameIndex++
-    if (frameIndex >= frames.length) {
-      frameIndex = 0;
-    }
-
-    const end = new Date().getTime();
-    const delta = end - start;
-    const duration = timePerBeat / frames.length;
-
-    setTimeout(() => {
-      requestAnimationFrame(renderFrame);
-    }, Math.max(0, Math.floor(duration - delta)));
+    requestAnimationFrame(renderFrame);
   }
 
   function readGif(): Promise<void> {
