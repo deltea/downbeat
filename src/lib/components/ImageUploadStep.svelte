@@ -112,7 +112,7 @@
       onclick={() => (mode === "slideshow" ? imageFileInput : gifFileInput).click()}
       ondrop={onDrop}
       ondragover={e => e.preventDefault()}
-      class="w-full aspect-square flex justify-center items-center text-center text-muted p-16 hover:cursor-pointer"
+      class="w-full aspect-square flex justify-center items-center text-center text-fg p-16 hover:cursor-pointer"
     >
       {#if mode === "gif"}
         drop or select your gif here!

@@ -114,16 +114,34 @@
 </script>
 
 <div class="flex flex-col gap-6 items-center w-full">
-  <p class="text-faded">
-    {#if isLoadingBPM}
-      <span class="flex items-center gap-2">
-        <iconify-icon icon="tdesign:loading" class="animate-spin text-xl"></iconify-icon>
-        loading bpm...
-      </span>
-    {:else if bpm > 0}
-      bpm = {bpm}
-    {/if}
-  </p>
+  {#if isLoadingBPM}
+    <p class="flex items-center gap-2">
+      <iconify-icon icon="tdesign:loading" class="animate-spin text-xl"></iconify-icon>
+      loading bpm...
+    </p>
+  {:else if bpm > 0}
+    <div class="flex gap-2">
+      <p>
+        {"bpm = "}
+        <span>{bpm}</span>
+        <!-- <input
+          type="text"
+          name="bpm"
+          id="bpm"
+          minlength={2}
+          maxlength={3}
+          min={50}
+          max={300}
+          pattern="\d*"
+          bind:value={bpm}
+          class="w-16 border-2 rounded-sm border-surface-0 text-center focus:border-fg outline-none"
+        /> -->
+      </p>
+      <!-- <button class="text-muted flex items-center hover:cursor-pointer" aria-label="edit bpm">
+        <iconify-icon icon="mingcute:edit-2-fill" class="text-lg"></iconify-icon>
+      </button> -->
+    </div>
+  {/if}
 
   <button
     onclick={() => fileInput.click()}
