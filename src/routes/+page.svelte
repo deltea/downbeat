@@ -5,6 +5,8 @@
   import MusicUploadStep from "$components/MusicUploadStep.svelte";
   import ImageUploadStep from "$components/ImageUploadStep.svelte";
   import FusionStep from "$components/FusionStep.svelte";
+  import ExportStep from "$components/ExportStep.svelte";
+
   import Progress from "$components/Progress.svelte";
   import Nav from "$components/Nav.svelte";
 
@@ -17,10 +19,6 @@
   let mode: Mode = $state("gif");
   let images = $state<File[]>([]);
   let gif: File | null = $state(null);
-
-  function nextStep() {
-    currentStep++;
-  }
 </script>
 
 <Progress bind:currentStep />
@@ -32,6 +30,8 @@
     <ImageUploadStep bind:mode bind:images bind:gif />
   {:else if currentStep === 2}
     <FusionStep {images} {gif} {bpm} {mode} />
+  {:else if currentStep === 3}
+    <ExportStep {images} {gif} {bpm} {mode} {musicFile} />
   {/if}
 
   <div class="flex gap-6">
@@ -47,7 +47,7 @@
 
     {#if currentStep < 3}
       <button
-        onclick={nextStep}
+        onclick={() => (currentStep++)}
         class="rounded-sm pl-4 pr-2 py-2 bg-fg text-bg font-bold hover:cursor-pointer disabled:bg-muted disabled:cursor-auto flex items-center gap-1"
         disabled={!(
           (currentStep === 0 && bpm) ||

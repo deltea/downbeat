@@ -104,7 +104,7 @@
 <div class="w-full flex justify-center items-center">
   {#if !gif || timePerBeat === Infinity}
     <p class="w-full aspect-square bg-surface rounded-sm flex justify-center items-center">
-      no preview
+      no preview available
     </p>
   {:else if isLoading}
     <p class="w-full aspect-square bg-surface rounded-sm flex justify-center items-center">
