@@ -3,7 +3,7 @@
   import { availableThemes } from "$lib/themes";
 
   let { bpm }: { bpm: number } = $props();
-  let boombox: HTMLImageElement;
+  let boombox: HTMLDivElement;
   let beatInterval: ReturnType<typeof setInterval> | null = null;
 
   $effect(() => {
@@ -24,7 +24,17 @@
 
 <nav class="fixed flex items-center justify-between w-full h-nav bottom-0 left-0 pl-6 pr-10">
   <a href="/" class="flex gap-4 items-center group">
-    <img bind:this={boombox} src="/logo.svg" alt="logo" class="w-10 aspect-square" />
+    <!-- <img bind:this={boombox} src="/logo.svg" alt="logo" class="w-10 aspect-square text-fg" /> -->
+    <div bind:this={boombox} class="w-10 aspect-square">
+      <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" class="text-fg size-full">
+        <path
+          fill="currentColor"
+          fill-rule="evenodd"
+          d="M1 5a4 4 0 0 1 4.002-4h13.996A4 4 0 0 1 23 5v14a4 4 0 0 1-4 4H5a4 4 0 0 1-4-4zm19 7a8 8 0 1 1-16 0a8 8 0 0 1 16 0m-8 2a2 2 0 1 0 0-4a2 2 0 0 0 0 4"
+          clip-rule="evenodd"
+        />
+      </svg>
+    </div>
 
     <div>
       <h1 class="font-bold group-hover:underline decoration-2 underline-offset-2">downbeat</h1>
