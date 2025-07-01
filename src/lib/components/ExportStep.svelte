@@ -79,20 +79,20 @@
   <p class="text-center">export is under<br> construction!</p>
   <p class="text-muted">come back later!</p>
 
-  <div class="top-10 w-full rotate-[6deg] absolute bg-fg text-bg shadow-[-2rem_0_0_#fff,2rem_0_0_#fff] outline-black flex justify-center text-nowrap">
-    WARNING! WARNING! WARNING! WARNING! WARNING! WARNING! WARNING! WARNING! WARNING! WARNING!
-  </div>
-
-  <div class="bottom-14 w-full -rotate-[8deg] absolute bg-fg text-bg shadow-[-2rem_0_0_#fff,2rem_0_0_#fff] outline-black flex justify-center text-nowrap">
-    WARNING! WARNING! WARNING! WARNING! WARNING! WARNING! WARNING! WARNING! WARNING! WARNING!
-  </div>
-
-  <div class="-left-2/5 w-full -rotate-[96deg] absolute bg-fg text-bg shadow-[-2rem_0_0_#fff,2rem_0_0_#fff] outline-black flex justify-center text-nowrap">
+  <div id="warning-tape" class="-left-2/5 w-full -rotate-[96deg] absolute bg-muted text-bg shadow-[-2rem_0_0_#888,2rem_0_0_#888] outline-black flex justify-center text-nowrap">
     COMING SOON! COMING SOON! COMING SOON! COMING SOON! COMING SOON! COMING SOON! COMING SOON! COMING SOON! COMING SOON! COMING SOON!
   </div>
 
-  <div class="-right-2/5 w-full -rotate-[90deg] absolute bg-fg text-bg shadow-[-2rem_0_0_#fff,2rem_0_0_#fff] outline-black flex justify-center text-nowrap">
+  <div id="warning-tape" class="-right-2/5 w-full -rotate-[90deg] absolute bg-muted text-bg shadow-[-2rem_0_0_#888,2rem_0_0_#888] outline-black flex justify-center text-nowrap">
     COMING SOON! COMING SOON! COMING SOON! COMING SOON! COMING SOON! COMING SOON! COMING SOON! COMING SOON! COMING SOON! COMING SOON!
+  </div>
+
+  <div id="warning-tape" class="top-10 w-full rotate-[6deg] absolute bg-fg text-bg shadow-[-2rem_0_0_#fff,2rem_0_0_#fff] outline-black flex justify-center text-nowrap">
+    WARNING! WARNING! WARNING! WARNING! WARNING! WARNING! WARNING! WARNING! WARNING! WARNING!
+  </div>
+
+  <div id="warning-tape" class="bottom-14 w-full -rotate-[8deg] absolute bg-fg text-bg shadow-[-2rem_0_0_#fff,2rem_0_0_#fff] outline-black flex justify-center text-nowrap">
+    WARNING! WARNING! WARNING! WARNING! WARNING! WARNING! WARNING! WARNING! WARNING! WARNING!
   </div>
 </div>
 
