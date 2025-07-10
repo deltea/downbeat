@@ -105,16 +105,27 @@
 {:else}
   {#if canExport}
     {#if resultUrl}
-      <div class="w-full aspect-square bg-surface rounded-sm flex justify-center items-center">
-        <video
-          class="w-full h-full object-cover rounded-sm"
-          src={resultUrl}
-          controls
-          autoplay
-          loop
+      <div class="flex flex-col items-center gap-6">
+        <div class="w-full aspect-square bg-surface rounded-sm flex justify-center items-center">
+          <video
+            class="w-full h-full object-cover rounded-sm"
+            src={resultUrl}
+            controls
+            autoplay
+            loop
+          >
+            <track kind="captions">
+          </video>
+        </div>
+
+        <a
+          href={resultUrl}
+          download="downbeat-export.mp4"
+          class="rounded-sm px-4 py-2 w-min bg-fg text-bg font-bold hover:cursor-pointer disabled:bg-muted disabled:cursor-auto flex items-center gap-2"
         >
-          <track kind="captions">
-        </video>
+          download
+          <iconify-icon icon="mingcute:download-2-fill" class="text-lg"></iconify-icon>
+        </a>
       </div>
     {:else}
       <div class="w-full aspect-square rounded-sm flex justify-center items-center">

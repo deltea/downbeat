@@ -37,10 +37,9 @@
   {/if}
 
   <div class="flex gap-6">
-    {#if currentStep > 0}
+    {#if currentStep > 0 && currentStep < 3}
       <button
         onclick={() => (currentStep--)}
-        disabled={(currentStep === 3 && !isExportDone)}
         class="rounded-sm pr-4 pl-2 py-2 bg-surface-0 text-fg font-bold hover:cursor-pointer disabled:bg-surface disabled:text-muted disabled:cursor-auto flex items-center gap-1"
       >
         <iconify-icon icon="line-md:chevron-small-left" class="text-2xl"></iconify-icon>
