@@ -35,6 +35,7 @@
 		"@ffmpeg/ffmpeg": "^0.12.15",
 		"@ffmpeg/util": "^0.12.2",
 		"@types/meyda": "^4.3.8",
+		"@types/node": "22.x",
 		"bits-ui": "^2.8.8",
 		"bpm-detective": "^2.0.5",
 		"bun-types": "^1.2.17",
@@ -47,6 +48,7 @@
 		"meyda": "^5.6.3",
 		"multer": "^2.0.1",
 		"music-metadata": "^11.3.0",
-		"music-tempo": "^1.0.3"
+		"music-tempo": "^1.0.3",
+		"node": "22.x"
 	}
 }
