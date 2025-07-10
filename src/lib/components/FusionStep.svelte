@@ -7,24 +7,24 @@
   import GifPlayer from "./GifPlayer.svelte";
 
   const SPEEDS = [
-    { value: "0.5", label: "0.5x" },
-    { value: "1", label: "1x" },
-    { value: "2", label: "2x" },
-    { value: "4", label: "4x" },
-    { value: "8", label: "8x" },
-    { value: "16", label: "16x" }
-  ]
+    { value: 0.5, label: "0.5x" },
+    { value: 1, label: "1x" },
+    { value: 2, label: "2x" },
+    { value: 4, label: "4x" },
+    { value: 8, label: "8x" },
+    { value: 16, label: "16x" }
+  ];
 
-  let { images, gif, bpm, mode }: {
+  let { images, gif, bpm, mode, speed = $bindable() }: {
     images: File[],
     gif: File | null,
     bpm: number,
-    mode: Mode
+    mode: Mode,
+    speed: string
   } = $props();
 
   let interval: ReturnType<typeof setInterval> | null = $state(null);
   let offset = $state(0);
-  let speed = $state("2");
   let imageIndex = $state(0);
   let imageSrc: string | null = $state(null);
   let timePerBeat = $derived(60 / bpm * 1000 * +speed);

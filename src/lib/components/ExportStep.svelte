@@ -4,10 +4,11 @@
   import { Progress } from "bits-ui";
   import { onMount } from "svelte";
 
-  let { images, gif, bpm, mode, musicFile, isExportDone = $bindable() }: {
+  let { images, gif, bpm, speed, mode, musicFile, isExportDone = $bindable() }: {
     images: File[],
     gif: File | null,
     bpm: number,
+    speed: string,
     mode: Mode,
     musicFile: File | null,
     isExportDone: boolean
@@ -39,7 +40,7 @@
     const form = new FormData();
     form.append("gif", new Blob([gifBlob], { type: "image/gif" }));
     form.append("audio", new Blob([audioBlob], { type: musicFile.type }));
-    form.append("bpm", bpm.toString());
+    form.append("timePerBeat", (60 / bpm * +speed).toString());
 
     // get music duration
     const audio = new Audio(URL.createObjectURL(musicFile));

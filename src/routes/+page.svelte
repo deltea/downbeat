@@ -17,6 +17,7 @@
   let musicFile: File | null = $state(null);
   let bpm = $state(0);
   let mode: Mode = $state("gif");
+  let speed = $state("2");
   let images = $state<File[]>([]);
   let gif: File | null = $state(null);
   let isExportDone = $state(false);
@@ -30,9 +31,9 @@
   {:else if currentStep === 1}
     <ImageUploadStep bind:mode bind:images bind:gif />
   {:else if currentStep === 2}
-    <FusionStep {images} {gif} {bpm} {mode} />
+    <FusionStep {images} {gif} {bpm} {mode} bind:speed />
   {:else if currentStep === 3}
-    <ExportStep {images} {gif} {bpm} {mode} {musicFile} bind:isExportDone />
+    <ExportStep {images} {gif} {bpm} {mode} {speed} {musicFile} bind:isExportDone />
   {/if}
 
   <div class="flex gap-6">
