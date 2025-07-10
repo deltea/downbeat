@@ -3,9 +3,6 @@
 	"private": true,
 	"version": "0.0.1",
 	"type": "module",
-  "engines": {
-    "node": "18.x"
-  },
 	"scripts": {
 		"dev": "bunx --bun vite dev",
 		"build": "bunx --bun vite build",
