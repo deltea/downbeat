@@ -4,7 +4,7 @@
   "version": "0.0.1",
   "type": "module",
   "engines": {
-    "node": "22.x"
+    "node": "18.x"
   },
   "scripts": {
     "dev": "bunx --bun vite dev",
@@ -52,7 +52,6 @@
     "meyda": "^5.6.3",
     "multer": "^2.0.1",
     "music-metadata": "^11.3.0",
-    "music-tempo": "^1.0.3",
-    "node": "22.x"
+    "music-tempo": "^1.0.3"
   }
 }
