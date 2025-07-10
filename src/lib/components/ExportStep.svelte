@@ -3,6 +3,7 @@
   import type { Mode } from "$lib/types";
   import { Progress } from "bits-ui";
   import { onMount } from "svelte";
+  import Confetti from "js-confetti";
 
   let { images, gif, bpm, speed, mode, musicFile, isExportDone = $bindable() }: {
     images: File[],
@@ -16,6 +17,7 @@
 
   let canExport = $derived((mode === "gif" ? gif : images.length > 0) && bpm !== Infinity);
   let resultUrl: string | null = $state(null);
+  const confetti = new Confetti();
 
   function exportSlideshow() {
     // export slideshow coming later!
@@ -61,6 +63,7 @@
     resultUrl = url;
     $muted = true;
     isExportDone = true;
+    createConfetti();
   }
 
   async function startExport() {
@@ -69,6 +72,19 @@
     } else {
       exportSlideshow();
     }
+  }
+
+  function createConfetti() {
+    confetti.addConfetti({
+      confettiRadius: 7,
+      confettiNumber: 800,
+      confettiColors: [
+        document.body.style.getPropertyValue("--color-fg"),
+        document.body.style.getPropertyValue("--color-muted"),
+        document.body.style.getPropertyValue("--color-surface"),
+        document.body.style.getPropertyValue("--color-surface-0"),
+      ],
+    });
   }
 
   onMount(async () => {
