@@ -19,6 +19,7 @@
   let mode: Mode = $state("gif");
   let images = $state<File[]>([]);
   let gif: File | null = $state(null);
+  let isExportDone = $state(false);
 </script>
 
 <Progress bind:currentStep />
@@ -31,14 +32,15 @@
   {:else if currentStep === 2}
     <FusionStep {images} {gif} {bpm} {mode} />
   {:else if currentStep === 3}
-    <ExportStep {images} {gif} {bpm} {mode} {musicFile} />
+    <ExportStep {images} {gif} {bpm} {mode} {musicFile} bind:isExportDone />
   {/if}
 
   <div class="flex gap-6">
     {#if currentStep > 0}
       <button
         onclick={() => (currentStep--)}
-        class="rounded-sm pr-4 pl-2 py-2 bg-surface-0 text-fg font-bold hover:cursor-pointer disabled:bg-surface-0 disabled:cursor-auto flex items-center gap-1"
+        disabled={(currentStep === 3 && !isExportDone)}
+        class="rounded-sm pr-4 pl-2 py-2 bg-surface-0 text-fg font-bold hover:cursor-pointer disabled:bg-surface disabled:text-muted disabled:cursor-auto flex items-center gap-1"
       >
         <iconify-icon icon="line-md:chevron-small-left" class="text-2xl"></iconify-icon>
         back

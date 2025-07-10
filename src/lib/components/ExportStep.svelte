@@ -4,12 +4,13 @@
   import { Progress } from "bits-ui";
   import { onMount } from "svelte";
 
-  let { images, gif, bpm, mode, musicFile }: {
+  let { images, gif, bpm, mode, musicFile, isExportDone = $bindable() }: {
     images: File[],
     gif: File | null,
     bpm: number,
     mode: Mode,
-    musicFile: File | null
+    musicFile: File | null,
+    isExportDone: boolean
   } = $props();
 
   let canExport = $derived((mode === "gif" ? gif : images.length > 0) && bpm !== Infinity);
@@ -28,7 +29,9 @@
       console.warn("no music file provided");
       return;
     }
+
     console.log("exporting gif", gif.name);
+    isExportDone = false;
 
     const gifBlob = await gif.arrayBuffer();
     const audioBlob = await musicFile.arrayBuffer();
@@ -43,7 +46,7 @@
     await new Promise(res => (audio.onloadedmetadata = () => res(null)));
     form.append("audioDuration", audio.duration.toString());
 
-    const endpoint = process.env.NODE_ENV === "development" ? "http://localhost:8000/" : "https://downbeat-server.onrender.com:8000/";
+    const endpoint = process.env.NODE_ENV === "development" ? "http://localhost:8000/" : "https://downbeat-server.onrender.com/";
     console.log("exporting using endpoint", endpoint);
 
     const response = await fetch(endpoint, {
@@ -56,6 +59,7 @@
     console.log("exported mp4 url", url);
     resultUrl = url;
     $muted = true;
+    isExportDone = true;
   }
 
   async function startExport() {
