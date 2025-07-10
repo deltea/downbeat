@@ -44,6 +44,8 @@
     form.append("audioDuration", audio.duration.toString());
 
     const endpoint = process.env.NODE_ENV === "development" ? "http://localhost:8000/" : "https://downbeat-server.onrender.com:8000/";
+    console.log("exporting using endpoint", endpoint);
+
     const response = await fetch(endpoint, {
       method: "POST",
       body: form
