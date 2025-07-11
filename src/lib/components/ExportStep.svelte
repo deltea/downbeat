@@ -145,7 +145,14 @@
       </div>
     {:else}
       <div class="w-full aspect-square rounded-sm flex justify-center items-center">
-        <div class="flex flex-col gap-2 w-full">
+        <div class="flex flex-col gap-6 w-full items-center">
+          <div class="flex flex-col gap-1 w-full items-center">
+            <p class="font-bold">processing...</p>
+            <p>hold on, this will take a while</p>
+          </div>
+          <iconify-icon icon="mingcute:loading-3-fill" class="animate-spin text-8xl"></iconify-icon>
+        </div>
+        <!-- <div class="flex flex-col gap-2 w-full">
           <div class="flex justify-between w-full font-bold">
             <p>processing...</p>
             <p>64%</p>
@@ -161,7 +168,7 @@
               style={`transform: translateX(-${100 - (100 * 64) / 100}%)`}
             ></div>
           </Progress.Root>
-        </div>
+        </div> -->
       </div>
     {/if}
   {:else}
