@@ -40,6 +40,7 @@
     "@ffmpeg/util": "^0.12.2",
     "@types/meyda": "^4.3.8",
     "@types/node": "22.x",
+    "@vercel/analytics": "^1.5.0",
     "bits-ui": "^2.8.8",
     "bpm-detective": "^2.0.5",
     "bun-types": "^1.2.17",
