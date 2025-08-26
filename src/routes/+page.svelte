@@ -29,6 +29,7 @@
     </button>
   </div>
 
+  <!-- connector lines -->
   <svg height="96" width="100%" xmlns="http://www.w3.org/2000/svg">
     <path d="M500 4 L500 31 Q500 35 496 35 L254 35 Q250 35 250 39 L250 93" style="fill: none; stroke: var(--color-surface); stroke-width: 2" />
     <path d="M1010 4 L1010 51 Q1010 55 1006 55 L274 55 Q270 55 270 59 L270 93" style="fill: none; stroke: var(--color-surface); stroke-width: 2" />
@@ -40,6 +41,7 @@
       PREVIEW HERE
     </div>
 
+    <!-- connector line -->
     <svg height="100%" width="128" xmlns="http://www.w3.org/2000/svg">
       <path d="M3 290 L125 290" style="fill: none; stroke: var(--color-surface); stroke-width: 2" />
     </svg>
