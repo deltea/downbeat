@@ -6,6 +6,7 @@
   import Nav from "$components/Nav.svelte";
   import Radio from "$components/Radio.svelte";
   import FilePicker from "$components/FilePicker.svelte";
+  import GifPlayer from "$components/GifPlayer.svelte";
 
   const SPEEDS = [
     { value: 0.5, label: "0.5x" },
@@ -106,8 +107,12 @@
 
   <!-- bottom row -->
   <div class="flex justify-center gap16 w-full grow">
-    <div class="bg-surface font-bold flex justify-center items-center h-full aspect-square rounded-sm">
-      PREVIEW HERE
+    <div class="bg-surface font-bold flex justify-center items-center h-full aspect-square rounded-sm p-4">
+      {#if gifFile && bpm}
+        <GifPlayer gif={gifFile} bpm={bpm} offset={0} />
+      {:else}
+        PREVIEW HERE
+      {/if}
     </div>
 
     <!-- connector line -->

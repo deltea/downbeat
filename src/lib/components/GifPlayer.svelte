@@ -2,25 +2,22 @@
   import { decompressFrames, parseGIF, type ParsedFrame } from "gifuct-js";
   import { onMount } from "svelte";
 
-  let { gif, timePerBeat, offset, gifFrameAmount = $bindable() }: {
+  let { gif, bpm, offset }: {
     gif: File | null,
-    timePerBeat: number,
-    gifFrameAmount: number
+    bpm: number,
     offset: number
   } = $props();
 
   let canvas: HTMLCanvasElement;
   let ctx: CanvasRenderingContext2D;
-  let bufferCanvas: HTMLCanvasElement;
-  let bufferCtx: CanvasRenderingContext2D;
 
-  let frameImageData: ImageData | null = $state(null);
-  let needsDisposal = $state(false);
   let frames = $state<ParsedFrame[]>([]);
   let frameIndex = $state(0);
-  let isLoading = $state(true);
-  let lastFrameTime = performance.now();
-  let duration = $derived(timePerBeat / frames.length);
+  let lastFrameTime = $state(0);
+  let frameDuration = $state(100);
+  let frameImageData: ImageData | null = $state(null);
+  let bufferCanvas: HTMLCanvasElement;
+  let bufferCtx: CanvasRenderingContext2D;
 
   function renderFrame() {
     if (!canvas) return;
@@ -29,13 +26,13 @@
     const now = performance.now();
     const elapsed = now - lastFrameTime;
 
-    if (elapsed >= duration) {
-      lastFrameTime = now - (elapsed % duration);
+    if (elapsed >= frameDuration) {
+      lastFrameTime = now - (elapsed % frameDuration);
 
-      if (needsDisposal) {
+      // if (needsDisposal) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        needsDisposal = false;
-      }
+      //   needsDisposal = false;
+      // }
 
       if (!frameImageData || frameImageData.width !== frame.dims.width || frameImageData.height !== frame.dims.height) {
         bufferCanvas.width = frame.dims.width;
@@ -44,13 +41,11 @@
       }
 
       frameImageData.data.set(frame.patch);
-      bufferCtx.putImageData(frameImageData, 0, 0);
+      ctx.putImageData(frameImageData, frame.dims.left, frame.dims.top);
 
-      ctx.drawImage(bufferCanvas, frame.dims.left, frame.dims.top);
-
-      if (frame.disposalType === 2) {
-        needsDisposal = true;
-      }
+      // if (frame.disposalType === 2) {
+      //   needsDisposal = true;
+      // }
 
       frameIndex++
       if (frameIndex >= frames.length) {
@@ -76,10 +71,6 @@
 
         canvas.width = bufferCanvas.width = frames[0].dims.width;
         canvas.height = bufferCanvas.height = frames[0].dims.height;
-
-        gifFrameAmount = frames.length;
-
-        isLoading = false;
         resolve();
       };
 
@@ -94,23 +85,9 @@
     bufferCanvas = document.createElement("canvas");
     bufferCtx = bufferCanvas.getContext("2d") as CanvasRenderingContext2D;
 
-    if (timePerBeat === Infinity) return;
-
     await readGif();
     renderFrame();
   });
 </script>
 
-<div class="w-full flex justify-center items-center">
-  {#if !gif || timePerBeat === Infinity}
-    <p class="w-full aspect-square bg-surface rounded-sm flex justify-center items-center">
-      no preview available
-    </p>
-  {:else if isLoading}
-    <p class="w-full aspect-square bg-surface rounded-sm flex justify-center items-center">
-      loading preview...
-    </p>
-  {/if}
-
-  <canvas bind:this={canvas} class="object-contain max-h-[40rem] size-full rounded-sm" hidden={isLoading}></canvas>
-</div>
+<canvas bind:this={canvas} class="w-full rounded-sm"></canvas>
