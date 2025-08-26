@@ -1,7 +1,11 @@
 <script lang="ts">
+  import { onDestroy, onMount } from "svelte";
+  import { Slider } from "bits-ui";
+  import { extractBPM, extractCoverImage } from "$lib";
+
   import Nav from "$components/Nav.svelte";
   import Radio from "$components/Radio.svelte";
-  import { Slider } from "bits-ui";
+  import FilePicker from "$components/FilePicker.svelte";
 
   const SPEEDS = [
     { value: 0.5, label: "0.5x" },
@@ -11,43 +15,104 @@
     { value: 8, label: "8x" },
     { value: 16, label: "16x" }
   ];
+
+  // audio stuff
+  let audioElement: HTMLAudioElement;
+  let audioCtx: AudioContext;
+  let source: MediaElementAudioSourceNode;
+
+  let musicFile: File | null = $state(null);
+  let musicCoverSrc: string | null = $state(null);
+  let isLoadingBPM = $state(false);
+  let bpm: number | null = $state(null);
+
+  let gifFile: File | null = $state(null);
+  let gifSrc: string | null = $state(null);
+
+  function onGifUpload(file: File) {
+    gifFile = file;
+    gifSrc = URL.createObjectURL(file);
+  }
+
+  async function onMusicUpload(file: File) {
+    musicFile = file;
+
+    await audioCtx.resume();
+    audioElement.src = URL.createObjectURL(file);
+    audioElement.play();
+
+    musicCoverSrc = await extractCoverImage(file);
+
+    isLoadingBPM = true;
+    bpm = await extractBPM(audioCtx, file);
+    console.log("bpm found: ", bpm);
+    isLoadingBPM = false;
+  }
+
+  onMount(() => {
+    audioElement = document.createElement("audio");
+    audioCtx = new AudioContext();
+    source = audioCtx.createMediaElementSource(audioElement);
+    source.connect(audioCtx.destination);
+  });
+
+  onDestroy(() => {
+    if (audioCtx) audioCtx.close();
+  });
 </script>
 
 <div class="grow flex flex-col items-center py-16 gap16 relative">
   <!-- top row -->
   <div class="flex justify-center gap-16 w-full">
-    <button class="dashed h-[10rem] w-[32rem] flex gap-4 items-center text-faded rounded-sm cursor-pointer p-4 outline-none hover:scale-[101%] active:scale-100 duration-100 bg-bg">
-      <div class="bg-surface rounded-sm h-full aspect-square"></div>
+    <FilePicker
+      previewSrc={musicCoverSrc}
+      placeholderIcon="mingcute:music-fill"
+      onUpload={onMusicUpload}
+      validFileTypes={["audio/mpeg", "audio/wav", "audio/ogg"]}
+    >
       <div class="flex flex-col gap-2 w-full">
-        <span class="text-muted">BPM = 120</span>
-        <span>[choose an audio track]</span>
+        <span class="text-muted">
+          {#if isLoadingBPM}
+            <span class="inline-flex items-center gap-4">
+              <iconify-icon icon="tdesign:loading" class="animate-spin text-base"></iconify-icon>
+              LOADING BPM...
+            </span>
+          {:else}
+            bpm = {bpm ? bpm : "?"}
+          {/if}
+        </span>
+        <span class="px-2 font-bold">{musicFile ? musicFile.name : "[drop or pick an audio track]"}</span>
       </div>
-    </button>
+    </FilePicker>
 
-    <button class="dashed h-[10rem] w-[32rem] flex gap-4 items-center text-faded rounded-sm cursor-pointer p-4 outline-none hover:scale-[101%] active:scale-100 duration-100 bg-bg">
-      <div class="bg-surface rounded-sm h-full aspect-square"></div>
+    <FilePicker
+      previewSrc={gifSrc}
+      placeholderIcon="mingcute:pic-2-fill"
+      onUpload={onGifUpload}
+      validFileTypes={["image/gif"]}
+    >
       <div class="flex flex-col gap-2 w-full">
-        <span class="text-muted">FRAMES = ?</span>
-        <span>[choose a gif]</span>
+        <span class="text-muted">frames = ?</span>
+        <span class="px-2 font-bold">{gifFile ? gifFile.name : "[drop or pick a gif]"}</span>
       </div>
-    </button>
+    </FilePicker>
   </div>
 
   <!-- connector lines -->
   <svg height="64" width="100%" xmlns="http://www.w3.org/2000/svg">
-    <path d="M500 4 L500 22 Q500 26 496 26 L254 26 Q250 26 250 31 L250 60" style="fill: none; stroke: var(--color-surface); stroke-width: 2" />
-    <path d="M1010 4 L1010 42 Q1010 46 1006 46 L274 46 Q270 46 270 50 L270 60" style="fill: none; stroke: var(--color-surface); stroke-width: 2" />
+    <path d="M400 4 L400 22 Q400 26 396 26 L254 26 Q250 26 250 31 L250 60" style="fill: none; stroke: var(--color-surface); stroke-width: 3" />
+    <path d="M1010 4 L1010 42 Q1010 46 1006 46 L274 46 Q270 46 270 50 L270 60" style="fill: none; stroke: var(--color-surface); stroke-width: 3" />
   </svg>
 
   <!-- bottom row -->
   <div class="flex justify-center gap16 w-full grow">
-    <div class="bg-surface flex justify-center items-center h-full aspect-square rounded-sm">
+    <div class="bg-surface font-bold flex justify-center items-center h-full aspect-square rounded-sm">
       PREVIEW HERE
     </div>
 
     <!-- connector line -->
     <svg height="100%" width="64" xmlns="http://www.w3.org/2000/svg">
-      <path d="M4 300 L60 300" style="fill: none; stroke: var(--color-surface); stroke-width: 2" />
+      <path d="M4 300 L60 300" style="fill: none; stroke: var(--color-surface); stroke-width: 3" />
     </svg>
 
     <div class="dashed h-full flex flex-col justify-between grow rounded-sm p-8 bg-bg">

@@ -1,6 +1,7 @@
 <script lang="ts">
   import { muted, theme } from "$lib/stores";
   import { availableThemes } from "$lib/themes";
+  import { onDestroy } from "svelte";
 
   let { bpm }: { bpm: number } = $props();
   let boombox: HTMLDivElement;
@@ -11,14 +12,20 @@
 
     if (beatInterval) clearInterval(beatInterval);
     beatInterval = setInterval(() => {
+      if (!boombox) return;
       console.log("🎵 beat detected!");
       boombox.style.scale = "1.3";
       boombox.style.transitionDuration = "0ms";
       setTimeout(() => {
+        if (!boombox) return;
         boombox.style.scale = "1";
         boombox.style.transitionDuration = "100ms";
       }, 100);
     }, 60 / bpm * 1000);
+  });
+
+  onDestroy(() => {
+    if (beatInterval) clearInterval(beatInterval);
   });
 </script>
 
