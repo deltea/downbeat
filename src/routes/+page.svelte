@@ -13,37 +13,41 @@
   ];
 </script>
 
-<div class="grow flex flex-col items-center py-16 mb-nav gap24 relative">
+<div class="grow flex flex-col items-center py-16 gap16 relative">
   <!-- top row -->
-  <div class="flex justify-center gap-32 w-full">
-    <button class="dashed w-[24rem] flex flex-col gap-4 items-center text-faded rounded-sm cursor-pointer p-8 outline-none hover:scale-[101%] active:scale-100 duration-100 bg-bg">
-      <span class="text-muted">BPM = 120</span>
-      <div class="bg-surface rounded-sm w-full aspect-square"></div>
-      <span>[choose an audio track]</span>
+  <div class="flex justify-center gap-16 w-full">
+    <button class="dashed h-[10rem] w-[32rem] flex gap-4 items-center text-faded rounded-sm cursor-pointer p-4 outline-none hover:scale-[101%] active:scale-100 duration-100 bg-bg">
+      <div class="bg-surface rounded-sm h-full aspect-square"></div>
+      <div class="flex flex-col gap-2 w-full">
+        <span class="text-muted">BPM = 120</span>
+        <span>[choose an audio track]</span>
+      </div>
     </button>
 
-    <button class="dashed w-[24rem] flex flex-col gap-4 items-center text-faded rounded-sm cursor-pointer p-8 outline-none hover:scale-[101%] active:scale-100 duration-100 bg-bg">
-      <span class="text-muted">FRAMES = ?</span>
-      <div class="bg-surface rounded-sm w-full aspect-square"></div>
-      <span>[choose a gif]</span>
+    <button class="dashed h-[10rem] w-[32rem] flex gap-4 items-center text-faded rounded-sm cursor-pointer p-4 outline-none hover:scale-[101%] active:scale-100 duration-100 bg-bg">
+      <div class="bg-surface rounded-sm h-full aspect-square"></div>
+      <div class="flex flex-col gap-2 w-full">
+        <span class="text-muted">FRAMES = ?</span>
+        <span>[choose a gif]</span>
+      </div>
     </button>
   </div>
 
   <!-- connector lines -->
-  <svg height="96" width="100%" xmlns="http://www.w3.org/2000/svg">
-    <path d="M500 4 L500 31 Q500 35 496 35 L254 35 Q250 35 250 39 L250 93" style="fill: none; stroke: var(--color-surface); stroke-width: 2" />
-    <path d="M1010 4 L1010 51 Q1010 55 1006 55 L274 55 Q270 55 270 59 L270 93" style="fill: none; stroke: var(--color-surface); stroke-width: 2" />
+  <svg height="64" width="100%" xmlns="http://www.w3.org/2000/svg">
+    <path d="M500 4 L500 22 Q500 26 496 26 L254 26 Q250 26 250 31 L250 60" style="fill: none; stroke: var(--color-surface); stroke-width: 2" />
+    <path d="M1010 4 L1010 42 Q1010 46 1006 46 L274 46 Q270 46 270 50 L270 60" style="fill: none; stroke: var(--color-surface); stroke-width: 2" />
   </svg>
 
   <!-- bottom row -->
-  <div class="flex justify-center gap32 w-full grow">
+  <div class="flex justify-center gap16 w-full grow">
     <div class="bg-surface flex justify-center items-center h-full aspect-square rounded-sm">
       PREVIEW HERE
     </div>
 
     <!-- connector line -->
-    <svg height="100%" width="128" xmlns="http://www.w3.org/2000/svg">
-      <path d="M3 290 L125 290" style="fill: none; stroke: var(--color-surface); stroke-width: 2" />
+    <svg height="100%" width="64" xmlns="http://www.w3.org/2000/svg">
+      <path d="M4 300 L60 300" style="fill: none; stroke: var(--color-surface); stroke-width: 2" />
     </svg>
 
     <div class="dashed h-full flex flex-col justify-between grow rounded-sm p-8 bg-bg">
