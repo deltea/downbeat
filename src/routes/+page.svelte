@@ -13,29 +13,38 @@
   ];
 </script>
 
-<div class="grow flex flex-col py-16 mb-nav gap-24">
+<div class="grow flex flex-col items-center py-16 mb-nav gap24 relative">
   <!-- top row -->
   <div class="flex justify-center gap-32 w-full">
-    <button class="dashed w-[24rem] flex flex-col gap-4 items-center text-faded rounded-sm cursor-pointer p-8 outline-none hover:scale-[101%] active:scale-100 duration-100">
+    <button class="dashed w-[24rem] flex flex-col gap-4 items-center text-faded rounded-sm cursor-pointer p-8 outline-none hover:scale-[101%] active:scale-100 duration-100 bg-bg">
       <span class="text-muted">BPM = 120</span>
       <div class="bg-surface rounded-sm w-full aspect-square"></div>
-      <span>choose an audio track</span>
+      <span>[choose an audio track]</span>
     </button>
 
-    <button class="dashed w-[24rem] flex flex-col gap-4 items-center text-faded rounded-sm cursor-pointer p-8 outline-none hover:scale-[101%] active:scale-100 duration-100">
+    <button class="dashed w-[24rem] flex flex-col gap-4 items-center text-faded rounded-sm cursor-pointer p-8 outline-none hover:scale-[101%] active:scale-100 duration-100 bg-bg">
       <span class="text-muted">FRAMES = ?</span>
       <div class="bg-surface rounded-sm w-full aspect-square"></div>
-      <span>choose a gif</span>
+      <span>[choose a gif]</span>
     </button>
   </div>
 
+  <svg height="96" width="100%" xmlns="http://www.w3.org/2000/svg">
+    <path d="M500 4 L500 31 Q500 35 496 35 L254 35 Q250 35 250 39 L250 93" style="fill: none; stroke: var(--color-surface); stroke-width: 2" />
+    <path d="M1010 4 L1010 51 Q1010 55 1006 55 L274 55 Q270 55 270 59 L270 93" style="fill: none; stroke: var(--color-surface); stroke-width: 2" />
+  </svg>
+
   <!-- bottom row -->
-  <div class="flex justify-center gap-32 w-full grow">
-    <div class="dashed h-full aspect-square rounded-sm">
-      <div class="bg-surface rounded-sm w-full h-full"></div>
+  <div class="flex justify-center gap32 w-full grow">
+    <div class="bg-surface flex justify-center items-center h-full aspect-square rounded-sm">
+      PREVIEW HERE
     </div>
 
-    <div class="dashed h-full flex flex-col justify-between grow rounded-sm p-8">
+    <svg height="100%" width="128" xmlns="http://www.w3.org/2000/svg">
+      <path d="M3 290 L125 290" style="fill: none; stroke: var(--color-surface); stroke-width: 2" />
+    </svg>
+
+    <div class="dashed h-full flex flex-col justify-between grow rounded-sm p-8 bg-bg">
       <div class="flex flex-col gap-16">
         <div>
           <!-- label -->
