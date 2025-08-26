@@ -1,75 +1,85 @@
 <script lang="ts">
-  import type { Mode } from "$lib/types";
-  import { muted } from "$lib/stores";
-
-  import MusicUploadStep from "$components/MusicUploadStep.svelte";
-  import ImageUploadStep from "$components/ImageUploadStep.svelte";
-  import FusionStep from "$components/FusionStep.svelte";
-  import ExportStep from "$components/ExportStep.svelte";
-
-  import Progress from "$components/Progress.svelte";
   import Nav from "$components/Nav.svelte";
+  import Radio from "$components/Radio.svelte";
+  import { Slider } from "bits-ui";
 
-  let currentStep = $state(0);
-
-  let audio: HTMLAudioElement;
-
-  let musicFile: File | null = $state(null);
-  let bpm = $state(0);
-  let mode: Mode = $state("gif");
-  let speed = $state("2");
-  let images = $state<File[]>([]);
-  let gif: File | null = $state(null);
-  let isExportDone = $state(false);
+  const SPEEDS = [
+    { value: 0.5, label: "0.5x" },
+    { value: 1, label: "1x" },
+    { value: 2, label: "2x" },
+    { value: 4, label: "4x" },
+    { value: 8, label: "8x" },
+    { value: 16, label: "16x" }
+  ];
 </script>
 
-<Progress bind:currentStep />
+<div class="grow flex flex-col py-16 mb-nav gap-24">
+  <!-- top row -->
+  <div class="flex justify-center gap-32 w-full">
+    <button class="dashed w-[24rem] flex flex-col gap-4 items-center text-faded rounded-sm cursor-pointer p-8 outline-none hover:scale-[101%] active:scale-100 duration-100">
+      <span class="text-muted">BPM = 120</span>
+      <div class="bg-surface rounded-sm w-full aspect-square"></div>
+      <span>choose an audio track</span>
+    </button>
 
-<div class="grow flex flex-col gap-6 justify-center items-center pt-progress pb-nav">
-  {#if currentStep === 0}
-    <MusicUploadStep bind:musicFile bind:bpm />
-  {:else if currentStep === 1}
-    <ImageUploadStep bind:mode bind:images bind:gif />
-  {:else if currentStep === 2}
-    <FusionStep {images} {gif} {bpm} {mode} bind:speed />
-  {:else if currentStep === 3}
-    <ExportStep {images} {gif} {bpm} {mode} {speed} {musicFile} bind:isExportDone />
-  {/if}
+    <button class="dashed w-[24rem] flex flex-col gap-4 items-center text-faded rounded-sm cursor-pointer p-8 outline-none hover:scale-[101%] active:scale-100 duration-100">
+      <span class="text-muted">FRAMES = ?</span>
+      <div class="bg-surface rounded-sm w-full aspect-square"></div>
+      <span>choose a gif</span>
+    </button>
+  </div>
 
-  <div class="flex gap-6">
-    {#if currentStep > 0 && currentStep < 3}
-      <button
-        onclick={() => (currentStep--)}
-        class="rounded-sm pr-4 pl-2 py-2 bg-surface-0 text-fg font-bold hover:cursor-pointer disabled:bg-surface disabled:text-muted disabled:cursor-auto flex items-center gap-1"
-      >
-        <iconify-icon icon="line-md:chevron-small-left" class="text-2xl"></iconify-icon>
-        back
+  <!-- bottom row -->
+  <div class="flex justify-center gap-32 w-full grow">
+    <div class="dashed h-full aspect-square rounded-sm">
+      <div class="bg-surface rounded-sm w-full h-full"></div>
+    </div>
+
+    <div class="dashed h-full flex flex-col justify-between grow rounded-sm p-8">
+      <div class="flex flex-col gap-16">
+        <div>
+          <!-- label -->
+          <p class="mb-4 flex justify-between">
+            <span class="font-bold">SPEED MULTIPLIER</span>
+            <span class="text-muted">(how fast the gif plays)</span>
+          </p>
+          <!-- speed multiplier radio -->
+          <Radio items={SPEEDS} name="speed-multiplier" value={"2"} />
+        </div>
+        <div>
+          <!-- label -->
+          <p class="mb-4 flex justify-between">
+            <span class="font-bold">AUDIO OFFSET</span>
+            <span class="text-muted">(amount of frames the audio is offset by)</span>
+          </p>
+          <!-- audio offset slider -->
+          <Slider.Root
+            type="single"
+            value={10}
+            min={0}
+            step={1}
+            max={20}
+            class="relative flex items-center w-full hover:cursor-grab active:cursor-grabbing"
+          >
+            {#snippet children({ tickItems })}
+              <span class="h-2 w-full bg-surface-0 rounded-sm duration-100">
+                <Slider.Range class="bg-fg h-full absolute rounded-sm duration-100" />
+              </span>
+              <Slider.Thumb
+                index={0}
+                class="size-6 bg-fg outline-none rounded-full duration-100 z-10"
+              />
+            {/snippet}
+          </Slider.Root>
+        </div>
+      </div>
+
+      <button class="flex justify-center items-center gap-2 font-bold rounded-sm bg-fg w-full py-2.5 text-bg cursor-pointer hover:scale-[101%] active:scale-100 duration-100">
+        <iconify-icon icon="mingcute:share-forward-fill" class="text-xl"></iconify-icon>
+        export
       </button>
-    {/if}
-
-    {#if currentStep < 3}
-      <button
-        onclick={() => (currentStep++)}
-        class="rounded-sm pl-4 pr-2 py-2 bg-fg text-bg font-bold hover:cursor-pointer disabled:bg-muted disabled:cursor-auto flex items-center gap-1"
-        disabled={!(
-          (currentStep === 0 && bpm) ||
-          (currentStep === 1 && (mode === "gif" ? gif : images.length > 0)) ||
-          (currentStep === 2)
-        )}
-      >
-        next
-        <iconify-icon icon="line-md:chevron-small-right" class="text-2xl"></iconify-icon>
-      </button>
-    {/if}
+    </div>
   </div>
 </div>
 
-<Nav {bpm} />
-
-<audio
-  bind:this={audio}
-  autoplay
-  loop
-  muted={$muted}
-  src={musicFile ? URL.createObjectURL(musicFile) : ""}
-></audio>
+<Nav bpm={120} />

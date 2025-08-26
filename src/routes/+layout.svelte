@@ -11,8 +11,8 @@
   <title>downbeat</title>
 </svelte:head>
 
-<div class="min-h-screen flex flex-col items-center">
-  <main class="w-1/3 flex justify-center items-center grow">
+<div class="h-screen flex flex-col items-center">
+  <main class="w-2/3 flex grow h-full">
     {@render children()}
   </main>
 </div>
