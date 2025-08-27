@@ -54,18 +54,12 @@
   {#if previewSrc}
     <div class="bg-cover h-full aspect-square bg-center rounded-sm" style:background-image="url('{previewSrc}')"></div>
   {:else}
-    <!-- TODO: make placeholder image actually show -->
     <div class="flex justify-center items-center h-full aspect-square rounded-sm bg-surface text-surface-0">
       <iconify-icon icon={placeholderIcon} class="text-[3rem]"></iconify-icon>
     </div>
   {/if}
 
   {@render children()}
-
-  <!-- <div class="flex flex-col gap-2 w-full">
-    <span class="text-muted">BPM = 120</span>
-    <span>[choose an audio track]</span>
-  </div> -->
 </button>
 
 <input

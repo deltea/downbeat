@@ -2,6 +2,7 @@
   import { onDestroy, onMount } from "svelte";
   import { Slider } from "bits-ui";
   import { extractBPM, extractCoverImage } from "$lib";
+  import { muted } from "$lib/stores";
 
   import Nav from "$components/Nav.svelte";
   import Radio from "$components/Radio.svelte";
@@ -30,6 +31,10 @@
   let gifFile: File | null = $state(null);
   let gifSrc: string | null = $state(null);
 
+  muted.subscribe((value) => {
+    if (audioElement) audioElement.muted = value;
+  });
+
   function onGifUpload(file: File) {
     gifFile = file;
     gifSrc = URL.createObjectURL(file);
@@ -52,6 +57,7 @@
 
   onMount(() => {
     audioElement = document.createElement("audio");
+    audioElement.volume = 0.2;
     audioCtx = new AudioContext();
     source = audioCtx.createMediaElementSource(audioElement);
     source.connect(audioCtx.destination);
