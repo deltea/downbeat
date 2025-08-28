@@ -44,7 +44,7 @@
 
     <div>
       <h1 class="font-bold group-hover:underline decoration-2 underline-offset-2">downbeat</h1>
-      <p class="text-muted">the ultimate beat-syncer</p>
+      <p class="text-muted">sync gifs to the beat</p>
     </div>
   </a>
 

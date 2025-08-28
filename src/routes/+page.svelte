@@ -58,6 +58,7 @@
   onMount(() => {
     audioElement = document.createElement("audio");
     audioElement.volume = 0.2;
+    audioElement.muted = $muted;
     audioCtx = new AudioContext();
     source = audioCtx.createMediaElementSource(audioElement);
     source.connect(audioCtx.destination);
@@ -114,8 +115,8 @@
   <!-- bottom row -->
   <div class="flex justify-center gap16 w-full grow">
     <div class="bg-surface font-bold flex justify-center items-center h-full aspect-square rounded-sm p-4">
-      {#if gifFile}
-        <GifPlayer gif={gifFile} bpm={20} offset={0} />
+      {#if gifFile && bpm}
+        <GifPlayer gif={gifFile} {bpm} offset={0} />
       {:else}
         PREVIEW HERE
       {/if}
@@ -165,10 +166,16 @@
         </div>
       </div>
 
-      <button class="flex justify-center items-center gap-2 font-bold rounded-sm bg-fg w-full py-2.5 text-bg cursor-pointer hover:scale-[101%] active:scale-100 duration-100">
-        <iconify-icon icon="mingcute:share-forward-fill" class="text-xl"></iconify-icon>
-        export
-      </button>
+      <div class="flex gap-4">
+        <button class="inline-flex justify-center items-center gap-2 font-bold rounded-sm bg-surface-0 w-1/2 py-2.5 text-fg cursor-pointer hover:scale-[102%] active:scale-100 duration-100">
+          <iconify-icon icon="mingcute:refresh-3-fill" class="text-xl"></iconify-icon>
+          restart preview
+        </button>
+        <button class="inline-flex justify-center items-center gap-2 font-bold rounded-sm bg-fg w-1/2 py-2.5 text-bg cursor-pointer hover:scale-[102%] active:scale-100 duration-100">
+          <iconify-icon icon="mingcute:share-forward-fill" class="text-xl"></iconify-icon>
+          export as mp4
+        </button>
+      </div>
     </div>
   </div>
 </div>

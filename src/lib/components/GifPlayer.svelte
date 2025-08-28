@@ -14,7 +14,7 @@
   let frames = $state<ParsedFrame[]>([]);
   let frameIndex = $state(0);
   let lastFrameTime = $state(0);
-  let frameDuration = $state(10);
+  let frameDuration = $state(100);
   let frameImageData: ImageData | null = $state(null);
   let bufferCanvas: HTMLCanvasElement;
   let bufferCtx: CanvasRenderingContext2D;
@@ -23,7 +23,7 @@
   $effect(() => {
     if (gif) {
       frameIndex = 0;
-      readGif(gif);
+      readGif(gif).then(renderFrame);
     }
   });
 
@@ -65,10 +65,6 @@
     requestAnimationFrame(renderFrame);
   }
 
-  function findBiggestNumber(arr: number[]): number {
-    return arr.reduce((a, b) => Math.max(a, b), -Infinity);
-  }
-
   function readGif(gif: File): Promise<void> {
     return new Promise((resolve, reject) => {
       if (!gif) {
@@ -103,4 +99,7 @@
   });
 </script>
 
-<canvas bind:this={canvas} class="rounded-sm bg-blue-500"></canvas>
+<canvas
+  bind:this={canvas}
+  class="{frames[0]?.dims.width > frames[0]?.dims.height ? "w-full" : "h-full"} rounded-sm"
+></canvas>
