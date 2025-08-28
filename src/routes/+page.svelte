@@ -3,6 +3,7 @@
   import { Slider } from "bits-ui";
   import { extractBPM, extractCoverImage } from "$lib";
   import { muted } from "$lib/stores";
+  import { decompressFrames, parseGIF, type ParsedFrame } from "gifuct-js";
 
   import Nav from "$components/Nav.svelte";
   import Radio from "$components/Radio.svelte";
@@ -30,14 +31,19 @@
 
   let gifFile: File | null = $state(null);
   let gifSrc: string | null = $state(null);
+  let gifFrames = $state<ParsedFrame[]>([]);
+  let canvasSize = $state<{ width: number; height: number } | null>(null);
 
   muted.subscribe((value) => {
     if (audioElement) audioElement.muted = value;
   });
 
-  function onGifUpload(file: File) {
+  async function onGifUpload(file: File) {
     gifFile = file;
     gifSrc = URL.createObjectURL(file);
+
+    gifFrames = await readGif(file);
+    console.log("gif loaded");
   }
 
   async function onMusicUpload(file: File) {
@@ -53,6 +59,22 @@
     bpm = await extractBPM(audioCtx, file);
     console.log("bpm found: ", bpm);
     isLoadingBPM = false;
+  }
+
+  function readGif(gif: File): Promise<ParsedFrame[]> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const buffer = e.target?.result as ArrayBuffer;
+        const data = parseGIF(buffer);
+        const frames = decompressFrames(data, true);
+
+        resolve(frames);
+      };
+
+      reader.onerror = (e) => reject(e);
+      reader.readAsArrayBuffer(gif);
+    });
   }
 
   onMount(() => {
@@ -72,6 +94,7 @@
 <div class="grow flex flex-col items-center py-16 gap16 relative">
   <!-- top row -->
   <div class="flex justify-center gap-16 w-full">
+    <!-- song picker -->
     <FilePicker
       previewSrc={musicCoverSrc}
       placeholderIcon="mingcute:music-fill"
@@ -93,6 +116,7 @@
       </div>
     </FilePicker>
 
+    <!-- gif picker -->
     <FilePicker
       previewSrc={gifSrc}
       placeholderIcon="mingcute:pic-2-fill"
@@ -100,7 +124,7 @@
       validFileTypes={["image/gif"]}
     >
       <div class="flex flex-col gap-2 w-full">
-        <span class="text-muted">frames = ?</span>
+        <span class="text-muted">frames = {gifFrames.length > 0 ? gifFrames.length : "?"}</span>
         <span class="px-2 font-bold">{gifFile ? gifFile.name : "[drop or pick a gif]"}</span>
       </div>
     </FilePicker>
@@ -116,7 +140,7 @@
   <div class="flex justify-center gap16 w-full grow">
     <div class="bg-surface font-bold flex justify-center items-center h-full aspect-square rounded-sm p-4">
       {#if gifFile && bpm}
-        <GifPlayer gif={gifFile} {bpm} offset={0} />
+        <GifPlayer gif={gifFile} {bpm} offset={0} frames={gifFrames} />
       {:else}
         PREVIEW HERE
       {/if}
@@ -180,4 +204,4 @@
   </div>
 </div>
 
-<Nav bpm={bpm ?? 0} />
+<Nav {bpm} />

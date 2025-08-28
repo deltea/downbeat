@@ -1,30 +1,34 @@
 <script lang="ts">
-  import { decompressFrames, parseGIF, type ParsedFrame } from "gifuct-js";
+  import type { ParsedFrame } from "gifuct-js";
   import { onMount } from "svelte";
 
-  let { gif, bpm, offset }: {
+  let { gif, bpm, offset, frames }: {
     gif: File | null,
     bpm: number,
-    offset: number
+    offset: number,
+    frames: ParsedFrame[]
   } = $props();
 
   let canvas: HTMLCanvasElement;
   let ctx: CanvasRenderingContext2D;
 
-  let frames = $state<ParsedFrame[]>([]);
   let frameIndex = $state(0);
   let lastFrameTime = $state(0);
-  let frameDuration = $state(100);
+  let frameDuration = $state(10);
   let frameImageData: ImageData | null = $state(null);
   let bufferCanvas: HTMLCanvasElement;
   let bufferCtx: CanvasRenderingContext2D;
   let needsDisposal = $state(false);
 
   $effect(() => {
-    if (gif) {
-      frameIndex = 0;
-      readGif(gif).then(renderFrame);
-    }
+    if (
+      !frames ||
+      frames.length === 0 ||
+      !canvas ||
+      !bufferCanvas
+    ) return;
+
+    updateGif();
   });
 
   function renderFrame() {
@@ -65,27 +69,14 @@
     requestAnimationFrame(renderFrame);
   }
 
-  function readGif(gif: File): Promise<void> {
-    return new Promise((resolve, reject) => {
-      if (!gif) {
-        console.error("no gif file provided");
-        return;
-      }
+  function updateGif() {
+    canvas.width = bufferCanvas.width = frames[0].dims.width + frames[0].dims.left;
+    canvas.height = bufferCanvas.height = frames[0].dims.height + frames[0].dims.top;
 
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const buffer = e.target?.result as ArrayBuffer;
-        const data = parseGIF(buffer);
-        frames = decompressFrames(data, true);
+    frameIndex = 0;
+    lastFrameTime = performance.now();
 
-        canvas.width = bufferCanvas.width = frames[0].dims.width + frames[0].dims.left;
-        canvas.height = bufferCanvas.height = frames[0].dims.height + frames[0].dims.top;
-        resolve();
-      };
-
-      reader.onerror = (e) => reject(e);
-      reader.readAsArrayBuffer(gif);
-    });
+    requestAnimationFrame(renderFrame);
   }
 
   onMount(async () => {
@@ -94,8 +85,7 @@
     bufferCanvas = document.createElement("canvas");
     bufferCtx = bufferCanvas.getContext("2d") as CanvasRenderingContext2D;
 
-    if (gif) await readGif(gif);
-    renderFrame();
+    updateGif();
   });
 </script>
 

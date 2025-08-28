@@ -3,21 +3,23 @@
   import { availableThemes } from "$lib/themes";
   import { onDestroy } from "svelte";
 
-  let { bpm }: { bpm: number } = $props();
+  let { bpm }: { bpm: number | null } = $props();
   let boombox: HTMLDivElement;
   let beatInterval: ReturnType<typeof setInterval> | null = null;
 
   $effect(() => {
-    if (bpm === 0) return;
+    if (!bpm) return;
 
     if (beatInterval) clearInterval(beatInterval);
     beatInterval = setInterval(() => {
       if (!boombox) return;
+
       console.log("🎵 beat detected!");
       boombox.style.scale = "1.3";
       boombox.style.transitionDuration = "0ms";
       setTimeout(() => {
         if (!boombox) return;
+
         boombox.style.scale = "1";
         boombox.style.transitionDuration = "100ms";
       }, 100);
