@@ -114,8 +114,8 @@
   <!-- bottom row -->
   <div class="flex justify-center gap16 w-full grow">
     <div class="bg-surface font-bold flex justify-center items-center h-full aspect-square rounded-sm p-4">
-      {#if gifFile && bpm}
-        <GifPlayer gif={gifFile} bpm={bpm} offset={0} />
+      {#if gifFile}
+        <GifPlayer gif={gifFile} bpm={20} offset={0} />
       {:else}
         PREVIEW HERE
       {/if}

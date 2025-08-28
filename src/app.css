@@ -21,6 +21,10 @@ body {
   @apply bg-bg text-fg font-mono text-base selection:bg-fg selection:text-bg;
 }
 
+canvas {
+  image-rendering: pixelated;
+}
+
 .dashed {
   background-image: var(--dashed-border-src);
 }

@@ -14,10 +14,18 @@
   let frames = $state<ParsedFrame[]>([]);
   let frameIndex = $state(0);
   let lastFrameTime = $state(0);
-  let frameDuration = $state(100);
+  let frameDuration = $state(10);
   let frameImageData: ImageData | null = $state(null);
   let bufferCanvas: HTMLCanvasElement;
   let bufferCtx: CanvasRenderingContext2D;
+  let needsDisposal = $state(false);
+
+  $effect(() => {
+    if (gif) {
+      frameIndex = 0;
+      readGif(gif);
+    }
+  });
 
   function renderFrame() {
     if (!canvas) return;
@@ -29,10 +37,10 @@
     if (elapsed >= frameDuration) {
       lastFrameTime = now - (elapsed % frameDuration);
 
-      // if (needsDisposal) {
+      if (needsDisposal || frameIndex === 0) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-      //   needsDisposal = false;
-      // }
+        needsDisposal = false;
+      }
 
       if (!frameImageData || frameImageData.width !== frame.dims.width || frameImageData.height !== frame.dims.height) {
         bufferCanvas.width = frame.dims.width;
@@ -41,11 +49,12 @@
       }
 
       frameImageData.data.set(frame.patch);
-      ctx.putImageData(frameImageData, frame.dims.left, frame.dims.top);
+      bufferCtx.putImageData(frameImageData, 0, 0);
+      ctx.drawImage(bufferCanvas, frame.dims.left, frame.dims.top);
 
-      // if (frame.disposalType === 2) {
-      //   needsDisposal = true;
-      // }
+      if (frame.disposalType === 2) {
+        needsDisposal = true;
+      }
 
       frameIndex++
       if (frameIndex >= frames.length) {
@@ -56,7 +65,11 @@
     requestAnimationFrame(renderFrame);
   }
 
-  function readGif(): Promise<void> {
+  function findBiggestNumber(arr: number[]): number {
+    return arr.reduce((a, b) => Math.max(a, b), -Infinity);
+  }
+
+  function readGif(gif: File): Promise<void> {
     return new Promise((resolve, reject) => {
       if (!gif) {
         console.error("no gif file provided");
@@ -69,8 +82,8 @@
         const data = parseGIF(buffer);
         frames = decompressFrames(data, true);
 
-        canvas.width = bufferCanvas.width = frames[0].dims.width;
-        canvas.height = bufferCanvas.height = frames[0].dims.height;
+        canvas.width = bufferCanvas.width = frames[0].dims.width + frames[0].dims.left;
+        canvas.height = bufferCanvas.height = frames[0].dims.height + frames[0].dims.top;
         resolve();
       };
 
@@ -85,9 +98,9 @@
     bufferCanvas = document.createElement("canvas");
     bufferCtx = bufferCanvas.getContext("2d") as CanvasRenderingContext2D;
 
-    await readGif();
+    if (gif) await readGif(gif);
     renderFrame();
   });
 </script>
 
-<canvas bind:this={canvas} class="w-full rounded-sm"></canvas>
+<canvas bind:this={canvas} class="rounded-sm bg-blue-500"></canvas>
