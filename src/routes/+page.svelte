@@ -180,4 +180,4 @@
   </div>
 </div>
 
-<Nav bpm={120} />
+<Nav bpm={bpm ?? 0} />
