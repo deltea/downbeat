@@ -150,7 +150,7 @@
     <div class="bg-surface font-bold flex justify-center items-center h-full aspect-square rounded-sm p-4">
       {#if gifFile && bpm}
         <GifPlayer
-          frameDuration={1.0 / (bpm / 60.0) / gifFrames.length / 0.25 * 1000}
+          frameDuration={1 / (bpm / 60) / gifFrames.length / 0.5 * 1000}
           offset={0}
           frames={gifFrames}
         />

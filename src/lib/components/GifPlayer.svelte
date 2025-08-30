@@ -12,7 +12,7 @@
   let ctx: CanvasRenderingContext2D;
 
   let frameIndex = $state(0);
-  let lastFrameTime = $state(0);
+  let startTime = $state(0);
   let frameImageData: ImageData | null = $state(null);
   let bufferCanvas: HTMLCanvasElement;
   let bufferCtx: CanvasRenderingContext2D;
@@ -25,14 +25,17 @@
   });
 
   function renderFrame() {
-    if (!canvas) return;
+    if (!canvas || !frames || frames.length === 0) return;
 
-    const frame = frames[(frameIndex + offset) % frames.length];
     const now = performance.now();
-    const elapsed = now - lastFrameTime;
+    const elapsed = now - startTime;
 
-    if (elapsed >= frameDuration) {
-      lastFrameTime = now - (elapsed % frameDuration);
+    const targetFrameIndex = Math.floor(elapsed / frameDuration) % frames.length;
+
+    if (targetFrameIndex !== frameIndex) {
+      frameIndex = targetFrameIndex;
+
+      const frame = frames[(frameIndex + offset) % frames.length];
 
       if (needsDisposal || frameIndex === 0) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -53,7 +56,6 @@
         needsDisposal = true;
       }
 
-      frameIndex++
       if (frameIndex >= frames.length) {
         frameIndex = 0;
       }
@@ -74,7 +76,7 @@
     canvas.height = bufferCanvas.height = frames[0].dims.height + frames[0].dims.top;
 
     frameIndex = 0;
-    // lastFrameTime = performance.now();
+    startTime = performance.now();
 
     requestAnimationFrame(renderFrame);
   }
