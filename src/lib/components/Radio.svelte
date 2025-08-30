@@ -8,7 +8,7 @@
   };
 
   type Props = {
-    value: number;
+    value: string;
     ref?: HTMLDivElement | null;
     items: Item[];
     [key: string]: any;
@@ -23,7 +23,7 @@
 </script>
 
 <div class="flex justify-center w-full">
-  <RadioGroup.Root value={value.toString()} bind:ref {...restProps} class="flex gap-0 rounded-sm bg-surface font-bold w-full">
+  <RadioGroup.Root bind:value bind:ref {...restProps} class="flex gap-0 rounded-sm bg-surface font-bold w-full">
     {#each items as item}
       {@const id = useId()}
       <RadioGroup.Item

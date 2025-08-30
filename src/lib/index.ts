@@ -1,6 +1,5 @@
 import { parseBlob } from "music-metadata";
-import musicTempo from "music-tempo";
-const { MusicTempo } = musicTempo;
+import MusicTempo from "music-tempo";
 
 // TODO: fix music-tempo
 export async function extractBPM(audioCtx: AudioContext, track: File) {

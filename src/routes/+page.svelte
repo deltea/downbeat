@@ -9,7 +9,7 @@
   import Radio from "$components/Radio.svelte";
   import FilePicker from "$components/FilePicker.svelte";
   import GifPlayer from "$components/GifPlayer.svelte";
-    import HelpTooltip from "$components/HelpTooltip.svelte";
+  import HelpTooltip from "$components/HelpTooltip.svelte";
 
   const SPEEDS = [
     { value: 0.5, label: "0.5x" },
@@ -28,15 +28,17 @@
   let musicFile: File | null = $state(null);
   let musicCoverSrc: string | null = $state(null);
   let isLoadingBPM = $state(false);
-  let bpm: number | null = $state(120);
+  let bpm: number | null = $state(null);
 
   let gifFile: File | null = $state(null);
   let gifSrc: string | null = $state(null);
   let gifFrames = $state<ParsedFrame[]>([]);
 
+  let speedMultiplierValue = $state("2");
+
   let options = $state({
-    speedMultiplier: 2,
-    audioOffset: 10
+    speedMultiplier: 1,
+    audioOffset: 5
   });
 
   muted.subscribe((value) => {
@@ -52,6 +54,7 @@
   }
 
   async function onMusicUpload(file: File) {
+    bpm = null;
     musicFile = file;
 
     await audioCtx.resume();
@@ -86,6 +89,7 @@
     audioElement = document.createElement("audio");
     audioElement.volume = 0.2;
     audioElement.muted = $muted;
+    audioElement.loop = true;
     audioCtx = new AudioContext();
     source = audioCtx.createMediaElementSource(audioElement);
     source.connect(audioCtx.destination);
@@ -146,7 +150,7 @@
     <div class="bg-surface font-bold flex justify-center items-center h-full aspect-square rounded-sm p-4">
       {#if gifFile && bpm}
         <GifPlayer
-          frameRate={1 / (bpm / 60) / gifFrames.length / options.speedMultiplier}
+          frameDuration={1.0 / (bpm / 60.0) / gifFrames.length / 0.25 * 1000}
           offset={0}
           frames={gifFrames}
         />
@@ -160,42 +164,67 @@
       <path d="M4 300 L60 300" style="fill: none; stroke: var(--color-surface); stroke-width: 3" />
     </svg>
 
-    <div class="dashed h-full flex flex-col justify-between grow rounded-sm p-8 bg-bg">
+    <div class="dashed h-full flex flex-col justify-between grow rounded-sm p-8 bg-bg max-w-[50rem] min-w-[30rem]">
       <div class="flex flex-col gap-16">
         <div>
           <!-- label -->
           <p class="mb-4 flex gap-3">
             <span class="font-bold">SPEED MULTIPLIER</span>
-            <HelpTooltip>This controls how fast the gif plays</HelpTooltip>
+            <HelpTooltip>This controls how fast the gif plays.</HelpTooltip>
           </p>
+
           <!-- speed multiplier radio -->
-          <Radio items={SPEEDS} name="speed-multiplier" bind:value={options.speedMultiplier} />
+          <Radio items={SPEEDS} name="speed-multiplier" bind:value={speedMultiplierValue} />
         </div>
+
         <div>
           <!-- label -->
           <p class="mb-4 flex gap-3">
             <span class="font-bold">AUDIO OFFSET</span>
-            <HelpTooltip>This controls how many frames the gif is offset by. (change this to position the downbeat)</HelpTooltip>
+            <HelpTooltip>This controls how many frames the gif is offset by, change this to position the downbeat.</HelpTooltip>
           </p>
+
           <!-- audio offset slider -->
-          <Slider.Root
-            type="single"
-            value={10}
-            min={0}
-            step={1}
-            max={20}
-            class="relative flex items-center w-full hover:cursor-grab active:cursor-grabbing"
-          >
-            {#snippet children({ tickItems })}
+          {#if gifFrames.length > 0}
+            <Slider.Root
+              type="single"
+              bind:value={options.audioOffset}
+              min={0}
+              step={1}
+              max={gifFrames.length - 1}
+              class="relative flex items-center w-full hover:cursor-grab active:cursor-grabbing group"
+            >
+              {#snippet children({ tickItems })}
+                <span class="h-2 w-full bg-surface-0 rounded-sm duration-100">
+                  <Slider.Range class="bg-fg data-[disabled]:bg-muted h-full absolute rounded-sm duration-100" />
+                </span>
+
+                <Slider.Thumb
+                  index={0}
+                  class="size-6 bg-fg data-[disabled]:bg-muted outline-none rounded-full duration-100 z-10"
+                />
+              {/snippet}
+            </Slider.Root>
+          {:else}
+            <!-- placeholder slider -->
+            <Slider.Root
+              type="single"
+              value={0.5}
+              min={0}
+              step={0.5}
+              max={1}
+              class="relative flex items-center w-full hover:cursor-grab active:cursor-grabbing group"
+            >
               <span class="h-2 w-full bg-surface-0 rounded-sm duration-100">
-                <Slider.Range class="bg-fg h-full absolute rounded-sm duration-100" />
+                <Slider.Range class="bg-muted h-full absolute rounded-sm duration-100" />
               </span>
+
               <Slider.Thumb
                 index={0}
-                class="size-6 bg-fg outline-none rounded-full duration-100 z-10"
+                class="size-6 bg-muted outline-none rounded-full duration-100 z-10"
               />
-            {/snippet}
-          </Slider.Root>
+            </Slider.Root>
+          {/if}
         </div>
       </div>
 
