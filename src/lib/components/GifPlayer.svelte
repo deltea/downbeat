@@ -2,9 +2,8 @@
   import type { ParsedFrame } from "gifuct-js";
   import { onMount } from "svelte";
 
-  let { gif, bpm, offset, frames }: {
-    gif: File | null,
-    bpm: number,
+  let { frameRate, offset, frames }: {
+    frameRate: number,
     offset: number,
     frames: ParsedFrame[]
   } = $props();
@@ -14,19 +13,14 @@
 
   let frameIndex = $state(0);
   let lastFrameTime = $state(0);
-  let frameDuration = $state(10);
+  let frameDuration = $derived(frameRate * 1000);
   let frameImageData: ImageData | null = $state(null);
   let bufferCanvas: HTMLCanvasElement;
   let bufferCtx: CanvasRenderingContext2D;
   let needsDisposal = $state(false);
 
   $effect(() => {
-    if (
-      !frames ||
-      frames.length === 0 ||
-      !canvas ||
-      !bufferCanvas
-    ) return;
+    if (!frames) return;
 
     updateGif();
   });
@@ -70,6 +64,13 @@
   }
 
   function updateGif() {
+    if (
+      frames.length === 0 ||
+      !canvas ||
+      !bufferCanvas
+    ) return;
+
+    console.log(frameRate);
     canvas.width = bufferCanvas.width = frames[0].dims.width + frames[0].dims.left;
     canvas.height = bufferCanvas.height = frames[0].dims.height + frames[0].dims.top;
 

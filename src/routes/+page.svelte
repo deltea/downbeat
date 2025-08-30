@@ -9,6 +9,7 @@
   import Radio from "$components/Radio.svelte";
   import FilePicker from "$components/FilePicker.svelte";
   import GifPlayer from "$components/GifPlayer.svelte";
+    import HelpTooltip from "$components/HelpTooltip.svelte";
 
   const SPEEDS = [
     { value: 0.5, label: "0.5x" },
@@ -27,12 +28,16 @@
   let musicFile: File | null = $state(null);
   let musicCoverSrc: string | null = $state(null);
   let isLoadingBPM = $state(false);
-  let bpm: number | null = $state(null);
+  let bpm: number | null = $state(120);
 
   let gifFile: File | null = $state(null);
   let gifSrc: string | null = $state(null);
   let gifFrames = $state<ParsedFrame[]>([]);
-  let canvasSize = $state<{ width: number; height: number } | null>(null);
+
+  let options = $state({
+    speedMultiplier: 2,
+    audioOffset: 10
+  });
 
   muted.subscribe((value) => {
     if (audioElement) audioElement.muted = value;
@@ -140,7 +145,11 @@
   <div class="flex justify-center gap16 w-full grow">
     <div class="bg-surface font-bold flex justify-center items-center h-full aspect-square rounded-sm p-4">
       {#if gifFile && bpm}
-        <GifPlayer gif={gifFile} {bpm} offset={0} frames={gifFrames} />
+        <GifPlayer
+          frameRate={1 / (bpm / 60) / gifFrames.length / options.speedMultiplier}
+          offset={0}
+          frames={gifFrames}
+        />
       {:else}
         PREVIEW HERE
       {/if}
@@ -155,18 +164,18 @@
       <div class="flex flex-col gap-16">
         <div>
           <!-- label -->
-          <p class="mb-4 flex justify-between">
+          <p class="mb-4 flex gap-3">
             <span class="font-bold">SPEED MULTIPLIER</span>
-            <span class="text-muted">(how fast the gif plays)</span>
+            <HelpTooltip>This controls how fast the gif plays</HelpTooltip>
           </p>
           <!-- speed multiplier radio -->
-          <Radio items={SPEEDS} name="speed-multiplier" value={"2"} />
+          <Radio items={SPEEDS} name="speed-multiplier" bind:value={options.speedMultiplier} />
         </div>
         <div>
           <!-- label -->
-          <p class="mb-4 flex justify-between">
+          <p class="mb-4 flex gap-3">
             <span class="font-bold">AUDIO OFFSET</span>
-            <span class="text-muted">(amount of frames the audio is offset by)</span>
+            <HelpTooltip>This controls how many frames the gif is offset by. (change this to position the downbeat)</HelpTooltip>
           </p>
           <!-- audio offset slider -->
           <Slider.Root

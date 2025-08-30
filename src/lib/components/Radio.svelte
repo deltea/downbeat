@@ -2,13 +2,16 @@
   import { RadioGroup, type WithoutChildrenOrChild, useId } from "bits-ui";
 
   type Item = {
-    value: string | number;
+    value: number;
     label: string;
     disabled?: boolean;
   };
 
-  type Props = WithoutChildrenOrChild<RadioGroup.RootProps> & {
+  type Props = {
+    value: number;
+    ref?: HTMLDivElement | null;
     items: Item[];
+    [key: string]: any;
   };
 
   let {
@@ -20,7 +23,7 @@
 </script>
 
 <div class="flex justify-center w-full">
-  <RadioGroup.Root bind:value bind:ref {...restProps} class="flex gap-0 rounded-sm bg-surface font-bold w-full">
+  <RadioGroup.Root value={value.toString()} bind:ref {...restProps} class="flex gap-0 rounded-sm bg-surface font-bold w-full">
     {#each items as item}
       {@const id = useId()}
       <RadioGroup.Item
