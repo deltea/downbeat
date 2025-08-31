@@ -1,6 +1,7 @@
 <script lang="ts">
   import type { ParsedFrame } from "gifuct-js";
   import { onMount } from "svelte";
+  import { loop } from "$lib/utils";
 
   let { frameDuration, offset, frames }: {
     frameDuration: number,
@@ -35,7 +36,7 @@
     if (targetFrameIndex !== frameIndex) {
       frameIndex = targetFrameIndex;
 
-      const frame = frames[(frameIndex + offset) % frames.length];
+      const frame = frames[loop(frameIndex + offset, 0, frames.length)];
 
       if (needsDisposal || frameIndex === 0) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -71,12 +72,12 @@
       !bufferCanvas
     ) return;
 
-    console.log(frameDuration);
     canvas.width = bufferCanvas.width = frames[0].dims.width + frames[0].dims.left;
     canvas.height = bufferCanvas.height = frames[0].dims.height + frames[0].dims.top;
 
     frameIndex = 0;
     startTime = performance.now();
+
 
     requestAnimationFrame(renderFrame);
   }

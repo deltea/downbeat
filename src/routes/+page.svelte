@@ -12,12 +12,12 @@
   import HelpTooltip from "$components/HelpTooltip.svelte";
 
   const SPEEDS = [
+    // { value: 0.0625, label: "0.0625x" },
+    { value: 0.125, label: "0.125x" },
+    { value: 0.25, label: "0.25x" },
     { value: 0.5, label: "0.5x" },
     { value: 1, label: "1x" },
-    { value: 2, label: "2x" },
-    { value: 4, label: "4x" },
-    { value: 8, label: "8x" },
-    { value: 16, label: "16x" }
+    { value: 2, label: "2x" }
   ];
 
   // audio stuff
@@ -34,12 +34,10 @@
   let gifSrc: string | null = $state(null);
   let gifFrames = $state<ParsedFrame[]>([]);
 
-  let speedMultiplierValue = $state("2");
+  let speedMultiplierValue = $state("0.5");
 
-  let options = $derived({
-    speedMultiplier: +speedMultiplierValue,
-    audioOffset: 5
-  });
+  let speedMultiplier = $derived(+speedMultiplierValue);
+  let frameOffset = $state(0);
 
   muted.subscribe((value) => {
     if (audioElement) audioElement.muted = value;
@@ -150,8 +148,8 @@
     <div class="bg-surface font-bold flex justify-center items-center h-full aspect-square rounded-sm p-4">
       {#if gifFile && bpm}
         <GifPlayer
-          frameDuration={1 / (bpm / 60) / gifFrames.length / options.speedMultiplier * 1000}
-          offset={0}
+          frameDuration={1 / (bpm / 60) / gifFrames.length / speedMultiplier * 1000}
+          offset={frameOffset}
           frames={gifFrames}
         />
       {:else}
@@ -165,7 +163,7 @@
     </svg>
 
     <div class="dashed h-full flex flex-col justify-between grow rounded-sm p-8 bg-bg max-w-[50rem] min-w-[30rem]">
-      <div class="flex flex-col gap-16">
+      <div class="flex flex-col gap-12">
         <div>
           <!-- label -->
           <p class="mb-4 flex gap-3">
@@ -180,31 +178,45 @@
         <div>
           <!-- label -->
           <p class="mb-4 flex gap-3">
-            <span class="font-bold">AUDIO OFFSET</span>
-            <HelpTooltip>This controls how many frames the gif is offset by, change this to position the downbeat.</HelpTooltip>
+            <span class="font-bold">FRAME OFFSET</span>
+            <HelpTooltip>This controls how many frames the gif is offset by, change this to position the beat drop.</HelpTooltip>
           </p>
 
           <!-- audio offset slider -->
           {#if gifFrames.length > 0}
             <Slider.Root
               type="single"
-              bind:value={options.audioOffset}
-              min={0}
+              bind:value={frameOffset}
+              min={-gifFrames.length / 2}
               step={1}
-              max={gifFrames.length - 1}
+              max={gifFrames.length / 2}
               class="relative flex items-center w-full hover:cursor-grab active:cursor-grabbing group"
             >
               {#snippet children({ tickItems })}
                 <span class="h-2 w-full bg-surface-0 rounded-sm duration-100">
-                  <Slider.Range class="bg-fg data-[disabled]:bg-muted h-full absolute rounded-sm duration-100" />
+                  <Slider.Range class="bg-fg h-full absolute rounded-sm duration-100" />
                 </span>
 
                 <Slider.Thumb
                   index={0}
-                  class="size-6 bg-fg data-[disabled]:bg-muted outline-none rounded-full duration-100 z-10"
+                  class="size-6 bg-fg outline-none rounded-full duration-100 z-10"
                 />
               {/snippet}
             </Slider.Root>
+
+            <div class="w-full flex justify-between text-muted mt-4">
+              <span class="w-1/2 flex flex-col gap-1 items-start">
+                <span>{-gifFrames.length / 2}</span>
+              </span>
+
+              <span class="flex flex-col gap-1 items-center">
+                <span>0</span>
+              </span>
+
+              <span class="w-1/2 flex flex-col gap-1 items-end">
+                <span>{gifFrames.length / 2}</span>
+              </span>
+            </div>
           {:else}
             <!-- placeholder slider -->
             <Slider.Root
@@ -213,7 +225,7 @@
               min={0}
               step={0.5}
               max={1}
-              class="relative flex items-center w-full hover:cursor-grab active:cursor-grabbing group"
+              class="relative flex items-center w-full group"
             >
               <span class="h-2 w-full bg-surface-0 rounded-sm duration-100">
                 <Slider.Range class="bg-muted h-full absolute rounded-sm duration-100" />
@@ -233,6 +245,7 @@
           <iconify-icon icon="mingcute:refresh-3-fill" class="text-xl"></iconify-icon>
           restart preview
         </button>
+
         <button class="inline-flex justify-center items-center gap-2 font-bold rounded-sm bg-fg w-1/2 py-2.5 text-bg cursor-pointer hover:scale-[102%] active:scale-100 duration-100">
           <iconify-icon icon="mingcute:share-forward-fill" class="text-xl"></iconify-icon>
           export as mp4
