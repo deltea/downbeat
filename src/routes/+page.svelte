@@ -33,6 +33,7 @@
   let gifFile: File | null = $state(null);
   let gifSrc: string | null = $state(null);
   let gifFrames = $state<ParsedFrame[]>([]);
+  let gifPlayer: GifPlayer | null = $state(null);
 
   let speedMultiplierValue = $state("0.5");
 
@@ -81,6 +82,13 @@
       reader.onerror = (e) => reject(e);
       reader.readAsArrayBuffer(gif);
     });
+  }
+
+  function restartPreview() {
+    audioCtx?.resume();
+    audioElement.currentTime = 0;
+    audioElement.play();
+    gifPlayer?.reset();
   }
 
   onMount(() => {
@@ -148,6 +156,7 @@
     <div class="bg-surface font-bold flex justify-center items-center h-full aspect-square rounded-sm p-4">
       {#if gifFile && bpm}
         <GifPlayer
+          bind:this={gifPlayer}
           frameDuration={1 / (bpm / 60) / gifFrames.length / speedMultiplier * 1000}
           offset={frameOffset}
           frames={gifFrames}
@@ -241,7 +250,10 @@
       </div>
 
       <div class="flex gap-4">
-        <button class="inline-flex justify-center items-center gap-2 font-bold rounded-sm bg-surface-0 w-1/2 py-2.5 text-fg cursor-pointer hover:scale-[102%] active:scale-100 duration-100">
+        <button
+          onclick={restartPreview}
+          class="inline-flex justify-center items-center gap-2 font-bold rounded-sm bg-surface-0 w-1/2 py-2.5 text-fg cursor-pointer hover:scale-[102%] active:scale-100 duration-100"
+        >
           <iconify-icon icon="mingcute:refresh-3-fill" class="text-xl"></iconify-icon>
           restart preview
         </button>

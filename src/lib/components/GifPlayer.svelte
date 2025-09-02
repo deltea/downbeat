@@ -38,7 +38,7 @@
 
       const frame = frames[loop(frameIndex + offset, 0, frames.length)];
 
-      if (needsDisposal || frameIndex === 0) {
+      if (needsDisposal || (frameIndex + offset) % frames.length === 0) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         needsDisposal = false;
       }
@@ -80,6 +80,14 @@
 
 
     requestAnimationFrame(renderFrame);
+  }
+
+  export function reset() {
+    frameIndex = 0;
+    startTime = performance.now();
+    needsDisposal = false;
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
   }
 
   onMount(async () => {
