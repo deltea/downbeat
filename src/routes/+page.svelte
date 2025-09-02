@@ -153,7 +153,7 @@
 
   <!-- bottom row -->
   <div class="flex justify-center gap16 w-full grow">
-    <div class="bg-surface font-bold flex justify-center items-center h-full aspect-square rounded-sm p-4">
+    <div class="bg-surface font-bold flex justify-center items-center h-full aspect-square rounded-md p-4">
       {#if gifFile && bpm}
         <GifPlayer
           bind:this={gifPlayer}
@@ -171,7 +171,7 @@
       <path d="M4 300 L60 300" style="fill: none; stroke: var(--color-surface); stroke-width: 3" />
     </svg>
 
-    <div class="dashe border-3 border-surface-0 h-full flex flex-col justify-between grow rounded-sm p-8 bg-bg max-w-[50rem] min-w-[30rem]">
+    <div class="dashe border-3 border-surface-0 h-full flex flex-col justify-between grow rounded-md p-8 bg-bg max-w-[50rem] min-w-[30rem]">
       <div class="flex flex-col gap-12">
         <div>
           <!-- label -->
@@ -202,8 +202,8 @@
               class="relative flex items-center w-full hover:cursor-grab active:cursor-grabbing group"
             >
               {#snippet children({ tickItems })}
-                <span class="h-2 w-full bg-surface-0 rounded-sm duration-100">
-                  <Slider.Range class="bg-fg h-full absolute rounded-sm duration-100" />
+                <span class="h-2 w-full bg-surface-0 rounded-md duration-100">
+                  <Slider.Range class="bg-fg h-full absolute rounded-md duration-100" />
                 </span>
 
                 <Slider.Thumb
@@ -236,8 +236,8 @@
               max={1}
               class="relative flex items-center w-full group"
             >
-              <span class="h-2 w-full bg-surface-0 rounded-sm duration-100">
-                <Slider.Range class="bg-muted h-full absolute rounded-sm duration-100" />
+              <span class="h-2 w-full bg-surface-0 rounded-md duration-100">
+                <Slider.Range class="bg-muted h-full absolute rounded-md duration-100" />
               </span>
 
               <Slider.Thumb
@@ -252,13 +252,13 @@
       <div class="flex gap-4">
         <button
           onclick={restartPreview}
-          class="inline-flex justify-center items-center gap-2 font-bold rounded-sm bg-surface-0 w-1/2 py-2.5 text-fg cursor-pointer hover:scale-[102%] active:scale-100 duration-100"
+          class="inline-flex justify-center items-center gap-2 font-bold rounded-md bg-surface-0 w-1/2 py-2.5 text-fg cursor-pointer hover:scale-[102%] active:scale-100 duration-100"
         >
           <iconify-icon icon="mingcute:refresh-3-fill" class="text-xl"></iconify-icon>
           restart preview
         </button>
 
-        <button class="inline-flex justify-center items-center gap-2 font-bold rounded-sm bg-fg w-1/2 py-2.5 text-bg cursor-pointer hover:scale-[102%] active:scale-100 duration-100">
+        <button class="inline-flex justify-center items-center gap-2 font-bold rounded-md bg-fg w-1/2 py-2.5 text-bg cursor-pointer hover:scale-[102%] active:scale-100 duration-100">
           <iconify-icon icon="mingcute:share-forward-fill" class="text-xl"></iconify-icon>
           export as mp4
         </button>
