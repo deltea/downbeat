@@ -171,7 +171,7 @@
       <path d="M4 300 L60 300" style="fill: none; stroke: var(--color-surface); stroke-width: 3" />
     </svg>
 
-    <div class="dashed h-full flex flex-col justify-between grow rounded-sm p-8 bg-bg max-w-[50rem] min-w-[30rem]">
+    <div class="dashe border-3 border-surface-0 h-full flex flex-col justify-between grow rounded-sm p-8 bg-bg max-w-[50rem] min-w-[30rem]">
       <div class="flex flex-col gap-12">
         <div>
           <!-- label -->
