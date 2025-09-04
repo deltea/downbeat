@@ -10,6 +10,7 @@
   import FilePicker from "$components/FilePicker.svelte";
   import GifPlayer from "$components/GifPlayer.svelte";
   import HelpTooltip from "$components/HelpTooltip.svelte";
+  import { BufferTarget, canEncode, canEncodeVideo, Mp4OutputFormat, Output, Quality, QUALITY_LOW, VideoSample, VideoSampleSource } from "mediabunny";
 
   const SPEEDS = [
     // { value: 0.0625, label: "0.0625x" },
@@ -39,6 +40,8 @@
 
   let speedMultiplier = $derived(+speedMultiplierValue);
   let frameOffset = $state(0);
+
+  let exampleUrl = $state("");
 
   muted.subscribe((value) => {
     if (audioElement) audioElement.muted = value;
@@ -91,6 +94,61 @@
     gifPlayer?.reset();
   }
 
+  async function onExport() {
+    // const response = await fetch("/api/export", {
+    //   method: "GET",
+    //   headers: {
+    //     "Content-Type": "application/json"
+    //   },
+    // });
+
+    const video = new Output({
+      format: new Mp4OutputFormat(),
+      target: new BufferTarget(),
+    });
+
+    const sampleSource = new VideoSampleSource({
+      codec: "avc",
+      bitrate: 1e6,
+      sizeChangeBehavior: "contain",
+    });
+
+    video.addVideoTrack(sampleSource);
+
+    const buffer = gifFrames[0].patch;
+    // const buffer = await gifFile?.arrayBuffer();
+    const sample = new VideoSample(buffer, {
+      format: "RGBA",
+      codedWidth: gifFrames[0].dims.width,
+      codedHeight: gifFrames[0].dims.height,
+      timestamp: 0,
+      // duration: 5,
+    });
+
+    const sample2 = new VideoSample(gifFrames[2].patch, {
+      format: "RGBA",
+      codedWidth: gifFrames[2].dims.width,
+      codedHeight: gifFrames[2].dims.height,
+      timestamp: 5,
+      duration: 5,
+    });
+
+    await video.start();
+
+    await sampleSource.add(sample);
+    await sampleSource.add(sample2);
+
+    await video.finalize();
+
+    const file = video.target.buffer;
+    if (!file) throw new Error("No file generated");
+
+    const blob = new Blob([file], { type: "video/mp4" });
+    const url = URL.createObjectURL(blob);
+    console.log(url);
+    exampleUrl = url;
+  }
+
   onMount(() => {
     audioElement = document.createElement("audio");
     audioElement.volume = 0.2;
@@ -105,6 +163,10 @@
     if (audioCtx) audioCtx.close();
   });
 </script>
+
+<video src={exampleUrl} class="absolute left-0 top-0 z-20" controls>
+  <track kind="captions" />
+</video>
 
 <div class="grow flex flex-col items-center py-16 gap16 relative">
   <!-- top row -->
@@ -136,7 +198,7 @@
       previewSrc={gifSrc}
       placeholderIcon="mingcute:pic-2-fill"
       onUpload={onGifUpload}
-      validFileTypes={["image/gif"]}
+      validFileTypes={["image/gif", "image/png", "image/jpeg"]}
     >
       <div class="flex flex-col gap-2 w-full">
         <span class="text-muted">frames = {gifFrames.length > 0 ? gifFrames.length : "?"}</span>
@@ -258,7 +320,10 @@
           restart preview
         </button>
 
-        <button class="inline-flex justify-center items-center gap-2 font-bold rounded-md bg-fg w-1/2 py-2.5 text-bg cursor-pointer hover:scale-[102%] active:scale-100 duration-100">
+        <button
+          onclick={onExport}
+          class="inline-flex justify-center items-center gap-2 font-bold rounded-md bg-fg w-1/2 py-2.5 text-bg cursor-pointer hover:scale-[102%] active:scale-100 duration-100"
+        >
           <iconify-icon icon="mingcute:share-forward-fill" class="text-xl"></iconify-icon>
           export as mp4
         </button>
