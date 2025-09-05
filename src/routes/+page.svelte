@@ -8,7 +8,6 @@
     BufferTarget,
     Mp4OutputFormat,
     Output,
-    QUALITY_MEDIUM,
     QUALITY_VERY_HIGH,
     VideoSample,
     VideoSampleSource
@@ -103,12 +102,7 @@
   }
 
   async function onExport() {
-    // const response = await fetch("/api/export", {
-    //   method: "GET",
-    //   headers: {
-    //     "Content-Type": "application/json"
-    //   },
-    // });
+    if (!bpm || gifFrames.length === 0) return;
 
     const video = new Output({
       format: new Mp4OutputFormat(),
@@ -125,17 +119,23 @@
 
     await video.start();
 
-    for (let i = 0; i < gifFrames.length; i++) {
-      const frame = gifFrames[i];
+    const secondsPerFrame = 1 / (bpm / 60) / gifFrames.length / speedMultiplier;
 
+    let timestamp = 0;
+    let index = 0;
+    while (timestamp < audioElement.duration) {
+      const frame = gifFrames[index];
       const buffer = frame.patch;
       const sample = new VideoSample(buffer, {
         format: "RGBA",
         codedWidth: frame.dims.width,
         codedHeight: frame.dims.height,
-        timestamp: i * 0.1,
-        duration: 0.1,
+        timestamp,
+        duration: secondsPerFrame,
       });
+
+      index = (index + 1) % gifFrames.length;
+      timestamp += secondsPerFrame;
 
       await sampleSource.add(sample);
     }

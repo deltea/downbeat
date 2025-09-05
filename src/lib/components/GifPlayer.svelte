@@ -78,7 +78,6 @@
     frameIndex = 0;
     startTime = performance.now();
 
-
     requestAnimationFrame(renderFrame);
   }
 
