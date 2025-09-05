@@ -4,13 +4,21 @@
   import { extractBPM, extractCoverImage } from "$lib";
   import { muted } from "$lib/stores";
   import { decompressFrames, parseGIF, type ParsedFrame } from "gifuct-js";
+  import {
+    BufferTarget,
+    Mp4OutputFormat,
+    Output,
+    QUALITY_MEDIUM,
+    QUALITY_VERY_HIGH,
+    VideoSample,
+    VideoSampleSource
+  } from "mediabunny";
 
   import Nav from "$components/Nav.svelte";
   import Radio from "$components/Radio.svelte";
   import FilePicker from "$components/FilePicker.svelte";
   import GifPlayer from "$components/GifPlayer.svelte";
   import HelpTooltip from "$components/HelpTooltip.svelte";
-  import { BufferTarget, canEncode, canEncodeVideo, Mp4OutputFormat, Output, Quality, QUALITY_LOW, VideoSample, VideoSampleSource } from "mediabunny";
 
   const SPEEDS = [
     // { value: 0.0625, label: "0.0625x" },
@@ -109,34 +117,28 @@
 
     const sampleSource = new VideoSampleSource({
       codec: "avc",
-      bitrate: 1e6,
+      bitrate: QUALITY_VERY_HIGH,
       sizeChangeBehavior: "contain",
     });
 
     video.addVideoTrack(sampleSource);
 
-    const buffer = gifFrames[0].patch;
-    // const buffer = await gifFile?.arrayBuffer();
-    const sample = new VideoSample(buffer, {
-      format: "RGBA",
-      codedWidth: gifFrames[0].dims.width,
-      codedHeight: gifFrames[0].dims.height,
-      timestamp: 0,
-      // duration: 5,
-    });
-
-    const sample2 = new VideoSample(gifFrames[2].patch, {
-      format: "RGBA",
-      codedWidth: gifFrames[2].dims.width,
-      codedHeight: gifFrames[2].dims.height,
-      timestamp: 5,
-      duration: 5,
-    });
-
     await video.start();
 
-    await sampleSource.add(sample);
-    await sampleSource.add(sample2);
+    for (let i = 0; i < gifFrames.length; i++) {
+      const frame = gifFrames[i];
+
+      const buffer = frame.patch;
+      const sample = new VideoSample(buffer, {
+        format: "RGBA",
+        codedWidth: frame.dims.width,
+        codedHeight: frame.dims.height,
+        timestamp: i * 0.1,
+        duration: 0.1,
+      });
+
+      await sampleSource.add(sample);
+    }
 
     await video.finalize();
 
