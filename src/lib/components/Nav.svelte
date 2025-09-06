@@ -63,8 +63,15 @@
       <iconify-icon icon="mingcute:palette-fill" class="text-3xl group-hover:rotate-30 duration-100"></iconify-icon>
     </button>
 
-    <a href="https://github.com/deltea/downbeat" target="_blank" class="hover:cursor-pointer hover:scale-110 active:scale-100 duration-100 group" aria-label="github">
+    <!-- <a href="https://github.com/deltea/downbeat" target="_blank" class="hover:cursor-pointer hover:scale-110 active:scale-100 duration-100 group" aria-label="github">
       <iconify-icon icon="mingcute:github-fill" class="text-3xl group-hover:rotate-12 duration-100"></iconify-icon>
-    </a>
+    </a> -->
+
+    <button
+      class="hover:cursor-pointer hover:scale-110 active:scale-100 duration-100 group"
+      aria-label="settings"
+    >
+      <iconify-icon icon="mingcute:settings-3-fill" class="text-3xl group-hover:rotate-30 duration-100"></iconify-icon>
+    </button>
   </div>
 </nav>

@@ -4,7 +4,6 @@ import { availableThemes, themes } from "./themes";
 
 export const muted = persistent("muted", false);
 export const theme = persistent("theme", 0);
-// export const theme = writable("classic");
 
 theme.subscribe(value => {
   if (!browser) return;
@@ -14,6 +13,7 @@ theme.subscribe(value => {
 
   document.body.style.setProperty("--color-bg", t.bg);
   document.body.style.setProperty("--color-surface", t.surface);
+  document.body.style.setProperty("--color-surface-light", t.surfaceLight);
   document.body.style.setProperty("--color-surface-0", t.surface0);
   document.body.style.setProperty("--color-fg", t.fg);
   document.body.style.setProperty("--color-muted", t.muted);

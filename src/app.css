@@ -5,6 +5,7 @@
 @theme {
   --color-bg: #000;
   --color-surface: #252525;
+  --color-surface-light: #333;
   --color-surface-0: #444;
   --color-fg: #fff;
   --color-muted: #888;

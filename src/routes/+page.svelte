@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onDestroy, onMount } from "svelte";
-  import { Slider } from "bits-ui";
+  import { Popover, Slider } from "bits-ui";
   import { extractBPM, extractCoverImage } from "$lib";
   import { muted } from "$lib/stores";
   import { decompressFrames, parseGIF, type ParsedFrame } from "gifuct-js";
@@ -21,6 +21,14 @@
   import FilePicker from "$components/FilePicker.svelte";
   import GifPlayer from "$components/GifPlayer.svelte";
   import HelpTooltip from "$components/HelpTooltip.svelte";
+
+  interface OutputItem {
+    gifSrc: string;
+    gifName: string;
+    audioName: string;
+    outputUrl: string | null;
+    output: Output;
+  }
 
   const SPEEDS = [
     { value: 0.125, label: "0.125x" },
@@ -56,6 +64,8 @@
   let qualityValue = $state(QUALITY_MEDIUM);
 
   let exampleUrl = $state("");
+  let processingQueueOpen = $state(false);
+  let processingQueue = $state<OutputItem[]>([]);
 
   muted.subscribe((value) => {
     if (audioElement) audioElement.muted = value;
@@ -119,6 +129,19 @@
       target: new BufferTarget(),
     });
 
+    const queueIndex = processingQueue.length;
+    processingQueue = [
+      ...processingQueue,
+      {
+        gifSrc: gifSrc!,
+        gifName: gifFile!.name,
+        audioName: musicFile.name,
+        outputUrl: null,
+        output: video,
+      }
+    ];
+    processingQueueOpen = true;
+
     const sampleSource = new VideoSampleSource({
       codec: "avc",
       bitrate: QUALITY_VERY_HIGH,
@@ -166,7 +189,6 @@
       await sampleSource.add(sample);
     }
 
-    // finish video creation
     await video.finalize();
 
     console.log(`export finished in ${Math.round((performance.now() - timeStart) / 1000)}s`);
@@ -176,6 +198,10 @@
 
     const blob = new Blob([file], { type: "video/mp4" });
     const url = URL.createObjectURL(blob);
+
+    processingQueue[queueIndex].outputUrl = url;
+    processingQueueOpen = true;
+
     console.log(url);
     exampleUrl = url;
   }
@@ -192,12 +218,16 @@
 
   onDestroy(() => {
     if (audioCtx) audioCtx.close();
+
+    processingQueue.forEach(item => {
+      item.output.cancel();
+    });
   });
 </script>
 
-<video src={exampleUrl} class="absolute left-0 top-0 z-20" controls>
+<!-- <video src={exampleUrl} class="absolute left-0 top-0 z-20" controls>
   <track kind="captions" />
-</video>
+</video> -->
 
 <div class="grow flex flex-col items-center py-16 gap16 relative">
   <!-- top row -->
@@ -306,7 +336,7 @@
               {/snippet}
             </Slider.Root>
 
-            <div class="w-full flex justify-between text-muted mt-4">
+            <div class="w-full flex justify-between text-muted mt-4 text-sm">
               <span class="w-1/2 flex flex-col gap-1 items-start">
                 <span>{-gifFrames.length / 2}</span>
               </span>
@@ -367,11 +397,65 @@
           class="inline-flex justify-center items-center gap-2 font-bold rounded-md bg-fg w-1/2 py-2.5 text-bg cursor-pointer hover:scale-[102%] active:scale-100 duration-100"
         >
           <iconify-icon icon="mingcute:share-forward-fill" class="text-xl"></iconify-icon>
-          export as mp4
+          export
         </button>
       </div>
     </div>
   </div>
 </div>
+
+<Popover.Root bind:open={processingQueueOpen}>
+  <Popover.Trigger class="fixed left-8 top-8 size-10 flex justify-center items-center rounded-full bg-surface-0 text-fg hover:scale-105 active:scale-100 duration-100 z-50 cursor-pointer">
+    <iconify-icon icon="mingcute:download-2-fill" class="text-lg "></iconify-icon>
+  </Popover.Trigger>
+
+  <Popover.Portal>
+    <Popover.Content
+      sideOffset={8}
+      collisionPadding={32}
+      class="bg-surface-light rounded-lg w-[32rem] h-[30rem] shadow-lg"
+    >
+      <h3 class="text-muted font-bold py-3 px-4">PROCESSING QUEUE</h3>
+      <ul class="flex flex-col gap-2 px-2">
+        {#each processingQueue as video}
+          <li class="p-2 flex gap-3 rounded-lg hover:bg-surface-0 duration-100 h-16 w-full">
+            {#if video.outputUrl}
+              <span class="h-full aspect-square bg-cover bg-center rounded-md" style:background-image="url('{video.gifSrc}')"></span>
+            {:else if video.output.state === "started"}
+              <span class="h-full aspect-square rounded-md bg-surface-0 flex justify-center items-center">
+                <iconify-icon icon="tdesign:loading" class="animate-spin text-base"></iconify-icon>
+              </span>
+            {/if}
+
+            <div class="flex flex-col grow justify-evenly">
+              <p class="flex gap-2 text-sm">
+                <span>{video.gifName}</span>
+                <span class="text-muted">x</span>
+                <span>{video.audioName}</span>
+              </p>
+
+              {#if video.outputUrl}
+                <p class="text-muted">finished</p>
+              {:else if video.output.state === "started"}
+                <p class="text-muted">processing...</p>
+              {/if}
+            </div>
+
+            {#if video.outputUrl}
+              <!-- svelte-ignore a11y_consider_explicit_label -->
+              <a
+                download="export.mp4"
+                href={video.outputUrl}
+                class="text-bg bg-fg flex justify-center items-center h-full aspect-square hover:scale-105 active:scale-100 duration-100 rounded-md cursor-pointer"
+              >
+                <iconify-icon icon="mingcute:download-2-fill" class="text-lg"></iconify-icon>
+              </a>
+            {/if}
+          </li>
+        {/each}
+      </ul>
+    </Popover.Content>
+  </Popover.Portal>
+</Popover.Root>
 
 <Nav {bpm} />
