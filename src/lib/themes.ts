@@ -8,7 +8,7 @@ interface Themes {
   };
 }
 
-export const availableThemes = ["classic", "nord", "tokyo-night", "everforest", "catppuccin", "gruvbox", "solarized"];
+export const availableThemes = ["classic", "nord", "everforest", "catppuccin", "gruvbox"];
 
 export const themes: Themes = {
   "classic": {

@@ -56,7 +56,7 @@
     </button>
 
     <button
-      onclick={() => ($theme = ($theme + 1) % (availableThemes.length - 1))}
+      onclick={() => ($theme = ($theme + 1) % availableThemes.length)}
       class="hover:cursor-pointer hover:scale-110 active:scale-100 duration-100 group"
       aria-label="settings"
     >
