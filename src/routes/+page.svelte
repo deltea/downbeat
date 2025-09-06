@@ -414,46 +414,53 @@
     <Popover.Content
       sideOffset={8}
       collisionPadding={32}
-      class="bg-surface-light rounded-lg w-[32rem] h-[30rem] shadow-lg"
+      class="bg-surface-light rounded-lg w-[32rem] h-[30rem] shadow-lg flex flex-col"
     >
       <h3 class="text-muted font-bold py-3 px-4">PROCESSING QUEUE</h3>
-      <ul class="flex flex-col gap-2 px-2">
-        {#each processingQueue as video}
-          <li class="p-2 flex gap-3 rounded-lg hover:bg-surface-0 duration-100 h-16 w-full">
-            {#if video.outputUrl}
-              <span class="h-full aspect-square bg-cover bg-center rounded-md" style:background-image="url('{video.gifSrc}')"></span>
-            {:else if video.output.state === "started"}
-              <span class="h-full aspect-square rounded-md bg-surface-0 flex justify-center items-center">
-                <iconify-icon icon="tdesign:loading" class="animate-spin text-base"></iconify-icon>
-              </span>
-            {/if}
+      <ul class="flex flex-col gap-2 px-2 grow">
+        {#if processingQueue.length === 0}
+          <div class="h-full flex flex-col gap-4 justify-center items-center text-muted">
+            <iconify-icon icon="mingcute:sad-fill" class="text-5xl"></iconify-icon>
+            <p>no items in queue</p>
+          </div>
+        {:else}
+          {#each processingQueue as video}
+            <li class="p-2 flex gap-3 rounded-lg hover:bg-surface-0 duration-100 h-16 w-full">
+              {#if video.outputUrl}
+                <span class="h-full aspect-square bg-cover bg-center rounded-md" style:background-image="url('{video.gifSrc}')"></span>
+              {:else if video.output.state === "started"}
+                <span class="h-full aspect-square rounded-md bg-surface-0 flex justify-center items-center">
+                  <iconify-icon icon="tdesign:loading" class="animate-spin text-base"></iconify-icon>
+                </span>
+              {/if}
 
-            <div class="flex flex-col grow justify-evenly">
-              <p class="flex gap-2 text-sm">
-                <span>{video.gifName}</span>
-                <span class="text-muted">x</span>
-                <span>{video.audioName}</span>
-              </p>
+              <div class="flex flex-col grow justify-evenly">
+                <p class="flex gap-2 text-sm">
+                  <span>{video.gifName}</span>
+                  <span class="text-muted">x</span>
+                  <span>{video.audioName}</span>
+                </p>
+
+                {#if video.outputUrl}
+                  <p class="text-muted">finished</p>
+                {:else if video.output.state === "started"}
+                  <p class="text-muted">processing...</p>
+                {/if}
+              </div>
 
               {#if video.outputUrl}
-                <p class="text-muted">finished</p>
-              {:else if video.output.state === "started"}
-                <p class="text-muted">processing...</p>
+                <!-- svelte-ignore a11y_consider_explicit_label -->
+                <a
+                  download="export.mp4"
+                  href={video.outputUrl}
+                  class="text-bg bg-fg flex justify-center items-center h-full aspect-square hover:scale-105 active:scale-100 duration-100 rounded-md cursor-pointer"
+                >
+                  <iconify-icon icon="mingcute:download-2-fill" class="text-lg"></iconify-icon>
+                </a>
               {/if}
-            </div>
-
-            {#if video.outputUrl}
-              <!-- svelte-ignore a11y_consider_explicit_label -->
-              <a
-                download="export.mp4"
-                href={video.outputUrl}
-                class="text-bg bg-fg flex justify-center items-center h-full aspect-square hover:scale-105 active:scale-100 duration-100 rounded-md cursor-pointer"
-              >
-                <iconify-icon icon="mingcute:download-2-fill" class="text-lg"></iconify-icon>
-              </a>
-            {/if}
-          </li>
-        {/each}
+            </li>
+          {/each}
+        {/if}
       </ul>
     </Popover.Content>
   </Popover.Portal>
