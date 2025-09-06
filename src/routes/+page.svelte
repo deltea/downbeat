@@ -353,6 +353,7 @@
             <!-- placeholder slider -->
             <Slider.Root
               type="single"
+              disabled
               value={0.5}
               min={0}
               step={0.5}
