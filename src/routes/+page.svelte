@@ -430,11 +430,9 @@
                 </span>
               {/if}
 
-              <div class="flex flex-col grow justify-evenly">
-                <p class="flex gap-2 text-sm">
-                  <span>{video.gifName}</span>
-                  <span class="text-muted">x</span>
-                  <span>{video.audioName}</span>
+              <div class="flex flex-col grow justify-evenly min-w-0">
+                <p class="text-sm overflow-hidden whitespace-nowrap overflow-ellipsis">
+                  {video.gifName}<span class="text-muted">{" x "}</span>{video.audioName}
                 </p>
 
                 {#if video.outputUrl}
