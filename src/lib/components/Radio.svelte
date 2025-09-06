@@ -1,16 +1,16 @@
 <script lang="ts">
   import { RadioGroup, type WithoutChildrenOrChild, useId } from "bits-ui";
 
-  type Item = {
-    value: number;
+  type Item<T = any> = {
+    value: T;
     label: string;
     disabled?: boolean;
   };
 
-  type Props = {
-    value: string;
+  type Props<T = any> = {
+    value: T;
     ref?: HTMLDivElement | null;
-    items: Item[];
+    items: Item<T>[];
     [key: string]: any;
   };
 
@@ -28,7 +28,7 @@
       {@const id = useId()}
       <RadioGroup.Item
         {id}
-        value={item.value.toString()}
+        value={item.value}
         disabled={item.disabled}
         class="text-fg data-[state=checked]:bg-fg data-[state=checked]:text-bg w-full py-2 rounded-md hover:bg-surface-0 hover:cursor-pointer data-[state=checked]:active:scale-95 duration-100"
       >

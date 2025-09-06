@@ -13,7 +13,7 @@
     <Tooltip.Content sideOffset={8}>
       <Tooltip.Arrow class="text-surface-0" />
 
-      <div class="bg-surface-0 py-2 px-4 rounded-lg text-sm relative">
+      <div class="bg-surface-0 py-2 px-4 rounded-lg text-sm relative z-50">
         {@render children()}
       </div>
     </Tooltip.Content>

@@ -5,10 +5,13 @@
   import { muted } from "$lib/stores";
   import { decompressFrames, parseGIF, type ParsedFrame } from "gifuct-js";
   import {
+    AudioBufferSource,
     BufferTarget,
     Mp4OutputFormat,
     Output,
+    QUALITY_MEDIUM,
     QUALITY_VERY_HIGH,
+    QUALITY_VERY_LOW,
     VideoSample,
     VideoSampleSource
   } from "mediabunny";
@@ -20,12 +23,17 @@
   import HelpTooltip from "$components/HelpTooltip.svelte";
 
   const SPEEDS = [
-    // { value: 0.0625, label: "0.0625x" },
     { value: 0.125, label: "0.125x" },
     { value: 0.25, label: "0.25x" },
     { value: 0.5, label: "0.5x" },
     { value: 1, label: "1x" },
     { value: 2, label: "2x" }
+  ];
+
+  const QUALITY = [
+    { value: QUALITY_VERY_LOW, label: "low" },
+    { value: QUALITY_MEDIUM, label: "medium" },
+    { value: QUALITY_VERY_HIGH, label: "high" }
   ];
 
   // audio stuff
@@ -43,10 +51,9 @@
   let gifFrames = $state<ParsedFrame[]>([]);
   let gifPlayer: GifPlayer | null = $state(null);
 
-  let speedMultiplierValue = $state("0.5");
-
-  let speedMultiplier = $derived(+speedMultiplierValue);
+  let speedMultiplier = $state(0.5);
   let frameOffset = $state(0);
+  let qualityValue = $state(QUALITY_MEDIUM);
 
   let exampleUrl = $state("");
 
@@ -102,7 +109,10 @@
   }
 
   async function onExport() {
-    if (!bpm || gifFrames.length === 0) return;
+    if (!bpm || gifFrames.length === 0 || !musicFile) return;
+
+    console.log(`exporting at ${qualityValue === QUALITY_VERY_LOW ? "low" : qualityValue === QUALITY_MEDIUM ? "medium" : "high"} quality...`);
+    const timeStart = performance.now();
 
     const video = new Output({
       format: new Mp4OutputFormat(),
@@ -115,15 +125,30 @@
       sizeChangeBehavior: "contain",
     });
 
+    const audioSource = new AudioBufferSource({
+      codec: "aac",
+      bitrate: qualityValue,
+    });
+
     video.addVideoTrack(sampleSource);
+    video.addAudioTrack(audioSource);
 
     await video.start();
 
+    // add audio
+    const audioBuffer = await audioCtx.decodeAudioData(await musicFile.arrayBuffer());
+    audioSource.add(audioBuffer);
+
+    // add video
     const secondsPerFrame = 1 / (bpm / 60) / gifFrames.length / speedMultiplier;
 
     let timestamp = 0;
     let index = 0;
-    while (timestamp < audioElement.duration) {
+    while (timestamp <= audioElement.duration) {
+      if (index === 0) {
+        console.log(Math.ceil(timestamp / audioElement.duration * 100) + "% done");
+      }
+
       const frame = gifFrames[index];
       const buffer = frame.patch;
       const sample = new VideoSample(buffer, {
@@ -140,7 +165,10 @@
       await sampleSource.add(sample);
     }
 
+    // finish video creation
     await video.finalize();
+
+    console.log(`export finished in ${Math.round((performance.now() - timeStart) / 1000)}s`);
 
     const file = video.target.buffer;
     if (!file) throw new Error("No file generated");
@@ -245,7 +273,7 @@
           </p>
 
           <!-- speed multiplier radio -->
-          <Radio items={SPEEDS} name="speed-multiplier" bind:value={speedMultiplierValue} />
+          <Radio items={SPEEDS} name="speed-multiplier" bind:value={speedMultiplier} />
         </div>
 
         <div>
@@ -306,10 +334,21 @@
 
               <Slider.Thumb
                 index={0}
-                class="size-6 bg-muted outline-none rounded-full duration-100 z-10"
+                class="size-6 bg-muted outline-none rounded-full duration-100"
               />
             </Slider.Root>
           {/if}
+        </div>
+
+        <div>
+          <!-- label -->
+          <p class="mb-4 flex gap-3">
+            <span class="font-bold">EXPORT QUALITY</span>
+            <HelpTooltip>This controls how high quality the output video is, lower quality exports faster.</HelpTooltip>
+          </p>
+
+          <!-- speed multiplier radio -->
+          <Radio items={QUALITY} name="quality" bind:value={qualityValue} />
         </div>
       </div>
 
