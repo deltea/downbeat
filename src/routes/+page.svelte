@@ -140,7 +140,8 @@
     audioSource.add(audioBuffer);
 
     // add video
-    const secondsPerFrame = 1 / (bpm / 60) / gifFrames.length / speedMultiplier;
+    const frames = gifFrames;
+    const secondsPerFrame = 1 / (bpm / 60) / frames.length / speedMultiplier;
 
     let timestamp = 0;
     let index = 0;
@@ -149,7 +150,7 @@
         console.log(Math.ceil(timestamp / audioElement.duration * 100) + "% done");
       }
 
-      const frame = gifFrames[index];
+      const frame = frames[index];
       const buffer = frame.patch;
       const sample = new VideoSample(buffer, {
         format: "RGBA",
@@ -159,7 +160,7 @@
         duration: secondsPerFrame,
       });
 
-      index = (index + 1) % gifFrames.length;
+      index = (index + 1) % frames.length;
       timestamp += secondsPerFrame;
 
       await sampleSource.add(sample);
