@@ -131,14 +131,14 @@
 
     const queueIndex = processingQueue.length;
     processingQueue = [
-      ...processingQueue,
       {
         gifSrc: gifSrc!,
         gifName: gifFile!.name,
         audioName: musicFile.name,
         outputUrl: null,
         output: video,
-      }
+      },
+      ...processingQueue,
     ];
     processingQueueOpen = true;
 
@@ -167,7 +167,7 @@
     const secondsPerFrame = 1 / (bpm / 60) / frames.length / speedMultiplier;
 
     let timestamp = 0;
-    let index = 0;
+    let index = frameOffset % frames.length;
     while (timestamp <= audioElement.duration) {
       if (index === 0) {
         console.log(Math.ceil(timestamp / audioElement.duration * 100) + "% done");
@@ -224,10 +224,6 @@
     });
   });
 </script>
-
-<!-- <video src={exampleUrl} class="absolute left-0 top-0 z-20" controls>
-  <track kind="captions" />
-</video> -->
 
 <div class="grow flex flex-col items-center py-16 gap16 relative">
   <!-- top row -->
