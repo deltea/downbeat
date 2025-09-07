@@ -1,6 +1,7 @@
 # todo
 
 - fix certain gifs
+- fix export queue
 - fix offset option markers
 - add export progress bar
 - add settings modal

@@ -132,14 +132,14 @@
 
     const queueIndex = processingQueue.length;
     processingQueue = [
+      ...processingQueue,
       {
         gifSrc: gifSrc!,
         gifName: gifFile!.name,
         audioName: musicFile.name,
         outputUrl: null,
         output: video,
-      },
-      ...processingQueue,
+      }
     ];
     processingQueueOpen = true;
 
@@ -200,6 +200,7 @@
     const blob = new Blob([file], { type: "video/mp4" });
     const url = URL.createObjectURL(blob);
 
+    console.log(queueIndex);
     processingQueue[queueIndex].outputUrl = url;
     processingQueueOpen = true;
 
