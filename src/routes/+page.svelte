@@ -4,6 +4,7 @@
   import { extractBPM, extractCoverImage } from "$lib";
   import { muted } from "$lib/stores";
   import { decompressFrames, parseGIF, type ParsedFrame } from "gifuct-js";
+  import { loop } from "$lib/utils";
   import {
     AudioBufferSource,
     BufferTarget,
@@ -21,7 +22,6 @@
   import FilePicker from "$components/FilePicker.svelte";
   import GifPlayer from "$components/GifPlayer.svelte";
   import HelpTooltip from "$components/HelpTooltip.svelte";
-    import { loop } from "$lib/utils";
 
   interface OutputItem {
     gifSrc: string;
@@ -29,6 +29,7 @@
     audioName: string;
     outputUrl: string | null;
     output: Output;
+    progress: number;
   }
 
   const SPEEDS = [
@@ -139,6 +140,7 @@
         audioName: musicFile.name,
         outputUrl: null,
         output: video,
+        progress: 0,
       }
     ];
     processingQueueOpen = true;
@@ -171,6 +173,7 @@
     let index = loop(frameOffset, 0, frames.length - 1);
     while (timestamp <= audioElement.duration) {
       if (index === 0) {
+        processingQueue[queueIndex].progress = Math.ceil(timestamp / audioElement.duration * 100);
         console.log(Math.ceil(timestamp / audioElement.duration * 100) + "% done");
       }
 
@@ -433,14 +436,19 @@
               {/if}
 
               <div class="flex flex-col grow justify-evenly min-w-0">
-                <p class="text-sm overflow-hidden whitespace-nowrap overflow-ellipsis">
+                <p class="textsm overflow-hidden whitespace-nowrap overflow-ellipsis">
                   {video.gifName}<span class="text-muted">{" x "}</span>{video.audioName}
                 </p>
 
                 {#if video.outputUrl}
-                  <p class="text-muted">finished</p>
+                  <p class="text-muted text-sm">finished</p>
                 {:else if video.output.state === "started"}
-                  <p class="text-muted">processing...</p>
+                  <div class="grow flex gap-2 items-center justifycenter">
+                    <span class="text-sm text-muted">{video.progress}%</span>
+                    <div class="grow bg-surface-0 rounded-md h-2">
+                      <div class="bg-fg h-full rounded-md duration-100" style:width="{video.progress}%"></div>
+                    </div>
+                  </div>
                 {/if}
               </div>
 
