@@ -307,9 +307,13 @@
 
         <div>
           <!-- label -->
-          <p class="mb-4 flex gap-3">
-            <span class="font-bold">FRAME OFFSET</span>
-            <HelpTooltip>This controls how many frames the gif is offset by, change this to position the beat drop.</HelpTooltip>
+          <p class="mb-4 flex gap3 justify-between">
+            <span class="flex gap-3">
+              <span class="font-bold">FRAME OFFSET</span>
+              <HelpTooltip>This controls how many frames the gif is offset by, change this to position the beat drop.</HelpTooltip>
+            </span>
+
+            <span class="text-fg">+{frameOffset}</span>
           </p>
 
           <!-- audio offset slider -->
@@ -317,9 +321,9 @@
             <Slider.Root
               type="single"
               bind:value={frameOffset}
-              min={-gifFrames.length / 2}
+              min={0}
               step={1}
-              max={gifFrames.length / 2}
+              max={gifFrames.length}
               class="relative flex items-center w-full hover:cursor-grab active:cursor-grabbing group"
             >
               {#snippet children({ tickItems })}
@@ -336,15 +340,11 @@
 
             <div class="w-full flex justify-between text-muted mt-4 text-sm">
               <span class="w-1/2 flex flex-col gap-1 items-start">
-                <span>{-gifFrames.length / 2}</span>
-              </span>
-
-              <span class="flex flex-col gap-1 items-center">
-                <span>0</span>
+                <span>+0</span>
               </span>
 
               <span class="w-1/2 flex flex-col gap-1 items-end">
-                <span>{gifFrames.length / 2}</span>
+                <span>+{gifFrames.length}</span>
               </span>
             </div>
           {:else}
