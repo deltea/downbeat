@@ -21,6 +21,7 @@
   import FilePicker from "$components/FilePicker.svelte";
   import GifPlayer from "$components/GifPlayer.svelte";
   import HelpTooltip from "$components/HelpTooltip.svelte";
+    import { loop } from "$lib/utils";
 
   interface OutputItem {
     gifSrc: string;
@@ -167,7 +168,7 @@
     const secondsPerFrame = 1 / (bpm / 60) / frames.length / speedMultiplier;
 
     let timestamp = 0;
-    let index = frameOffset % frames.length;
+    let index = loop(frameOffset, 0, frames.length - 1);
     while (timestamp <= audioElement.duration) {
       if (index === 0) {
         console.log(Math.ceil(timestamp / audioElement.duration * 100) + "% done");
