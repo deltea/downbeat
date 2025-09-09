@@ -15,6 +15,9 @@
   --spacing-progress: 8rem;
   --spacing-content: 32rem;
 
+  /* --drop-shadow-base: 0 4px 6px rgb(0 0 0 / 0.1); */
+  --drop-shadow-base: 0 5px 3px rgb(0 0 0 / 0.15);
+
   --dashed-border-src: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='4' ry='4' stroke='%23444' stroke-width='5' stroke-dasharray='10%2c 10' stroke-dashoffset='0' stroke-linecap='square'/%3e%3c/svg%3e");
 }
 

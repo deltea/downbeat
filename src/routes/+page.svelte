@@ -415,7 +415,7 @@
     <Popover.Content
       sideOffset={8}
       collisionPadding={32}
-      class="bg-surface-light rounded-lg w-[32rem] h-[30rem] shadow-lg flex flex-col"
+      class="bg-surface-light rounded-lg w-[32rem] h-[30rem] drop-shadow-base flex flex-col"
     >
       <h3 class="text-muted font-bold py-3 px-4">PROCESSING QUEUE</h3>
       <ul class="flex flex-col gap-2 px-2 grow">

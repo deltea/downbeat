@@ -1,5 +1,6 @@
 <script lang="ts">
   import { Tooltip } from "bits-ui";
+  import { fly } from "svelte/transition";
 
   let { children } = $props();
 </script>
@@ -10,12 +11,21 @@
       <iconify-icon icon="mingcute:information-fill" class="text-lg"></iconify-icon>
     </Tooltip.Trigger>
 
-    <Tooltip.Content sideOffset={8} class="shadow-lg">
-      <Tooltip.Arrow class="text-surface-0" />
+    <Tooltip.Content forceMount sideOffset={8} class="drop-shadow-base">
+      {#snippet child({ wrapperProps, props, open })}
+        {#if open}
+          <div {...wrapperProps}>
+            <div {...props} transition:fly={{ y: 8, duration: 100 }}>
+              <Tooltip.Arrow class="text-surface-light" />
 
-      <div class="bg-surface-light py-2 px-4 rounded-lg text-sm relative z-50">
-        {@render children()}
-      </div>
+              <div class="bg-surface-light py-2 px-4 rounded-lg text-sm relative z-50">
+                {@render children()}
+              </div>
+            </div>
+          </div>
+        {/if}
+      {/snippet}
+
     </Tooltip.Content>
   </Tooltip.Root>
 </Tooltip.Provider>
