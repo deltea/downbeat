@@ -23,6 +23,7 @@
   import FilePicker from "$components/FilePicker.svelte";
   import GifPlayer from "$components/GifPlayer.svelte";
   import HelpTooltip from "$components/HelpTooltip.svelte";
+  import NumberPicker from "$components/NumberPicker.svelte";
 
   interface OutputItem {
     gifSrc: string;
@@ -298,6 +299,17 @@
 
     <div class="dashed border3 border-surface-0 h-full flex flex-col justify-between grow rounded-md p-8 bg-bg max-w-[50rem] min-w-[30rem]">
       <div class="flex flex-col gap-12">
+        <div>
+          <!-- label -->
+          <p class="mb-4 flex gap-3">
+            <span class="font-bold">BPM</span>
+            <HelpTooltip>Manually change this if the BPM is off.</HelpTooltip>
+          </p>
+
+          <!-- bpm picker -->
+          <NumberPicker bind:value={bpm} />
+        </div>
+
         <div>
           <!-- label -->
           <p class="mb-4 flex gap-3">
