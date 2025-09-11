@@ -1,8 +1,9 @@
 # todo
 
+- [ ] bpm picker/editor
+- [ ] fix funny circuit line thingies
+- [x] fix certain gifs not exporting
 - [x] fix export queue
-- [ ] fix certain gifs
 - [x] fix offset option markers
 - [x] add export progress bar
-- [ ] add svelte transitions to all the bits ui components
-- [ ] bpm picker/editor
+- [x] add svelte transitions to all the bits ui components

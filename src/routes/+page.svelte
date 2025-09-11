@@ -5,6 +5,7 @@
   import { muted } from "$lib/stores";
   import { decompressFrames, parseGIF, type ParsedFrame } from "gifuct-js";
   import { loop } from "$lib/utils";
+  import { fly } from "svelte/transition";
   import {
     AudioBufferSource,
     BufferTarget,
@@ -22,7 +23,6 @@
   import FilePicker from "$components/FilePicker.svelte";
   import GifPlayer from "$components/GifPlayer.svelte";
   import HelpTooltip from "$components/HelpTooltip.svelte";
-    import { fly } from "svelte/transition";
 
   interface OutputItem {
     gifSrc: string;
@@ -147,8 +147,8 @@
     processingQueueOpen = true;
 
     const sampleSource = new VideoSampleSource({
-      codec: "avc",
-      bitrate: QUALITY_VERY_HIGH,
+      codec: "av1",
+      bitrate: qualityValue,
       sizeChangeBehavior: "contain",
     });
 
