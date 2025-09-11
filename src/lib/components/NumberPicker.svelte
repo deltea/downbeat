@@ -29,7 +29,7 @@
       max={300}
     />
   {:else}
-    <p class="border-y-3 border-surface text-center grow flex items-center justify-center text-muted">no bpm</p>
+    <p class="border-y-3 border-surface text-center grow flex items-center justify-center text-muted">no bpm detected</p>
   {/if}
 
   <button onclick={() => changeValue(1)} class="bg-surface hover:bg-surface-0 size-11 rounded-r-md flex justify-center text-lg items-center cursor-pointer active:scale-95 duration-100 font-bold">
