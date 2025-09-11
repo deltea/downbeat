@@ -302,7 +302,7 @@
         <div>
           <!-- label -->
           <p class="mb-4 flex gap-3">
-            <span class="font-bold">BPM</span>
+            <span class="font-bold">MUSIC BPM</span>
             <HelpTooltip>Manually change this if the BPM is off.</HelpTooltip>
           </p>
 
@@ -398,10 +398,10 @@
         </div>
       </div>
 
-      <div class="flex gap-4">
+      <div class="flex flex-col gap-4">
         <button
           onclick={restartPreview}
-          class="inline-flex justify-center items-center gap-2 font-bold rounded-md bg-surface-0 w-1/2 py-2.5 text-fg cursor-pointer hover:scale-[102%] active:scale-100 duration-100"
+          class="inline-flex justify-center items-center gap-2 font-bold rounded-md bg-surface-0 w1/2 py-2.5 text-fg cursor-pointer hover:scale-[102%] active:scale-100 duration-100"
         >
           <iconify-icon icon="mingcute:refresh-3-fill" class="text-xl"></iconify-icon>
           restart preview
@@ -409,7 +409,7 @@
 
         <button
           onclick={onExport}
-          class="inline-flex justify-center items-center gap-2 font-bold rounded-md bg-fg w-1/2 py-2.5 text-bg cursor-pointer hover:scale-[102%] active:scale-100 duration-100"
+          class="inline-flex justify-center items-center gap-2 font-bold rounded-md bg-fg w1/2 py-2.5 text-bg cursor-pointer hover:scale-[102%] active:scale-100 duration-100"
         >
           <iconify-icon icon="mingcute:share-forward-fill" class="text-xl"></iconify-icon>
           export

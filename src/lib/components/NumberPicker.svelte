@@ -19,7 +19,15 @@
   </button>
 
   {#if value}
-    <input bind:value type="number" name="bpm" id="bpm" class="border-y-3 border-surface text-center grow outline-none">
+    <input
+      bind:value
+      type="number"
+      name="bpm"
+      id="bpm"
+      class="border-y-3 border-surface text-center grow outline-none"
+      min={20}
+      max={300}
+    />
   {:else}
     <p class="border-y-3 border-surface text-center grow flex items-center justify-center text-muted">no bpm</p>
   {/if}

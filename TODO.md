@@ -1,7 +1,7 @@
 # todo
 
-- [ ] bpm picker/editor
 - [ ] fix funny circuit line thingies
+- [x] bpm picker/editor
 - [x] fix certain gifs not exporting
 - [x] fix export queue
 - [x] fix offset option markers
