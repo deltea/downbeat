@@ -297,8 +297,8 @@
       <path d="M4 300 L60 300" style="fill: none; stroke: var(--color-surface); stroke-width: 3" />
     </svg>
 
-    <div class="dashed border3 border-surface-0 h-full flex flex-col justify-between grow rounded-md p-8 bg-bg max-w-[50rem] min-w-[30rem]">
-      <div class="flex flex-col gap-12">
+    <div class="dashed border3 border-surface-0 h-full flex flex-col justify-between grow rounded-md px-6 pb-6 bg-bg max-w-[50rem] min-w-[30rem]">
+      <div class="flex flex-col gap-11 overflow-y-scroll py-6 grow h-0">
         <div>
           <!-- label -->
           <p class="mb-4 flex gap-3">
@@ -398,7 +398,7 @@
         </div>
       </div>
 
-      <div class="flex flex-col gap-4">
+      <div class="flex flex-col gap-4 pt-6">
         <button
           onclick={restartPreview}
           class="inline-flex justify-center items-center gap-2 font-bold rounded-md bg-surface-0 w1/2 py-2.5 text-fg cursor-pointer hover:scale-[102%] active:scale-100 duration-100"
