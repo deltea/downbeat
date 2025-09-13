@@ -1,10 +1,11 @@
 # todo
 
-- [ ] fix funny circuit line thingies
 - [ ] fix export syncing issues and cropping
-- [ ] add mobile suppport
 - [ ] add fix start offset syncing
 - [ ] add auto speed setting
+- [ ] add mobile suppport
+- [ ] fix certain gifs corrupted export
+- [ ] fix funny circuit line thingies
 - [x] bpm picker/editor
 - [x] fix certain gifs not exporting
 - [x] fix export queue
