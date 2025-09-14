@@ -196,7 +196,6 @@
       });
 
       index = (index + 1) % frames.length;
-      // timestamp = secondsPerFrame * frameCount;
 
       await sampleSource.add(sample);
     }
