@@ -1,11 +1,12 @@
 # todo
 
+- [ ] "gif x song" export file name
 - [ ] fix export syncing issues and cropping
-- [ ] add fix start offset syncing
 - [ ] add auto speed setting
 - [ ] add mobile suppport
 - [ ] fix certain gifs corrupted export
 - [ ] fix funny circuit line thingies
+- [o] add fix start offset syncing
 - [x] bpm picker/editor
 - [x] fix certain gifs not exporting
 - [x] fix export queue

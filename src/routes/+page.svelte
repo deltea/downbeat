@@ -81,6 +81,8 @@
 
     gifFrames = await readGif(file);
     console.log("gif loaded");
+
+    restartPreview();
   }
 
   async function onMusicUpload(file: File) {
@@ -148,7 +150,7 @@
     processingQueueOpen = true;
 
     const sampleSource = new VideoSampleSource({
-      codec: "av1",
+      codec: "avc",
       bitrate: qualityValue,
       sizeChangeBehavior: "contain",
     });
