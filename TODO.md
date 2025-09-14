@@ -1,9 +1,12 @@
 # todo
 
-- [ ] fix export syncing issues and cropping
+- [ ] fix export cropping issues
+- [ ] fix export quality bad
+- [ ] actually learn how time signatures work
 - [ ] add auto speed setting
 - [ ] add mobile suppport
 - [ ] fix certain gifs corrupted export
+- [x] fix export syncing issues
 - [x] fix funny circuit line thingies
 - [x] "gif x song" export file name
 - [o] add fix start offset syncing

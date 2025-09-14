@@ -175,7 +175,11 @@
 
     let timestamp = 0;
     let index = loop(frameOffset, 0, frames.length - 1);
-    while (timestamp <= audioElement.duration) {
+    const frameCount = Math.floor(audioElement.duration / secondsPerFrame);
+    for (let i = 0; i < frameCount; i++) {
+      timestamp = i * secondsPerFrame;
+
+      // update progress bar
       if (index === 0) {
         processingQueue[queueIndex].progress = Math.ceil(timestamp / audioElement.duration * 100);
         console.log(Math.ceil(timestamp / audioElement.duration * 100) + "% done");
@@ -192,7 +196,7 @@
       });
 
       index = (index + 1) % frames.length;
-      timestamp += secondsPerFrame;
+      // timestamp = secondsPerFrame * frameCount;
 
       await sampleSource.add(sample);
     }
