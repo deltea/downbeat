@@ -140,8 +140,8 @@
       ...processingQueue,
       {
         gifSrc: gifSrc!,
-        gifName: gifFile!.name,
-        audioName: musicFile.name,
+        gifName: gifFile!.name.split(".").slice(0, -1).join("."),
+        audioName: musicFile.name.split(".").slice(0, -1).join("."),
         outputUrl: null,
         output: video,
         progress: 0,
@@ -475,7 +475,7 @@
                       {#if video.outputUrl}
                         <!-- svelte-ignore a11y_consider_explicit_label -->
                         <a
-                          download="export.mp4"
+                          download={`${video.gifName} x ${video.audioName}.mp4`}
                           href={video.outputUrl}
                           class="text-bg bg-fg flex justify-center items-center h-full aspect-square hover:scale-105 active:scale-100 duration-100 rounded-md cursor-pointer"
                         >
