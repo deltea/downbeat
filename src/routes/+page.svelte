@@ -125,7 +125,7 @@
   }
 
   async function onExport() {
-    if (!bpm || gifFrames.length === 0 || !musicFile) return;
+    if (!bpm || gifFrames.length === 0 || !musicFile || !gifFile || !gifSrc) return;
 
     console.log(`exporting at ${qualityValue === QUALITY_VERY_LOW ? "low" : qualityValue === QUALITY_MEDIUM ? "medium" : "high"} quality...`);
     const timeStart = performance.now();
@@ -139,8 +139,8 @@
     processingQueue = [
       ...processingQueue,
       {
-        gifSrc: gifSrc!,
-        gifName: gifFile!.name.split(".").slice(0, -1).join("."),
+        gifSrc: gifSrc,
+        gifName: gifFile.name.split(".").slice(0, -1).join("."),
         audioName: musicFile.name.split(".").slice(0, -1).join("."),
         outputUrl: null,
         output: video,
@@ -274,10 +274,12 @@
   </div>
 
   <!-- connector lines -->
-  <svg height="64" width="100%" xmlns="http://www.w3.org/2000/svg">
+  <div class="flex justify-center w-full">
+    <svg height="64" width="85rem" xmlns="http://www.w3.org/2000/svg">
     <path d="M400 4 L400 22 Q400 26 396 26 L254 26 Q250 26 250 31 L250 60" style="fill: none; stroke: var(--color-surface); stroke-width: 3" />
     <path d="M1010 4 L1010 42 Q1010 46 1006 46 L274 46 Q270 46 270 50 L270 60" style="fill: none; stroke: var(--color-surface); stroke-width: 3" />
-  </svg>
+    </svg>
+  </div>
 
   <!-- bottom row -->
   <div class="flex justify-center gap16 w-full grow">
@@ -295,9 +297,11 @@
     </div>
 
     <!-- connector line -->
-    <svg height="100%" width="64" xmlns="http://www.w3.org/2000/svg">
-      <path d="M4 300 L60 300" style="fill: none; stroke: var(--color-surface); stroke-width: 3" />
-    </svg>
+    <div class="flex flex-col justify-center">
+      <svg height="16" width="64" xmlns="http://www.w3.org/2000/svg">
+        <path d="M4 8 L60 8" style="fill: none; stroke: var(--color-surface); stroke-width: 3" />
+      </svg>
+    </div>
 
     <div class="dashed border3 border-surface-0 h-full flex flex-col justify-between grow rounded-md px-6 pb-6 bg-bg max-w-[50rem] min-w-[30rem]">
       <div class="flex flex-col gap-11 overflow-y-scroll py-6 grow h-0">
