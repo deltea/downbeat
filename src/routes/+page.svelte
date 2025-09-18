@@ -35,7 +35,8 @@
   }
 
   const SPEEDS = [
-    { value: 0.125, label: "0.125x" },
+    { value: 0, label: "auto" },
+    // { value: 0.125, label: "0.125x" },
     { value: 0.25, label: "0.25x" },
     { value: 0.5, label: "0.5x" },
     { value: 1, label: "1x" },
@@ -47,6 +48,13 @@
     { value: QUALITY_MEDIUM, label: "medium" },
     { value: QUALITY_VERY_HIGH, label: "high" }
   ];
+
+  const CODECS = [
+    { value: "av1", label: "AV1" },
+    { value: "avc", label: "AVC" }
+  ];
+
+  const idealBeatDuration = 500;
 
   // audio stuff
   let audioElement: HTMLAudioElement;
@@ -61,11 +69,14 @@
   let gifFile: File | null = $state(null);
   let gifSrc: string | null = $state(null);
   let gifFrames = $state<ParsedFrame[]>([]);
+  let gifDuration: number = $state(0);
   let gifPlayer: GifPlayer | null = $state(null);
 
-  let speedMultiplier = $state(0.5);
+  let autoSpeedMultiplier = $state(0);
+  let speedMultiplier = $state(0);
   let frameOffset = $state(0);
   let qualityValue = $state(QUALITY_MEDIUM);
+  let codecValue = $state<"av1" | "avc" | "hevc" | "vp9" | "vp8">("av1");
 
   let exampleUrl = $state("");
   let processingQueueOpen = $state(false);
@@ -101,6 +112,10 @@
     isLoadingBPM = false;
   }
 
+  function getGifDuration(frames: ParsedFrame[]) {
+    return frames.reduce((acc, frame) => acc + frame.delay, 0);
+  }
+
   function readGif(gif: File): Promise<ParsedFrame[]> {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -108,6 +123,11 @@
         const buffer = e.target?.result as ArrayBuffer;
         const data = parseGIF(buffer);
         const frames = decompressFrames(data, true);
+
+        gifDuration = getGifDuration(frames);
+        const num = idealBeatDuration / gifDuration;
+        autoSpeedMultiplier = Math.pow(2, Math.round(Math.log2(num)));
+        console.log(autoSpeedMultiplier);
 
         resolve(frames);
       };
@@ -150,7 +170,7 @@
     processingQueueOpen = true;
 
     const sampleSource = new VideoSampleSource({
-      codec: "avc",
+      codec: codecValue,
       bitrate: qualityValue,
       sizeChangeBehavior: "contain",
     });
@@ -290,7 +310,7 @@
       {#if gifFile && bpm}
         <GifPlayer
           bind:this={gifPlayer}
-          frameDuration={1 / (bpm / 60) / gifFrames.length / speedMultiplier * 1000}
+          frameDuration={1 / (bpm / 60) / gifFrames.length / (speedMultiplier == 0 ? autoSpeedMultiplier : speedMultiplier) * 1000}
           offset={frameOffset}
           frames={gifFrames}
         />
@@ -405,6 +425,17 @@
           <!-- speed multiplier radio -->
           <Radio items={QUALITY} name="quality" bind:value={qualityValue} />
         </div>
+
+        <div>
+          <!-- label -->
+          <p class="mb-4 flex gap-3">
+            <span class="font-bold">VIDEO CODEC</span>
+            <HelpTooltip>This controls what video codec the exported video will use.</HelpTooltip>
+          </p>
+
+          <!-- codec radio -->
+          <Radio items={CODECS} name="codec" bind:value={codecValue} />
+        </div>
       </div>
 
       <div class="flex flex-col gap-4 pt-6">
@@ -438,7 +469,7 @@
       forceMount
       sideOffset={10}
       collisionPadding={32}
-      class="bg-surface-light rounded-lg w-[32rem] h-[30rem] drop-shadow-base flex flex-col"
+      class="bg-surface-light rounded-lg w-[32rem] h-[30rem] drop-shadow-base flex flex-col overflow-scroll"
     >
       {#snippet child({ wrapperProps, props, open })}
         {#if open}

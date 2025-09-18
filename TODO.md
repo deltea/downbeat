@@ -1,11 +1,14 @@
 # todo
 
+- [ ] fix certain gifs not exporting
+- [ ] fix gif
 - [ ] fix export cropping issues
 - [ ] fix export quality bad
 - [ ] actually learn how time signatures work
 - [ ] add auto speed setting
 - [ ] add mobile suppport
-- [ ] fix certain gifs not exporting
+- [ ] unfuk the code
+
 - [x] fix certain gifs corrupted export
 - [x] fix export syncing issues
 - [x] fix funny circuit line thingies
