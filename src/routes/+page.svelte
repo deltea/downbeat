@@ -24,6 +24,7 @@
   import GifPlayer from "$components/GifPlayer.svelte";
   import HelpTooltip from "$components/HelpTooltip.svelte";
   import NumberPicker from "$components/NumberPicker.svelte";
+    import toast from "svelte-french-toast";
 
   interface OutputItem {
     gifSrc: string;
@@ -236,6 +237,7 @@
 
     console.log(url);
     exampleUrl = url;
+    toast.success("export complete!");
   }
 
   onMount(() => {
