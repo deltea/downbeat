@@ -4,11 +4,14 @@
 - [ ] fix gif
 - [ ] fix export cropping issues
 - [ ] fix export quality bad
-- [ ] actually learn how time signatures work
-- [ ] add auto speed setting
+
+### maybe
 - [ ] add mobile suppport
 - [ ] unfuk the code
 
+### done
+- [x] add auto speed setting
+- [x] actually learn how time signatures work
 - [x] fix certain gifs corrupted export
 - [x] fix export syncing issues
 - [x] fix funny circuit line thingies
