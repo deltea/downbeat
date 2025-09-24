@@ -23,23 +23,15 @@ export const themes: Themes = {
   "nord": {
     bg: "#2e3440",
     surface: "#3b4252",
-    surfaceLight: "#333",
+    surfaceLight: "#3f4454",
     surface0: "#434c5e",
     fg: "#eceff4",
     muted: "#d8dee9"
   },
-  "tokyo-night": {
-    bg: "#1a1b26",
-    surface: "#24283b",
-    surfaceLight: "#333",
-    surface0: "#303446",
-    fg: "#c0caf5",
-    muted: "#a9b1d6"
-  },
   "everforest": {
     bg: "#2D353B",
     surface: "#3D484D",
-    surfaceLight: "#333",
+    surfaceLight: "#464F52",
     surface0: "#4F585E",
     fg: "#D3C7AA",
     muted: "#859289"
@@ -47,7 +39,7 @@ export const themes: Themes = {
   "catppuccin": {
     bg: "#1e1e2e",
     surface: "#313244",
-    surfaceLight: "#333",
+    surfaceLight: "#363a4f",
     surface0: "#45475a",
     fg: "#cdd6f4",
     muted: "#a6adc8"
@@ -55,17 +47,9 @@ export const themes: Themes = {
   "gruvbox": {
     bg: "#282828",
     surface: "#32302f",
-    surfaceLight: "#333",
+    surfaceLight: "#3c3836",
     surface0: "#3c3836",
     fg: "#ebdbb2",
     muted: "#928374"
   },
-  "solarized": {
-    bg: "#002b36",
-    surface: "#073642",
-    surfaceLight: "#333",
-    surface0: "#586e75",
-    fg: "#839496",
-    muted: "#93a1a1"
-  }
 }

@@ -75,7 +75,7 @@
   let processingQueueOpen = $state(false);
   let processingQueue = $state<OutputItem[]>([]);
 
-  muted.subscribe((value) => {
+  muted.subscribe(value => {
     if (audioElement) audioElement.muted = value;
   });
 
@@ -84,7 +84,6 @@
     gifSrc = URL.createObjectURL(file);
 
     gifFrames = await readGif(file);
-    console.log("gif loaded");
 
     restartPreview();
   }
@@ -184,7 +183,7 @@
 
     // add video
     const frames = gifFrames;
-    const secondsPerFrame = 1 / (bpm / 60) / frames.length / speedMultiplier;
+    const secondsPerFrame = 1 / (bpm / 60) / frames.length / (speedMultiplier == 0 ? autoSpeedMultiplier : speedMultiplier);
 
     let timestamp = 0;
     let index = loop(frameOffset, 0, frames.length - 1);
@@ -228,7 +227,12 @@
 
     console.log(url);
     exampleUrl = url;
-    toast.success("export complete!");
+    toast.success("export complete!", {
+      iconTheme: {
+        primary: "var(--color-bg)",
+        secondary: "var(--color-fg)"
+      }
+    });
   }
 
   onMount(() => {
@@ -453,5 +457,4 @@
 </div>
 
 <ProcessingQueue bind:open={processingQueueOpen} queue={processingQueue} />
-
 <Nav {bpm} />
