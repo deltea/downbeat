@@ -10,6 +10,7 @@
   import {
     AudioBufferSource,
     BufferTarget,
+    CanvasSource,
     Mp4OutputFormat,
     Output,
     QUALITY_MEDIUM,
@@ -64,6 +65,7 @@
   let gifFrames = $state<ParsedFrame[]>([]);
   let gifDuration: number = $state(0);
   let gifPlayer: GifPlayer | null = $state(null);
+  let gifPlayerCanvas: HTMLCanvasElement;
 
   let autoSpeedMultiplier = $state(0);
   let speedMultiplier = $state(0);
@@ -161,7 +163,12 @@
     ];
     processingQueueOpen = true;
 
-    const sampleSource = new VideoSampleSource({
+    // const sampleSource = new VideoSampleSource({
+    //   codec: codecValue,
+    //   bitrate: qualityValue,
+    //   sizeChangeBehavior: "contain",
+    // });
+    const sampleSource = new CanvasSource(gifPlayerCanvas, {
       codec: codecValue,
       bitrate: qualityValue,
       sizeChangeBehavior: "contain",
@@ -209,7 +216,7 @@
 
       index = (index + 1) % frames.length;
 
-      await sampleSource.add(sample);
+      await sampleSource.add(timestamp, secondsPerFrame);
     }
 
     await video.finalize();
@@ -310,6 +317,7 @@
           frameDuration={1 / (bpm / 60) / gifFrames.length / (speedMultiplier == 0 ? autoSpeedMultiplier : speedMultiplier) * 1000}
           offset={frameOffset}
           frames={gifFrames}
+          bind:canvas={gifPlayerCanvas}
         />
       {:else}
         PREVIEW HERE

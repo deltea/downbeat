@@ -1,12 +1,14 @@
 # todo
 
-- [ ] fix certain gifs not exporting
-- [ ] fix gif
 - [ ] fix export cropping issues
 - [ ] fix export quality bad
+- [ ] fix certain gifs not exporting
+- [ ] fix gif preview
 
 ### maybe
+- [ ] auto speed multiplier adjustments
 - [ ] add mobile suppport
+- [ ] fix layout of preview (adjustable size)
 - [ ] unfuk the code
 
 ### done

@@ -3,13 +3,14 @@
   import { onMount } from "svelte";
   import { loop } from "$lib/utils";
 
-  let { frameDuration, offset, frames }: {
+  let { frameDuration, offset, frames, canvas = $bindable() }: {
     frameDuration: number,
     offset: number,
-    frames: ParsedFrame[]
+    frames: ParsedFrame[],
+    canvas: HTMLCanvasElement
   } = $props();
 
-  let canvas: HTMLCanvasElement;
+  // let canvas: HTMLCanvasElement;
   let ctx: CanvasRenderingContext2D;
 
   let frameIndex = $state(0);
@@ -87,6 +88,12 @@
     needsDisposal = false;
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    for (let i = 0; i < frames.length; i++) {
+      const frame = frames[i];
+      frameImageData = bufferCtx.createImageData(frame.dims.width, frame.dims.height);
+      frameImageData.data.set(frame.patch);
+      ctx.putImageData(frameImageData, frame.dims.left, frame.dims.top);
+    }
   }
 
   onMount(async () => {
