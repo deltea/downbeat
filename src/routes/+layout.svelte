@@ -10,10 +10,8 @@
   <title>downbeat</title>
 </svelte:head>
 
-<div class="h-screen flex flex-col items-center">
-  <main class="w2/3 w-full px-32 flex grow h-full mb-nav">
-    {@render children()}
-  </main>
-</div>
+<main class="h-screen flex flex-col items-center">
+  {@render children()}
+</main>
 
 <Toaster position="bottom-center" />

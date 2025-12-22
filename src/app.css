@@ -22,7 +22,7 @@
 }
 
 body {
-  @apply bg-bg text-fg font-mono text-base selection:bg-fg selection:text-bg;
+  @apply bg-bg text-fg font-mono text-sm selection:bg-fg selection:text-bg;
 }
 
 canvas {
@@ -34,7 +34,15 @@ canvas {
 }
 
 ::-webkit-scrollbar {
-  display: none;
+  width: 16px;
+  background-color: var(--color-bg);
+}
+
+::-webkit-scrollbar-thumb {
+  border: 5px solid rgba(0, 0, 0, 0);
+  background-color: var(--color-surface);
+  background-clip: padding-box;
+  border-radius: 999px;
 }
 
 input::-webkit-outer-spin-button,

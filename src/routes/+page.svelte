@@ -1,36 +1,19 @@
 <script lang="ts">
-  import { onDestroy, onMount } from "svelte";
-  import { Slider } from "bits-ui";
-  import { extractBPM, extractCoverImage } from "$lib";
-  import { muted } from "$lib/stores";
-  import { decompressFrames, parseGIF, type ParsedFrame } from "gifuct-js";
-  import { loop } from "$lib/utils";
-  import toast from "svelte-french-toast";
-  import type { OutputItem } from "$lib/types";
-  import {
-    AudioBufferSource,
-    BufferTarget,
-    CanvasSource,
-    Mp4OutputFormat,
-    Output,
-    QUALITY_MEDIUM,
-    QUALITY_VERY_HIGH,
-    QUALITY_VERY_LOW,
-    VideoSample,
-    VideoSampleSource
-  } from "mediabunny";
-
-  import Nav from "$components/Nav.svelte";
-  import Radio from "$components/Radio.svelte";
   import FilePicker from "$components/FilePicker.svelte";
   import GifPlayer from "$components/GifPlayer.svelte";
   import HelpTooltip from "$components/HelpTooltip.svelte";
+  import Logo from "$components/Logo.svelte";
   import NumberPicker from "$components/NumberPicker.svelte";
-  import ProcessingQueue from "$components/ProcessingQueue.svelte";
+  import Radio from "$components/Radio.svelte";
+  import { extractBPM, extractCoverImage } from "$lib";
+  import { muted } from "$lib/stores";
+  import { Slider } from "bits-ui";
+  import { decompressFrames, parseGIF, type ParsedFrame } from "gifuct-js";
+  import { QUALITY_MEDIUM, QUALITY_VERY_HIGH, QUALITY_VERY_LOW } from "mediabunny";
+  import { onDestroy, onMount } from "svelte";
 
   const SPEEDS = [
     { value: 0, label: "auto" },
-    // { value: 0.125, label: "0.125x" },
     { value: 0.25, label: "0.25x" },
     { value: 0.5, label: "0.5x" },
     { value: 1, label: "1x" },
@@ -50,10 +33,11 @@
 
   const idealBeatDuration = 500;
 
-  // audio stuff
   let audioElement: HTMLAudioElement;
   let audioCtx: AudioContext;
   let source: MediaElementAudioSourceNode;
+
+  let isSidebarOpen = $state(true);
 
   let musicFile: File | null = $state(null);
   let musicCoverSrc: string | null = $state(null);
@@ -73,38 +57,9 @@
   let qualityValue = $state(QUALITY_MEDIUM);
   let codecValue = $state<"av1" | "avc" | "hevc" | "vp9" | "vp8">("av1");
 
-  let exampleUrl = $state("");
-  let processingQueueOpen = $state(false);
-  let processingQueue = $state<OutputItem[]>([]);
-
   muted.subscribe(value => {
     if (audioElement) audioElement.muted = value;
   });
-
-  async function onGifUpload(file: File) {
-    gifFile = file;
-    gifSrc = URL.createObjectURL(file);
-
-    gifFrames = await readGif(file);
-
-    restartPreview();
-  }
-
-  async function onMusicUpload(file: File) {
-    bpm = null;
-    musicFile = file;
-
-    await audioCtx.resume();
-    audioElement.src = URL.createObjectURL(file);
-    audioElement.play();
-
-    musicCoverSrc = await extractCoverImage(file);
-
-    isLoadingBPM = true;
-    bpm = await extractBPM(audioCtx, file);
-    console.log("bpm found: ", bpm);
-    isLoadingBPM = false;
-  }
 
   function getGifDuration(frames: ParsedFrame[]) {
     return frames.reduce((acc, frame) => acc + frame.delay, 0);
@@ -131,120 +86,32 @@
     });
   }
 
-  function restartPreview() {
-    audioCtx?.resume();
-    audioElement.currentTime = 0;
+  async function onMusicUpload(file: File): Promise<void> {
+    bpm = null;
+    musicFile = file;
+
+    await audioCtx.resume();
+    audioElement.src = URL.createObjectURL(file);
     audioElement.play();
-    gifPlayer?.reset();
+
+    musicCoverSrc = await extractCoverImage(file);
+
+    isLoadingBPM = true;
+    bpm = await extractBPM(audioCtx, file);
+    console.log("bpm found: ", bpm);
+    isLoadingBPM = false;
+
   }
 
-  async function onExport() {
-    if (!bpm || gifFrames.length === 0 || !musicFile || !gifFile || !gifSrc) return;
-
-    console.log(`exporting at ${qualityValue === QUALITY_VERY_LOW ? "low" : qualityValue === QUALITY_MEDIUM ? "medium" : "high"} quality...`);
-    const timeStart = performance.now();
-
-    const video = new Output({
-      format: new Mp4OutputFormat(),
-      target: new BufferTarget(),
-    });
-
-    const queueIndex = processingQueue.length;
-    processingQueue = [
-      ...processingQueue,
-      {
-        gifSrc: gifSrc,
-        gifName: gifFile.name.split(".").slice(0, -1).join("."),
-        audioName: musicFile.name.split(".").slice(0, -1).join("."),
-        outputUrl: null,
-        output: video,
-        progress: 0,
-      }
-    ];
-    processingQueueOpen = true;
-
-    // const sampleSource = new VideoSampleSource({
-    //   codec: codecValue,
-    //   bitrate: qualityValue,
-    //   sizeChangeBehavior: "contain",
-    // });
-    const sampleSource = new CanvasSource(gifPlayerCanvas, {
-      codec: codecValue,
-      bitrate: qualityValue,
-      sizeChangeBehavior: "contain",
-    });
-
-    const audioSource = new AudioBufferSource({
-      codec: "aac",
-      bitrate: qualityValue,
-    });
-
-    video.addVideoTrack(sampleSource);
-    video.addAudioTrack(audioSource);
-
-    await video.start();
-
-    // add audio
-    const audioBuffer = await audioCtx.decodeAudioData(await musicFile.arrayBuffer());
-    audioSource.add(audioBuffer);
-
-    // add video
-    const frames = gifFrames;
-    const secondsPerFrame = 1 / (bpm / 60) / frames.length / (speedMultiplier == 0 ? autoSpeedMultiplier : speedMultiplier);
-
-    let timestamp = 0;
-    let index = loop(frameOffset, 0, frames.length - 1);
-    const frameCount = Math.floor(audioElement.duration / secondsPerFrame);
-    for (let i = 0; i < frameCount; i++) {
-      timestamp = i * secondsPerFrame;
-
-      // update progress bar
-      if (index === 0) {
-        processingQueue[queueIndex].progress = Math.ceil(timestamp / audioElement.duration * 100);
-        console.log(Math.ceil(timestamp / audioElement.duration * 100) + "% done");
-      }
-
-      const frame = frames[index];
-      const buffer = frame.patch;
-      const sample = new VideoSample(buffer, {
-        format: "RGBA",
-        codedWidth: frame.dims.width,
-        codedHeight: frame.dims.height,
-        timestamp,
-        duration: secondsPerFrame,
-      });
-
-      index = (index + 1) % frames.length;
-
-      await sampleSource.add(timestamp, secondsPerFrame);
-    }
-
-    await video.finalize();
-
-    console.log(`export finished in ${Math.round((performance.now() - timeStart) / 1000)}s`);
-
-    const file = video.target.buffer;
-    if (!file) throw new Error("No file generated");
-
-    const blob = new Blob([file], { type: "video/mp4" });
-    const url = URL.createObjectURL(blob);
-
-    processingQueue[queueIndex].outputUrl = url;
-    processingQueueOpen = true;
-
-    console.log(url);
-    exampleUrl = url;
-    toast.success("export complete!", {
-      iconTheme: {
-        primary: "var(--color-bg)",
-        secondary: "var(--color-fg)"
-      }
-    });
+  async function onGifUpload(file: File): Promise<void> {
+    gifFile = file;
+    gifSrc = URL.createObjectURL(file);
+    gifFrames = await readGif(file);
   }
 
   onMount(() => {
     audioElement = document.createElement("audio");
-    audioElement.volume = 0.2;
+    audioElement.volume = 0.4;
     audioElement.muted = $muted;
     audioElement.loop = true;
     audioCtx = new AudioContext();
@@ -254,63 +121,141 @@
 
   onDestroy(() => {
     if (audioCtx) audioCtx.close();
-
-    processingQueue.forEach(item => {
-      item.output.cancel();
-    });
   });
 </script>
 
-<div class="grow flex flex-col items-center py-16 gap16 relative">
-  <!-- top row -->
-  <div class="flex justify-center gap-16 w-full">
-    <!-- song picker -->
-    <FilePicker
-      previewSrc={musicCoverSrc}
-      placeholderIcon="mingcute:music-fill"
-      onUpload={onMusicUpload}
-      validFileTypes={["audio/mpeg", "audio/wav", "audio/ogg"]}
-    >
-      <div class="flex flex-col gap-2 w-full">
-        <span class="text-muted">
-          {#if isLoadingBPM}
-            <span class="inline-flex items-center gap-4">
-              <iconify-icon icon="tdesign:loading" class="animate-spin text-base"></iconify-icon>
-              LOADING BPM...
+<div class="size-full flex">
+  <!-- sidebar -->
+  {#if isSidebarOpen}
+    <aside class="w-lg border-r-2 border-surface flex flex-col">
+      <div class="flex flex-col gap-14 overflow-y-auto p-6 grow w-full">
+        <div>
+          <p class="mb-4 flex gap-3">
+            <span class="font-bold">MUSIC BPM</span>
+            <HelpTooltip>Manually change this if the BPM is off.</HelpTooltip>
+          </p>
+          <NumberPicker bind:value={bpm} />
+        </div>
+
+        <div>
+          <p class="mb-4 flex gap-3">
+            <span class="font-bold">SPEED MULTIPLIER</span>
+            <HelpTooltip>This controls how fast the gif plays.</HelpTooltip>
+          </p>
+          <Radio items={SPEEDS} name="speed-multiplier" bind:value={speedMultiplier} />
+        </div>
+
+        <div>
+          <p class="mb-4 flex gap3 justify-between">
+            <span class="flex gap-3">
+              <span class="font-bold">FRAME OFFSET</span>
+              <HelpTooltip>This controls how many frames the gif is offset by, change this to position the beat drop.</HelpTooltip>
             </span>
-          {:else}
-            bpm = {bpm ? bpm : "?"}
-          {/if}
-        </span>
-        <span class="px-2 font-bold">{musicFile ? musicFile.name : "[drop or pick an audio track]"}</span>
+            <span class="text-fg">+{frameOffset}</span>
+          </p>
+
+          <Slider.Root
+            type="single"
+            bind:value={frameOffset}
+            min={0}
+            step={1}
+            max={gifFrames.length}
+            class="relative flex items-center w-full hover:cursor-grab active:cursor-grabbing group"
+          >
+            {#snippet children({ tickItems })}
+              <span class="h-2 w-full bg-surface-0 rounded-md duration-100">
+                <Slider.Range class="bg-fg h-full absolute rounded-md duration-100" />
+              </span>
+
+              <Slider.Thumb
+                index={0}
+                class="size-6 bg-fg outline-none rounded-full duration-100 z-10"
+              />
+            {/snippet}
+          </Slider.Root>
+
+          <div class="w-full flex justify-between text-muted mt-4 text-sm">
+            <span class="w-1/2 flex flex-col gap-1 items-start">
+              <span>+0</span>
+            </span>
+
+            <span class="w-1/2 flex flex-col gap-1 items-end">
+              <span>+{gifFrames.length}</span>
+            </span>
+          </div>
+        </div>
+
+        <div>
+          <p class="mb-4 flex gap-3">
+            <span class="font-bold">EXPORT QUALITY</span>
+            <HelpTooltip>This controls how high quality the output video is, lower quality exports faster.</HelpTooltip>
+          </p>
+          <Radio items={QUALITY} name="quality" bind:value={qualityValue} />
+        </div>
+
+        <div>
+          <p class="mb-4 flex gap-3">
+            <span class="font-bold">VIDEO CODEC</span>
+            <HelpTooltip>This controls what video codec the exported video will use.</HelpTooltip>
+          </p>
+
+          <Radio items={CODECS} name="codec" bind:value={codecValue} />
+        </div>
       </div>
-    </FilePicker>
 
-    <!-- gif picker -->
-    <FilePicker
-      previewSrc={gifSrc}
-      placeholderIcon="mingcute:pic-2-fill"
-      onUpload={onGifUpload}
-      validFileTypes={["image/gif", "image/png", "image/jpeg"]}
-    >
-      <div class="flex flex-col gap-2 w-full">
-        <span class="text-muted">frames = {gifFrames.length > 0 ? gifFrames.length : "?"}</span>
-        <span class="px-2 font-bold">{gifFile ? gifFile.name : "[drop or pick a gif]"}</span>
+      <div class="flex w-full border-t-2 border-surface p-4 justify-between">
+        <Logo />
+
+        <button
+          onclick={() => isSidebarOpen = false}
+          aria-label="collapse sidebar"
+          class="flex justify-center items-center h-full aspect-square hover:bg-surface duration-100 rounded-md cursor-pointer"
+        >
+          <iconify-icon icon="mingcute:arrows-left-fill" class="text-3xl"></iconify-icon>
+        </button>
       </div>
-    </FilePicker>
-  </div>
+    </aside>
+  {/if}
 
-  <!-- connector lines -->
-  <div class="flex justify-center w-full">
-    <svg height="64" width="85rem" xmlns="http://www.w3.org/2000/svg">
-    <path d="M400 4 L400 22 Q400 26 396 26 L254 26 Q250 26 250 31 L250 60" style="fill: none; stroke: var(--color-surface); stroke-width: 3" />
-    <path d="M1010 4 L1010 42 Q1010 46 1006 46 L274 46 Q270 46 270 50 L270 60" style="fill: none; stroke: var(--color-surface); stroke-width: 3" />
-    </svg>
-  </div>
+  <div class="grow flex flex-col">
+    <div class="flex justify-between border-b-2 border-surface p-6 items-center gap-8">
+      <FilePicker
+        previewSrc={musicCoverSrc}
+        placeholderIcon="mingcute:music-fill"
+        onUpload={onMusicUpload}
+        validFileTypes={["audio/mpeg", "audio/wav", "audio/ogg"]}
+      >
+        <div class="flex flex-col gap-2 w-full">
+          <span class="text-muted">
+            {#if isLoadingBPM}
+              <span class="inline-flex items-center gap-4">
+                <iconify-icon icon="tdesign:loading" class="animate-spin text-base"></iconify-icon>
+                LOADING BPM...
+              </span>
+            {:else}
+              bpm = {bpm ? bpm : "?"}
+            {/if}
+          </span>
+          <span class="px-2 font-bold">{musicFile ? musicFile.name : "[drop or pick an audio track]"}</span>
+        </div>
+      </FilePicker>
 
-  <!-- bottom row -->
-  <div class="flex justify-center gap16 w-full grow">
-    <div class="bg-surface font-bold flex justify-center items-center h-full aspect-square rounded-md p-4">
+      <span class="font-normal text-4xl text-muted">+</span>
+
+      <FilePicker
+        previewSrc={gifSrc}
+        placeholderIcon="mingcute:pic-2-fill"
+        onUpload={onGifUpload}
+        validFileTypes={["image/gif", "image/png", "image/jpeg"]}
+      >
+        <div class="flex flex-col gap-2 w-full">
+          <span class="text-muted">frames = {gifFrames.length > 0 ? gifFrames.length : "?"}</span>
+          <span class="px-2 font-bold">{gifFile ? gifFile.name : "[drop or pick a gif]"}</span>
+        </div>
+      </FilePicker>
+    </div>
+
+    <div class="grow bg-surface size-full font-bold flex justify-center items-center p-4">
       {#if gifFile && bpm}
         <GifPlayer
           bind:this={gifPlayer}
@@ -323,146 +268,5 @@
         PREVIEW HERE
       {/if}
     </div>
-
-    <!-- connector line -->
-    <div class="flex flex-col justify-center">
-      <svg height="16" width="64" xmlns="http://www.w3.org/2000/svg">
-        <path d="M4 8 L60 8" style="fill: none; stroke: var(--color-surface); stroke-width: 3" />
-      </svg>
-    </div>
-
-    <div class="dashed border3 border-surface-0 h-full flex flex-col justify-between grow rounded-md px-6 pb-6 bg-bg max-w-[50rem] min-w-[30rem]">
-      <div class="flex flex-col gap-11 overflow-y-scroll py-6 grow h-0">
-        <div>
-          <!-- label -->
-          <p class="mb-4 flex gap-3">
-            <span class="font-bold">MUSIC BPM</span>
-            <HelpTooltip>Manually change this if the BPM is off.</HelpTooltip>
-          </p>
-
-          <!-- bpm picker -->
-          <NumberPicker bind:value={bpm} />
-        </div>
-
-        <div>
-          <!-- label -->
-          <p class="mb-4 flex gap-3">
-            <span class="font-bold">SPEED MULTIPLIER</span>
-            <HelpTooltip>This controls how fast the gif plays.</HelpTooltip>
-          </p>
-
-          <!-- speed multiplier radio -->
-          <Radio items={SPEEDS} name="speed-multiplier" bind:value={speedMultiplier} />
-        </div>
-
-        <div>
-          <!-- label -->
-          <p class="mb-4 flex gap3 justify-between">
-            <span class="flex gap-3">
-              <span class="font-bold">FRAME OFFSET</span>
-              <HelpTooltip>This controls how many frames the gif is offset by, change this to position the beat drop.</HelpTooltip>
-            </span>
-
-            <span class="text-fg">+{frameOffset}</span>
-          </p>
-
-          <!-- audio offset slider -->
-          {#if gifFrames.length > 0}
-            <Slider.Root
-              type="single"
-              bind:value={frameOffset}
-              min={0}
-              step={1}
-              max={gifFrames.length}
-              class="relative flex items-center w-full hover:cursor-grab active:cursor-grabbing group"
-            >
-              {#snippet children({ tickItems })}
-                <span class="h-2 w-full bg-surface-0 rounded-md duration-100">
-                  <Slider.Range class="bg-fg h-full absolute rounded-md duration-100" />
-                </span>
-
-                <Slider.Thumb
-                  index={0}
-                  class="size-6 bg-fg outline-none rounded-full duration-100 z-10"
-                />
-              {/snippet}
-            </Slider.Root>
-
-            <div class="w-full flex justify-between text-muted mt-4 text-sm">
-              <span class="w-1/2 flex flex-col gap-1 items-start">
-                <span>+0</span>
-              </span>
-
-              <span class="w-1/2 flex flex-col gap-1 items-end">
-                <span>+{gifFrames.length}</span>
-              </span>
-            </div>
-          {:else}
-            <!-- placeholder slider -->
-            <Slider.Root
-              type="single"
-              disabled
-              value={0.5}
-              min={0}
-              step={0.5}
-              max={1}
-              class="relative flex items-center w-full group"
-            >
-              <span class="h-2 w-full bg-surface-0 rounded-md duration-100">
-                <Slider.Range class="bg-muted h-full absolute rounded-md duration-100" />
-              </span>
-
-              <Slider.Thumb
-                index={0}
-                class="size-6 bg-muted outline-none rounded-full duration-100"
-              />
-            </Slider.Root>
-          {/if}
-        </div>
-
-        <div>
-          <!-- label -->
-          <p class="mb-4 flex gap-3">
-            <span class="font-bold">EXPORT QUALITY</span>
-            <HelpTooltip>This controls how high quality the output video is, lower quality exports faster.</HelpTooltip>
-          </p>
-
-          <!-- speed multiplier radio -->
-          <Radio items={QUALITY} name="quality" bind:value={qualityValue} />
-        </div>
-
-        <div>
-          <!-- label -->
-          <p class="mb-4 flex gap-3">
-            <span class="font-bold">VIDEO CODEC</span>
-            <HelpTooltip>This controls what video codec the exported video will use.</HelpTooltip>
-          </p>
-
-          <!-- codec radio -->
-          <Radio items={CODECS} name="codec" bind:value={codecValue} />
-        </div>
-      </div>
-
-      <div class="flex flex-col gap-4 pt-6">
-        <button
-          onclick={restartPreview}
-          class="inline-flex justify-center items-center gap-2 font-bold rounded-md bg-surface-0 w1/2 py-2.5 text-fg cursor-pointer hover:scale-[102%] active:scale-100 duration-100"
-        >
-          <iconify-icon icon="mingcute:refresh-3-fill" class="text-xl"></iconify-icon>
-          restart preview
-        </button>
-
-        <button
-          onclick={onExport}
-          class="inline-flex justify-center items-center gap-2 font-bold rounded-md bg-fg w1/2 py-2.5 text-bg cursor-pointer hover:scale-[102%] active:scale-100 duration-100"
-        >
-          <iconify-icon icon="mingcute:share-forward-fill" class="text-xl"></iconify-icon>
-          export
-        </button>
-      </div>
-    </div>
   </div>
 </div>
-
-<ProcessingQueue bind:open={processingQueueOpen} queue={processingQueue} />
-<Nav {bpm} />
