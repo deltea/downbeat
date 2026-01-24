@@ -225,7 +225,7 @@
     </div>
   </aside>
 
-  <div class="bg-dotted h-full grow flex justify-center items-center overflow-hidden">
+  <div class="bg-dotted h-full grow flex justify-center items-center overflow-hidden relative">
     {#if gifFile && bpm}
       <GifPlayer
         bind:this={gifPlayer}
@@ -242,10 +242,14 @@
       </div>
     {/if}
 
+    <p class="flex absolute bottom-6 left-6 text-text-dim">
+      scroll to zoom + drag to pan
+    </p>
+
     <div class="flex items-center absolute bottom-6 right-6 bg-surface h-10 rounded-sm">
-      <button onclick={() => setZoom(zoom - 0.25)} class="cursor-pointer aspect-square h-full hover:text-text-bright hover:bg-border">-</button>
+      <button onclick={() => setZoom(zoom - 0.25)} class="cursor-pointer aspect-square rounded-l-sm text-text-dim h-full hover:text-text-bright hover:bg-border">-</button>
       <button onclick={() => setZoom(1)} class="cursor-pointer w-16 flex justify-center items-center">{Math.round(zoom * 100)}%</button>
-      <button onclick={() => setZoom(zoom + 0.25)} class="cursor-pointer aspect-square h-full hover:text-text-bright hover:bg-border">+</button>
+      <button onclick={() => setZoom(zoom + 0.25)} class="cursor-pointer aspect-square rounded-r-sm text-text-dim h-full hover:text-text-bright hover:bg-border">+</button>
     </div>
   </div>
 </div>
