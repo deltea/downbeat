@@ -218,7 +218,7 @@
     </div>
   </aside>
 
-  <div class="bg-bg h-full grow flex justify-center items-center p-4">
+  <div class="bg-dotted h-full grow flex justify-center items-center p-4">
     <div class="size-full rounded-sm flex justify-center items-center p-4">
       {#if gifFile && bpm}
         <GifPlayer

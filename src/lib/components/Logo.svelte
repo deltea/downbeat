@@ -12,6 +12,6 @@
 
 <div>
   <h1 class="font-black group-hover:underline decoration-2 underline-offset-2 text-accent">downbeat</h1>
-  <p>sync gifs to the beat</p>
+  <p>[sync gifs to the beat]</p>
 </div>
 </a>
