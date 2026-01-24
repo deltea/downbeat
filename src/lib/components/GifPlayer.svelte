@@ -3,10 +3,11 @@
   import { onMount } from "svelte";
   import { loop } from "$lib/utils";
 
-  let { frameDuration, offset, frames, canvas = $bindable() }: {
+  let { frameDuration, offset, frames, zoom = 1, canvas = $bindable() }: {
     frameDuration: number,
     offset: number,
     frames: ParsedFrame[],
+    zoom?: number,
     canvas: HTMLCanvasElement
   } = $props();
 
@@ -110,5 +111,6 @@
 
 <canvas
   bind:this={canvas}
-  class="{frames[0]?.dims.width > frames[0]?.dims.height ? "w-full" : "h-full"} rounded-sm"
+  class="object-contain duration-75"
+  style:transform={`scale(${zoom})`}
 ></canvas>

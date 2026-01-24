@@ -8,6 +8,7 @@
 
   import { extractBPM, extractCoverImage } from "$lib";
   import { muted } from "$lib/stores";
+    import { clamp } from "$lib/utils";
   import { Button, Slider } from "bits-ui";
   import { decompressFrames, parseGIF, type ParsedFrame } from "gifuct-js";
   import { QUALITY_MEDIUM, QUALITY_VERY_HIGH, QUALITY_VERY_LOW } from "mediabunny";
@@ -49,6 +50,8 @@
   let gifDuration: number = $state(0);
   let gifPlayer: GifPlayer | null = $state(null);
   let gifPlayerCanvas: HTMLCanvasElement;
+
+  let zoom = $state(1);
 
   let autoSpeedMultiplier = $state(0);
   let speedMultiplier = $state(0);
@@ -106,6 +109,10 @@
     gifFile = file;
     gifSrc = URL.createObjectURL(file);
     gifFrames = await readGif(file);
+  }
+
+  function setZoom(value: number) {
+    zoom = clamp(value, 0.1, 5);
   }
 
   onMount(() => {
@@ -218,22 +225,27 @@
     </div>
   </aside>
 
-  <div class="bg-dotted h-full grow flex justify-center items-center p-4">
-    <div class="size-full rounded-sm flex justify-center items-center p-4">
-      {#if gifFile && bpm}
-        <GifPlayer
-          bind:this={gifPlayer}
-          frameDuration={1 / (bpm / 60) / gifFrames.length / (speedMultiplier == 0 ? autoSpeedMultiplier : speedMultiplier) * 1000}
-          offset={frameOffset}
-          frames={gifFrames}
-          bind:canvas={gifPlayerCanvas}
-        />
-      {:else}
-        <div class="text-center font-normal">
-          <h2>PREVIEW HERE</h2>
-          <p class="text-text-dim">[drop or select a gif and audio track]</p>
-        </div>
-      {/if}
+  <div class="bg-dotted h-full grow flex justify-center items-center overflow-hidden">
+    {#if gifFile && bpm}
+      <GifPlayer
+        bind:this={gifPlayer}
+        frameDuration={1 / (bpm / 60) / gifFrames.length / (speedMultiplier == 0 ? autoSpeedMultiplier : speedMultiplier) * 1000}
+        offset={frameOffset}
+        frames={gifFrames}
+        {zoom}
+        bind:canvas={gifPlayerCanvas}
+      />
+    {:else}
+      <div class="flex flex-col justify-center items-center font-normal gap-2 size-full">
+        <h2>PREVIEW HERE</h2>
+        <p class="text-text-dim">[drop or select a gif and audio track]</p>
+      </div>
+    {/if}
+
+    <div class="flex items-center absolute bottom-6 right-6 bg-surface h-10 rounded-sm">
+      <button onclick={() => setZoom(zoom - 0.25)} class="cursor-pointer aspect-square h-full hover:text-text-bright hover:bg-border">-</button>
+      <button onclick={() => setZoom(1)} class="cursor-pointer w-16 flex justify-center items-center">{Math.round(zoom * 100)}%</button>
+      <button onclick={() => setZoom(zoom + 0.25)} class="cursor-pointer aspect-square h-full hover:text-text-bright hover:bg-border">+</button>
     </div>
   </div>
 </div>
