@@ -8,7 +8,7 @@
 <Tooltip.Provider>
   <Tooltip.Root delayDuration={200}>
     <Tooltip.Trigger class="flex justify-center items-center text-text-dim">
-      <iconify-icon icon="mingcute:information-fill" class="text-lg"></iconify-icon>
+      <iconify-icon icon="material-symbols:info-outline" class="text-lg"></iconify-icon>
     </Tooltip.Trigger>
 
     <Tooltip.Content forceMount sideOffset={8} collisionPadding={16} class="drop-shadow-base">

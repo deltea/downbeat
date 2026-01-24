@@ -3,6 +3,23 @@
 @import "tailwindcss";
 @import "tailwindcss-animate";
 
+@theme {
+  --color-bg: #0A0A0A;
+  --color-surface: #0F0F0F;
+  --color-border: #222222;
+  --color-text: #888888;
+  --color-text-dim: #555555;
+  --color-text-bright: #cccccc;
+  --color-accent: #ffffff;
+
+  --font-mono: "JetBrains Mono", monospace;
+  --spacing-nav: 6rem;
+  --spacing-progress: 8rem;
+  --spacing-content: 32rem;
+
+  --drop-shadow-base: 0 5px 3px rgb(0 0 0 / 0.15);
+}
+
 @layer base {
   body {
     @apply bg-bg text-text font-mono text-sm selection:bg-text selection:text-accent;
@@ -29,21 +46,4 @@
     -webkit-appearance: none;
     margin: 0;
   }
-}
-
-@theme {
-  --color-bg: #0A0A0A;
-  --color-surface: #0F0F0F;
-  --color-border: #222222;
-  --color-text: #888888;
-  --color-text-dim: #555555;
-  --color-text-bright: #cccccc;
-  --color-accent: #ffffff;
-
-  --font-mono: "JetBrains Mono", monospace;
-  --spacing-nav: 6rem;
-  --spacing-progress: 8rem;
-  --spacing-content: 32rem;
-
-  --drop-shadow-base: 0 5px 3px rgb(0 0 0 / 0.15);
 }

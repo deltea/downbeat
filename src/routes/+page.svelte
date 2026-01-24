@@ -127,8 +127,7 @@
   <!-- sidebar -->
   <aside class="w-lg border-r-2 border-border bg-surface flex flex-col">
     <h2 class="text-text-bright font-bold text-base flex gap-2 items-center p-6 border-b-2 border-border">
-      <!-- <span class="text-xl -translate-y-[2px]">⚙︎</span> -->
-      <span class="z-10">Settings</span>
+      SETTINGS
     </h2>
 
     <div class="flex flex-col gap-10 overflow-y-auto p-6 grow w-full">
@@ -188,25 +187,15 @@
         >
           {#snippet children({ tickItems })}
             <span class="h-1 w-full bg-border rounded-sm duration-100">
-              <Slider.Range class="bg-text h-full absolute rounded-sm duration-100" />
+              <Slider.Range class="bg-text-dim h-full absolute rounded-sm duration-100" />
             </span>
 
             <Slider.Thumb
               index={0}
-              class="size-4 bg-accent outline-none rounded-full duration-100 z-10"
+              class="size-4 bg-accent outline-none rounded-full duration-100 z10"
             />
           {/snippet}
         </Slider.Root>
-
-        <div class="w-full flex justify-between text-text mt-4 text-sm">
-          <span class="w-1/2 flex flex-col gap-1 items-start">
-            <span>+0</span>
-          </span>
-
-          <span class="w-1/2 flex flex-col gap-1 items-end">
-            <span>+{gifFrames.length}</span>
-          </span>
-        </div>
       </Setting>
 
       <Setting name="Export Quality" description="This controls how high quality the output video is, lower quality exports faster.">
@@ -242,7 +231,7 @@
       {:else}
         <div class="text-center font-normal">
           <h2>PREVIEW HERE</h2>
-          <p class="text-text-dim">select a gif and audio track</p>
+          <p class="text-text-dim">[drop or select a gif and audio track]</p>
         </div>
       {/if}
     </div>

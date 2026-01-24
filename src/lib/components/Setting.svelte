@@ -10,8 +10,8 @@
 </script>
 
 <div>
-  <p class="mb-3 flex gap-3">
-    <span class="font-bold uppercase">{name}</span>
+  <p class="mb-3 flex gap-2">
+    <span class="">{name}</span>
     {#if description}
       <HelpTooltip>{description}</HelpTooltip>
     {/if}
