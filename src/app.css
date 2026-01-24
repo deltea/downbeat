@@ -1,6 +1,35 @@
 @import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap");
 
 @import "tailwindcss";
+@import "tailwindcss-animate";
+
+@layer base {
+  body {
+    @apply bg-bg text-text font-mono text-sm selection:bg-text selection:text-accent;
+  }
+
+  canvas {
+    image-rendering: pixelated;
+  }
+
+  ::-webkit-scrollbar {
+    width: 16px;
+    background-color: var(--color-bg);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    border: 5px solid rgba(0, 0, 0, 0);
+    background-color: var(--color-surface);
+    background-clip: padding-box;
+    border-radius: 999px;
+  }
+
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+}
 
 @theme {
   --color-bg: #0A0A0A;
@@ -17,36 +46,4 @@
   --spacing-content: 32rem;
 
   --drop-shadow-base: 0 5px 3px rgb(0 0 0 / 0.15);
-
-  --dashed-border-src: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='4' ry='4' stroke='%23444' stroke-width='5' stroke-dasharray='10%2c 10' stroke-dashoffset='0' stroke-linecap='square'/%3e%3c/svg%3e");
-}
-
-body {
-  @apply bg-bg text-text font-mono text-sm selection:bg-text selection:text-accent;
-}
-
-canvas {
-  image-rendering: pixelated;
-}
-
-.dashed {
-  background-image: var(--dashed-border-src);
-}
-
-::-webkit-scrollbar {
-  width: 16px;
-  background-color: var(--color-bg);
-}
-
-::-webkit-scrollbar-thumb {
-  border: 5px solid rgba(0, 0, 0, 0);
-  background-color: var(--color-surface);
-  background-clip: padding-box;
-  border-radius: 999px;
-}
-
-input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
 }

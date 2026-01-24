@@ -1,14 +1,14 @@
 <script lang="ts">
   import FilePicker from "$components/FilePicker.svelte";
   import GifPlayer from "$components/GifPlayer.svelte";
-  import HelpTooltip from "$components/HelpTooltip.svelte";
   import Logo from "$components/Logo.svelte";
   import NumberPicker from "$components/NumberPicker.svelte";
   import Radio from "$components/Radio.svelte";
-    import Setting from "$components/Setting.svelte";
+  import Setting from "$components/Setting.svelte";
+
   import { extractBPM, extractCoverImage } from "$lib";
   import { muted } from "$lib/stores";
-  import { Slider } from "bits-ui";
+  import { Button, Slider } from "bits-ui";
   import { decompressFrames, parseGIF, type ParsedFrame } from "gifuct-js";
   import { QUALITY_MEDIUM, QUALITY_VERY_HIGH, QUALITY_VERY_LOW } from "mediabunny";
   import { onDestroy, onMount } from "svelte";
@@ -126,7 +126,7 @@
 <div class="size-full flex">
   <!-- sidebar -->
   <aside class="w-lg border-r-2 border-border bg-surface flex flex-col">
-    <h2 class="text-text-bright font-bold text-base flex gap-2 items-center px-6 pt-6">
+    <h2 class="text-text-bright font-bold text-base flex gap-2 items-center p-6 border-b-2 border-border">
       <!-- <span class="text-xl -translate-y-[2px]">⚙︎</span> -->
       <span class="z-10">Settings</span>
     </h2>
@@ -150,7 +150,7 @@
                 bpm = {bpm ? bpm : "?"}
               {/if}
             </span>
-            <span class="px-2 font-bold text-text-dim">{musicFile ? musicFile.name : "[drop or pick an audio track]"}</span>
+            <span class="px-2 text-text-dim">{musicFile ? musicFile.name : "[drop or pick an audio track]"}</span>
           </div>
         </FilePicker>
       </Setting>
@@ -164,7 +164,7 @@
         >
           <div class="flex flex-col gap-2 w-full">
             <span>frames = {gifFrames.length > 0 ? gifFrames.length : "?"}</span>
-            <span class="px-2 font-bold text-text-dim">{gifFile ? gifFile.name : "[drop or pick a gif]"}</span>
+            <span class="px-2 text-text-dim">{gifFile ? gifFile.name : "[drop or pick a gif]"}</span>
           </div>
         </FilePicker>
       </Setting>
@@ -184,16 +184,16 @@
           min={0}
           step={1}
           max={gifFrames.length}
-          class="relative flex items-center w-full hover:cursor-grab active:cursor-grabbing group"
+          class="relative flex items-center w-full hover:cursor-grab active:cursor-grabbing group mt-4"
         >
           {#snippet children({ tickItems })}
-            <span class="h-2 w-full bg-accent rounded-sm duration-100">
-              <Slider.Range class="bg-accent h-full absolute rounded-sm duration-100" />
+            <span class="h-1 w-full bg-border rounded-sm duration-100">
+              <Slider.Range class="bg-text h-full absolute rounded-sm duration-100" />
             </span>
 
             <Slider.Thumb
               index={0}
-              class="size-6 bg-accent outline-none rounded-full duration-100 z-10"
+              class="size-4 bg-accent outline-none rounded-full duration-100 z-10"
             />
           {/snippet}
         </Slider.Root>
@@ -218,66 +218,33 @@
       </Setting>
     </div>
 
-    <div class="flex w-full border-t-2 border-surface p-4 justify-between">
+    <div class="border-t2 border-border p-4">
+      <button class="text-bg bg-accent w-full py-2 font-bold rounded-sm hover:bg-text-bright hover:cursor-pointer active:scale-98 duration-100">
+        Export as video
+      </button>
+    </div>
+
+    <div class="flex w-full border-t-2 border-border p-4 justify-between">
       <Logo />
     </div>
   </aside>
 
-  <div class="grow flex flex-col">
-    <!-- <div class="flex justify-between border-b-2 border-surface p-6 items-center gap-8">
-      <FilePicker
-        previewSrc={musicCoverSrc}
-        placeholderIcon="mingcute:music-fill"
-        onUpload={onMusicUpload}
-        validFileTypes={["audio/mpeg", "audio/wav", "audio/ogg"]}
-      >
-        <div class="flex flex-col gap-2 w-full">
-          <span>
-            {#if isLoadingBPM}
-              <span class="inline-flex items-center gap-4">
-                <iconify-icon icon="tdesign:loading" class="animate-spin text-base"></iconify-icon>
-                LOADING BPM...
-              </span>
-            {:else}
-              bpm = {bpm ? bpm : "?"}
-            {/if}
-          </span>
-          <span class="px-2 font-bold text-text-dim">{musicFile ? musicFile.name : "[drop or pick an audio track]"}</span>
+  <div class="bg-bg h-full grow flex justify-center items-center p-4">
+    <div class="size-full rounded-sm flex justify-center items-center p-4">
+      {#if gifFile && bpm}
+        <GifPlayer
+          bind:this={gifPlayer}
+          frameDuration={1 / (bpm / 60) / gifFrames.length / (speedMultiplier == 0 ? autoSpeedMultiplier : speedMultiplier) * 1000}
+          offset={frameOffset}
+          frames={gifFrames}
+          bind:canvas={gifPlayerCanvas}
+        />
+      {:else}
+        <div class="text-center font-normal">
+          <h2>PREVIEW HERE</h2>
+          <p class="text-text-dim">select a gif and audio track</p>
         </div>
-      </FilePicker>
-
-      <span class="font-normal text-4xl text-text">+</span>
-
-      <FilePicker
-        previewSrc={gifSrc}
-        placeholderIcon="mingcute:pic-2-fill"
-        onUpload={onGifUpload}
-        validFileTypes={["image/gif", "image/png", "image/jpeg"]}
-      >
-        <div class="flex flex-col gap-2 w-full">
-          <span>frames = {gifFrames.length > 0 ? gifFrames.length : "?"}</span>
-          <span class="px-2 font-bold text-text-dim">{gifFile ? gifFile.name : "[drop or pick a gif]"}</span>
-        </div>
-      </FilePicker>
-    </div> -->
-
-    <div class="bg-bg size-full grow flex justify-center items-center p-4">
-      <div class="font-bold size-full rounded-sm flex justify-center items-center p-4">
-        {#if gifFile && bpm}
-          <GifPlayer
-            bind:this={gifPlayer}
-            frameDuration={1 / (bpm / 60) / gifFrames.length / (speedMultiplier == 0 ? autoSpeedMultiplier : speedMultiplier) * 1000}
-            offset={frameOffset}
-            frames={gifFrames}
-            bind:canvas={gifPlayerCanvas}
-          />
-        {:else}
-          <div class="text-center">
-            <h2>PREVIEW HERE</h2>
-            <p class="text-text-dim">select a gif and audio track</p>
-          </div>
-        {/if}
-      </div>
+      {/if}
     </div>
   </div>
 </div>

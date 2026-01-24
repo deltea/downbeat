@@ -12,7 +12,9 @@
 <div>
   <p class="mb-3 flex gap-3">
     <span class="font-bold uppercase">{name}</span>
-    <HelpTooltip>{description}</HelpTooltip>
+    {#if description}
+      <HelpTooltip>{description}</HelpTooltip>
+    {/if}
   </p>
 
   {@render children()}

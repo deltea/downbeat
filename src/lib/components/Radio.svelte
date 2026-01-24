@@ -23,14 +23,14 @@
 </script>
 
 <div class="flex justify-center w-full">
-  <RadioGroup.Root bind:value bind:ref {...restProps} class="flex gap-0 rounded-sm bg-bg border-2 border-border font-bold w-full">
+  <RadioGroup.Root bind:value bind:ref {...restProps} class="flex gap-0 rounded-sm bg-bg border-2 border-border w-full">
     {#each items as item}
       {@const id = useId()}
       <RadioGroup.Item
         {id}
         value={item.value}
         disabled={item.disabled}
-        class="text-text-dim data-[state=checked]:bg-accent data-[state=checked]:text-bg w-full py-2 rounded-sm hover:bg-border hover:text-text-bright hover:cursor-pointer data-[state=checked]:active:scale-95 duration-100"
+        class="text-text-dim data-[state=checked]:bg-accent data-[state=checked]:font-bold data-[state=checked]:hover:bg-text-bright data-[state=checked]:text-bg w-full py-2 rounded-sm hover:bg-border hover:text-text-bright hover:cursor-pointer data-[state=checked]:active:scale-95 duration-100"
       >
         {item.label}
       </RadioGroup.Item>
