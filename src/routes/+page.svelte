@@ -5,6 +5,7 @@
   import Logo from "$components/Logo.svelte";
   import NumberPicker from "$components/NumberPicker.svelte";
   import Radio from "$components/Radio.svelte";
+    import Setting from "$components/Setting.svelte";
   import { extractBPM, extractCoverImage } from "$lib";
   import { muted } from "$lib/stores";
   import { Slider } from "bits-ui";
@@ -131,10 +132,7 @@
     </h2>
 
     <div class="flex flex-col gap-10 overflow-y-auto p-6 grow w-full">
-      <div>
-        <p class="mb-4 flex gap-3">
-          <span class="font-bold uppercase">Audio Track</span>
-        </p>
+      <Setting name="Audio Track">
         <FilePicker
           previewSrc={musicCoverSrc}
           placeholderIcon="material-symbols:music-note"
@@ -155,12 +153,9 @@
             <span class="px-2 font-bold text-text-dim">{musicFile ? musicFile.name : "[drop or pick an audio track]"}</span>
           </div>
         </FilePicker>
-      </div>
+      </Setting>
 
-      <div>
-        <p class="mb-4 flex gap-3">
-          <span class="font-bold uppercase">GIF</span>
-        </p>
+      <Setting name="GIF">
         <FilePicker
           previewSrc={gifSrc}
           placeholderIcon="material-symbols:image-outline-sharp"
@@ -172,33 +167,17 @@
             <span class="px-2 font-bold text-text-dim">{gifFile ? gifFile.name : "[drop or pick a gif]"}</span>
           </div>
         </FilePicker>
-      </div>
+      </Setting>
 
-      <div>
-        <p class="mb-4 flex gap-3">
-          <span class="font-bold uppercase">Audio BPM</span>
-          <HelpTooltip>Manually change this if the BPM is off.</HelpTooltip>
-        </p>
+      <Setting name="Audio BPM" description="Manually change this if the BPM is a bit off.">
         <NumberPicker bind:value={bpm} />
-      </div>
+      </Setting>
 
-      <div>
-        <p class="mb-4 flex gap-3">
-          <span class="font-bold uppercase">Speed Multiplier</span>
-          <HelpTooltip>This controls how fast the gif plays.</HelpTooltip>
-        </p>
+      <Setting name="Speed Multiplier" description="This controls how fast the gif plays.">
         <Radio items={SPEEDS} name="speed-multiplier" bind:value={speedMultiplier} />
-      </div>
+      </Setting>
 
-      <div>
-        <p class="mb-4 flex gap3 justify-between">
-          <span class="flex gap-3">
-            <span class="font-bold uppercase">Frame Offset</span>
-            <HelpTooltip>This controls how many frames the gif is offset by, change this to position the beat drop.</HelpTooltip>
-          </span>
-          <span class="text-accent">+{frameOffset}</span>
-        </p>
-
+      <Setting name="Frame Offset" description="This controls how many frames the gif is offset by, change this to position the beat drop.">
         <Slider.Root
           type="single"
           bind:value={frameOffset}
@@ -228,24 +207,15 @@
             <span>+{gifFrames.length}</span>
           </span>
         </div>
-      </div>
+      </Setting>
 
-      <div>
-        <p class="mb-4 flex gap-3">
-          <span class="font-bold uppercase">Export Quality</span>
-          <HelpTooltip>This controls how high quality the output video is, lower quality exports faster.</HelpTooltip>
-        </p>
+      <Setting name="Export Quality" description="This controls how high quality the output video is, lower quality exports faster.">
         <Radio items={QUALITY} name="quality" bind:value={qualityValue} />
-      </div>
+      </Setting>
 
-      <div>
-        <p class="mb-4 flex gap-3">
-          <span class="font-bold uppercase">Video Codec</span>
-          <HelpTooltip>This controls what video codec the exported video will use.</HelpTooltip>
-        </p>
-
+      <Setting name="Video Codec" description="This controls what video codec the exported video will use.">
         <Radio items={CODECS} name="codec" bind:value={codecValue} />
-      </div>
+      </Setting>
     </div>
 
     <div class="flex w-full border-t-2 border-surface p-4 justify-between">

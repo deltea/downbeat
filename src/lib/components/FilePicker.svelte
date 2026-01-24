@@ -49,7 +49,7 @@
   onclick={() => fileInput.click()}
   ondrop={onDrop}
   ondragover={e => e.preventDefault()}
-  class="border-2 border-border border-dashed w-full flex gap-4 items-center rounded-sm cursor-pointer group hover:border-text-dim hover:text-text-bright text-text p-4 outline-none duration-100 bg-bg"
+  class="border-2 border-border border-dashed w-full h-24 flex gap-4 items-center rounded-sm cursor-pointer group hover:border-text-dim hover:text-text-bright text-text p-2 outline-none duration-100 bg-bg"
 >
   {#if previewSrc}
     <div class="bg-cover h-full aspect-square bg-center rounded-sm" style:background-image="url('{previewSrc}')"></div>

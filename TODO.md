@@ -4,6 +4,7 @@
 - [ ] fix export quality bad
 - [ ] fix certain gifs not exporting
 - [ ] fix gif preview
+- [ ] video seeking
 
 ### maybe
 - [ ] auto speed multiplier adjustments
