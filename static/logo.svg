@@ -1,9 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Icon from Akar Icons by Arturo Wibawa - https://github.com/artcoholic/akar-icons/blob/master/LICENSE -->
-<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24">
+
+<svg
+   width="32"
+   height="32"
+   viewBox="0 0 24 24"
+   version="1.1"
+   id="svg1"
+   sodipodi:docname="logo.svg"
+   inkscape:version="1.4 (e7c3feb1, 2024-10-09)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs1" />
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#505050"
+     bordercolor="#eeeeee"
+     borderopacity="1"
+     inkscape:showpageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#505050"
+     inkscape:zoom="13.431951"
+     inkscape:cx="13.289208"
+     inkscape:cy="21.627535"
+     inkscape:window-width="2544"
+     inkscape:window-height="1348"
+     inkscape:window-x="12"
+     inkscape:window-y="52"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg1" />
   <path
-    fill="white"
-    fill-rule="evenodd"
-    d="M1 5a4 4 0 0 1 4.002-4h13.996A4 4 0 0 1 23 5v14a4 4 0 0 1-4 4H5a4 4 0 0 1-4-4zm19 7a8 8 0 1 1-16 0a8 8 0 0 1 16 0m-8 2a2 2 0 1 0 0-4a2 2 0 0 0 0 4"
-    clip-rule="evenodd"
-  />
+     fill="#ffffff"
+     fill-rule="evenodd"
+     d="M 2.7309472,6.1015118 A 3.3705646,3.3705646 0 0 1 6.1031971,2.7309472 H 17.896803 a 3.3705646,3.3705646 0 0 1 3.37225,3.3705646 V 17.898489 a 3.3705646,3.3705646 0 0 1 -3.370565,3.370564 H 6.1015119 A 3.3705646,3.3705646 0 0 1 2.7309472,17.898489 Z M 18.741129,12 A 6.7411293,6.7411293 0 1 1 5.2588707,12 6.7411293,6.7411293 0 0 1 18.741129,12 M 12,13.685282 a 1.6852822,1.6852822 0 1 0 0,-3.370564 1.6852822,1.6852822 0 0 0 0,3.370564"
+     clip-rule="evenodd"
+     id="path1"
+     style="stroke-width:0.842641" />
 </svg>
