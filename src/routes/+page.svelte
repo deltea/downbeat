@@ -126,7 +126,7 @@
 <div class="size-full flex">
   <!-- sidebar -->
   <aside class="w-lg border-r-2 border-border bg-surface flex flex-col">
-    <h2 class="text-text-bright font-bold text-base flex gap-2 items-center p-6 border-b-2 border-border">
+    <h2 class="text-text-bright font-bold text-base flex gap-2 items-center py-4 px-6 border-b-2 border-border">
       SETTINGS
     </h2>
 
@@ -154,7 +154,7 @@
         </FilePicker>
       </Setting>
 
-      <Setting name="GIF">
+      <Setting name="GIF Source">
         <FilePicker
           previewSrc={gifSrc}
           placeholderIcon="material-symbols:image-outline-sharp"
@@ -168,15 +168,15 @@
         </FilePicker>
       </Setting>
 
-      <Setting name="Audio BPM" description="Manually change this if the BPM is a bit off.">
+      <Setting name="Audio BPM">
         <NumberPicker bind:value={bpm} />
       </Setting>
 
-      <Setting name="Speed Multiplier" description="This controls how fast the gif plays.">
+      <Setting name="Speed Multiplier">
         <Radio items={SPEEDS} name="speed-multiplier" bind:value={speedMultiplier} />
       </Setting>
 
-      <Setting name="Frame Offset" description="This controls how many frames the gif is offset by, change this to position the beat drop.">
+      <Setting name="Frame Offset">
         <Slider.Root
           type="single"
           bind:value={frameOffset}
@@ -198,11 +198,11 @@
         </Slider.Root>
       </Setting>
 
-      <Setting name="Export Quality" description="This controls how high quality the output video is, lower quality exports faster.">
+      <Setting name="Export Quality">
         <Radio items={QUALITY} name="quality" bind:value={qualityValue} />
       </Setting>
 
-      <Setting name="Video Codec" description="This controls what video codec the exported video will use.">
+      <Setting name="Video Codec">
         <Radio items={CODECS} name="codec" bind:value={codecValue} />
       </Setting>
     </div>
