@@ -13,8 +13,8 @@
   }
 </script>
 
-<div class="flex w-full items-stretch">
-  <button onclick={() => changeValue(-1)} class="bg-surface hover:bg-surface-0 size-11 rounded-l-md flex justify-center text-lg items-center cursor-pointer active:scale-95 duration-100 font-bold">
+<div class="flex w-full items-stretch border-2 border-border bg-bg rounded-sm">
+  <button onclick={() => changeValue(-1)} class="bg-surface text-text-dim hover:text-text-bright hover:bg-border size-11 rounded-l-sm flex justify-center text-lg items-center cursor-pointer active:scale-95 duration-100 font-bold">
     -
   </button>
 
@@ -24,15 +24,15 @@
       type="number"
       name="bpm"
       id="bpm"
-      class="border-y-3 border-surface text-center grow outline-none"
+      class="text-center grow outline-none"
       min={20}
       max={300}
     />
   {:else}
-    <p class="border-y-3 border-surface text-center grow flex items-center justify-center text-muted">no bpm detected</p>
+    <p class="text-center grow flex items-center justify-center text-text-dim">no bpm detected</p>
   {/if}
 
-  <button onclick={() => changeValue(1)} class="bg-surface hover:bg-surface-0 size-11 rounded-r-md flex justify-center text-lg items-center cursor-pointer active:scale-95 duration-100 font-bold">
+  <button onclick={() => changeValue(1)} class="bg-surface text-text-dim hover:text-text-bright hover:bg-border size-11 rounded-r-sm flex justify-center text-lg items-center cursor-pointer active:scale-95 duration-100 font-bold">
     +
   </button>
 </div>

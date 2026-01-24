@@ -1,6 +1,6 @@
-<a href="/" class="flex gap-4 items-center group bg-bg">
+<a href="/" class="flex gap-4 items-center group">
 <div class="w-10 aspect-square">
-  <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" class="text-fg size-full">
+  <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" class="text-accent size-full">
     <path
       fill="currentColor"
       fill-rule="evenodd"
@@ -11,7 +11,7 @@
 </div>
 
 <div>
-  <h1 class="font-black group-hover:underline decoration-2 underline-offset-2">downbeat</h1>
-  <p class="text-muted">sync gifs to the beat</p>
+  <h1 class="font-black group-hover:underline decoration-2 underline-offset-2 text-accent">downbeat</h1>
+  <p>sync gifs to the beat</p>
 </div>
 </a>

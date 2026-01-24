@@ -56,6 +56,7 @@
     "multer": "^2.0.1",
     "music-metadata": "^11.3.0",
     "music-tempo": "^1.0.3",
-    "svelte-french-toast": "^1.2.0"
+    "svelte-french-toast": "^1.2.0",
+    "tailwindcss-animate": "^1.0.7"
   }
 }

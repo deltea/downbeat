@@ -110,5 +110,5 @@
 
 <canvas
   bind:this={canvas}
-  class="{frames[0]?.dims.width > frames[0]?.dims.height ? "w-full" : "h-full"} rounded-md"
+  class="{frames[0]?.dims.width > frames[0]?.dims.height ? "w-full" : "h-full"} rounded-sm"
 ></canvas>
