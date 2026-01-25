@@ -109,8 +109,4 @@
   });
 </script>
 
-<canvas
-  bind:this={canvas}
-  class="object-contain duration-75"
-  style:transform={`scale(${zoom})`}
-></canvas>
+<canvas bind:this={canvas}></canvas>

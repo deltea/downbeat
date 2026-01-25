@@ -8,7 +8,7 @@
 
   import { extractBPM, extractCoverImage } from "$lib";
   import { muted } from "$lib/stores";
-    import { clamp } from "$lib/utils";
+  import { clamp } from "$lib/utils";
   import { Button, Slider } from "bits-ui";
   import { decompressFrames, parseGIF, type ParsedFrame } from "gifuct-js";
   import { QUALITY_MEDIUM, QUALITY_VERY_HIGH, QUALITY_VERY_LOW } from "mediabunny";
@@ -51,7 +51,10 @@
   let gifPlayer: GifPlayer | null = $state(null);
   let gifPlayerCanvas: HTMLCanvasElement;
 
+  let resultElement: HTMLDivElement;
   let zoom = $state(1);
+  let canvasOffset = $state({ x: 0, y: 0 });
+  let isPanning = $state(false);
 
   let autoSpeedMultiplier = $state(0);
   let speedMultiplier = $state(0);
@@ -123,6 +126,39 @@
     audioCtx = new AudioContext();
     source = audioCtx.createMediaElementSource(audioElement);
     source.connect(audioCtx.destination);
+
+    document.addEventListener("wheel", (e) => {
+      if (e.deltaY < 0) {
+        setZoom(zoom + 0.1);
+      } else {
+        setZoom(zoom - 0.1);
+      }
+    });
+
+    let lastX: number;
+    let lastY: number;
+    resultElement.addEventListener("mousedown", (e) => {
+      isPanning = true;
+      lastX = e.clientX;
+      lastY = e.clientY;
+      resultElement.style.cursor = "grabbing";
+    });
+    document.addEventListener("mouseup", () => {
+      isPanning = false;
+      resultElement.style.cursor = "default";
+    });
+    document.addEventListener("mousemove", (e) => {
+      if (isPanning) {
+        const deltaX = (e.clientX - lastX) / zoom;
+        const deltaY = (e.clientY - lastY) / zoom;
+        canvasOffset = {
+          x: canvasOffset.x + deltaX,
+          y: canvasOffset.y + deltaY
+        };
+        lastX = e.clientX;
+        lastY = e.clientY;
+      }
+    });
   });
 
   onDestroy(() => {
@@ -192,16 +228,14 @@
           max={gifFrames.length}
           class="relative flex items-center w-full hover:cursor-grab active:cursor-grabbing group mt-4"
         >
-          {#snippet children({ tickItems })}
-            <span class="h-1 w-full bg-border rounded-sm duration-100">
-              <Slider.Range class="bg-text-dim h-full absolute rounded-sm duration-100" />
-            </span>
+          <span class="h-1 w-full bg-border rounded-sm duration-100">
+            <Slider.Range class="bg-text-dim h-full absolute rounded-sm duration-100" />
+          </span>
 
-            <Slider.Thumb
-              index={0}
-              class="size-4 bg-accent outline-none rounded-full duration-100 z10"
-            />
-          {/snippet}
+          <Slider.Thumb
+            index={0}
+            class="size-4 bg-accent outline-none rounded-full duration-100 z10"
+          />
         </Slider.Root>
       </Setting>
 
@@ -225,16 +259,22 @@
     </div>
   </aside>
 
-  <div class="bg-dotted h-full grow flex justify-center items-center overflow-hidden relative">
+  <div bind:this={resultElement} class="bg-dotted h-full grow flex justify-center items-center overflow-hidden relative">
     {#if gifFile && bpm}
-      <GifPlayer
-        bind:this={gifPlayer}
-        frameDuration={1 / (bpm / 60) / gifFrames.length / (speedMultiplier == 0 ? autoSpeedMultiplier : speedMultiplier) * 1000}
-        offset={frameOffset}
-        frames={gifFrames}
-        {zoom}
-        bind:canvas={gifPlayerCanvas}
-      />
+      <div
+        class="bg-red-500 duration-50"
+        style:transform="translate({canvasOffset.x}px, {canvasOffset.y}px)"
+        style:scale="{zoom}"
+      >
+        <GifPlayer
+          bind:this={gifPlayer}
+          frameDuration={1 / (bpm / 60) / gifFrames.length / (speedMultiplier == 0 ? autoSpeedMultiplier : speedMultiplier) * 1000}
+          offset={frameOffset}
+          frames={gifFrames}
+          {zoom}
+          bind:canvas={gifPlayerCanvas}
+        />
+      </div>
     {:else}
       <div class="flex flex-col justify-center items-center font-normal gap-2 size-full">
         <h2>PREVIEW HERE</h2>
@@ -242,7 +282,7 @@
       </div>
     {/if}
 
-    <p class="flex absolute bottom-6 left-6 text-text-dim">
+    <p class="flex absolute bottom-6 left-6 text-text-dim backdrop-blur-xl rounded-sm px-2 py-1">
       scroll to zoom + drag to pan
     </p>
 
