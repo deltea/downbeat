@@ -249,8 +249,8 @@
     </div>
 
     <div class="border-t2 border-border p-4">
-      <button class="text-bg bg-accent w-full py-2 font-bold rounded-sm hover:bg-text-bright hover:cursor-pointer active:scale-98 duration-100">
-        Export as video
+      <button disabled class="text-bg bg-accent disabled:opacity-30 disabled:cursor-not-allowed w-full py-2 font-bold rounded-sm hover:bg-text-bright hover:cursor-pointer active:scale-98 duration-100">
+        Export to MP4
       </button>
     </div>
 
