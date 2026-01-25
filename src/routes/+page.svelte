@@ -262,7 +262,7 @@
   <div bind:this={resultElement} class="bg-dotted h-full grow flex justify-center items-center overflow-hidden relative">
     {#if gifFile && bpm}
       <div
-        class="bg-red-500 duration-50"
+        class="duration-50"
         style:transform="translate({canvasOffset.x}px, {canvasOffset.y}px)"
         style:scale="{zoom}"
       >
@@ -282,7 +282,7 @@
       </div>
     {/if}
 
-    <p class="flex absolute bottom-6 left-6 text-text-dim backdrop-blur-xl rounded-sm px-2 py-1">
+    <p class="flex absolute bottom-6 left-6 text-text-dim backdrop-blur-xl rounded-sm px-3 py-1">
       scroll to zoom + drag to pan
     </p>
 

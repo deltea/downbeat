@@ -1,15 +1,15 @@
 # todo
 
-- [ ] fix layout of preview (adjustable size)
+- [ ] fix gif preview
 - [ ] fix export issues
 - [ ] fix certain gifs not exporting
-- [ ] fix gif preview
 - [ ] video seeking
 - [ ] full page file drop
 - [ ] add mobile suppport
 - [ ] auto speed multiplier adjustments
 
 ### done
+- [x] fix layout of preview (adjustable size)
 - [x] unfuk the code
 - [x] add auto speed setting
 - [x] actually learn how time signatures work
