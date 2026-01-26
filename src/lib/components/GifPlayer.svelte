@@ -74,7 +74,7 @@
     canvas.width = bufferCanvas.width = frames[0].dims.width + frames[0].dims.left;
     canvas.height = bufferCanvas.height = frames[0].dims.height + frames[0].dims.top;
 
-    frameIndex = 0;
+    frameIndex = frames.length - 1;
     startTime = performance.now();
 
     requestAnimationFrame(renderFrame);
@@ -99,8 +99,6 @@
 
     bufferCanvas = document.createElement("canvas");
     bufferCtx = bufferCanvas.getContext("2d") as CanvasRenderingContext2D;
-
-    console.log(frameDuration);
 
     updateGif();
   });

@@ -1,6 +1,5 @@
 # todo
 
-- [ ] fix gif preview
 - [ ] fix export issues
 - [ ] fix certain gifs not exporting
 - [ ] full page file drop
@@ -11,6 +10,7 @@
 - [ ] video seeking
 
 ### done
+- [x] fix gif preview
 - [x] drag and drop interactions
 - [x] mute button
 - [x] bouncing speaker
