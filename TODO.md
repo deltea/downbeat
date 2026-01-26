@@ -1,15 +1,8 @@
 # todo
 
 - [ ] fix export issues
-- [ ] fix certain gifs not exporting
-- [ ] full page file drop
-- [ ] add mobile suppport
+- [ ] music and gif samples (caramelldansen)
 - [ ] better speed multiplier adjustments
-
-## maybe
-- [ ] video seeking
-- [ ] youtube search?
-- [ ] giphy or tenor search
 
 ### done
 - [x] fix gif preview

@@ -23,7 +23,7 @@
 </script>
 
 <div class="flex justify-center w-full">
-  <RadioGroup.Root bind:value bind:ref {...restProps} class="flex gap-0 rounded-sm bg-bg border-2 border-border w-full p-1 gap-1">
+  <RadioGroup.Root bind:value bind:ref {...restProps} class="flex rounded-md bg-bg border-2 border-border w-full p-1 gap-1">
     {#each items as item}
       {@const id = useId()}
       <RadioGroup.Item
