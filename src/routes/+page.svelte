@@ -127,7 +127,7 @@
     source = audioCtx.createMediaElementSource(audioElement);
     source.connect(audioCtx.destination);
 
-    document.addEventListener("wheel", (e) => {
+    resultElement.addEventListener("wheel", (e) => {
       if (e.deltaY < 0) {
         setZoom(zoom + 0.1);
       } else {
@@ -307,7 +307,7 @@
         aria-label="mute toggle"
         title="Toggle Mute"
         onclick={() => $muted = !$muted}
-        class="flex justify-center items-center border-2 rounded-sm border-border hover:bg-border text-text hover:text-text-bright size-10 cursor-pointer"
+        class="flex justify-center items-center border-2 rounded-sm bg-bg border-border hover:bg-border text-text hover:text-text-bright size-10 cursor-pointer"
       >
         <iconify-icon icon={$muted ? "material-symbols:volume-off-outline" : "material-symbols:volume-up-outline"} class="text-xl"></iconify-icon>
       </button>
@@ -316,7 +316,7 @@
         aria-label="info"
         title="About"
         href="/#"
-        class="flex justify-center items-center border-2 rounded-sm border-border hover:bg-border text-text hover:text-text-bright size-10 cursor-pointer"
+        class="flex justify-center items-center border-2 rounded-sm bg-bg border-border hover:bg-border text-text hover:text-text-bright size-10 cursor-pointer"
       >
         <iconify-icon icon="material-symbols:info-outline" class="text-xl"></iconify-icon>
       </a>

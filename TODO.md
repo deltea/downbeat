@@ -8,6 +8,8 @@
 
 ## maybe
 - [ ] video seeking
+- [ ] youtube search?
+- [ ] giphy or tenor search
 
 ### done
 - [x] fix gif preview
