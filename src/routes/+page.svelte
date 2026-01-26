@@ -255,7 +255,7 @@
     </div>
 
     <div class="flex w-full border-t-2 border-border p-4 justify-between">
-      <Logo />
+      <Logo {bpm} />
     </div>
   </aside>
 
@@ -287,9 +287,18 @@
     </p>
 
     <div class="flex items-center absolute bottom-6 right-6 bg-surface h-10 rounded-sm">
-      <button onclick={() => setZoom(zoom - 0.25)} class="cursor-pointer aspect-square rounded-l-sm text-text-dim h-full hover:text-text-bright hover:bg-border">-</button>
-      <button onclick={() => setZoom(1)} class="cursor-pointer w-16 flex justify-center items-center">{Math.round(zoom * 100)}%</button>
-      <button onclick={() => setZoom(zoom + 0.25)} class="cursor-pointer aspect-square rounded-r-sm text-text-dim h-full hover:text-text-bright hover:bg-border">+</button>
+      <button
+        onclick={() => setZoom(zoom - 0.25)}
+        class="cursor-pointer aspect-square rounded-l-sm text-text-dim h-full hover:text-text-bright hover:bg-border"
+      >-</button>
+      <button
+        onclick={() => setZoom(1)}
+        class="cursor-pointer w-16 flex justify-center items-center"
+      >{Math.round(zoom * 100)}%</button>
+      <button
+        onclick={() => setZoom(zoom + 0.25)}
+        class="cursor-pointer aspect-square rounded-r-sm text-text-dim h-full hover:text-text-bright hover:bg-border"
+      >+</button>
     </div>
   </div>
 </div>

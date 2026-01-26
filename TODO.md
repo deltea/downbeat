@@ -1,5 +1,6 @@
 # todo
 
+- [ ] mute button
 - [ ] fix gif preview
 - [ ] fix export issues
 - [ ] fix certain gifs not exporting
@@ -9,6 +10,7 @@
 - [ ] auto speed multiplier adjustments
 
 ### done
+- [x] bouncing speaker
 - [x] fix layout of preview (adjustable size)
 - [x] unfuk the code
 - [x] add auto speed setting
