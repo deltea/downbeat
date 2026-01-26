@@ -3,12 +3,15 @@
 - [ ] fix gif preview
 - [ ] fix export issues
 - [ ] fix certain gifs not exporting
-- [ ] video seeking
 - [ ] full page file drop
 - [ ] add mobile suppport
-- [ ] auto speed multiplier adjustments
+- [ ] better speed multiplier adjustments
+
+## maybe
+- [ ] video seeking
 
 ### done
+- [x] drag and drop interactions
 - [x] mute button
 - [x] bouncing speaker
 - [x] fix layout of preview (adjustable size)

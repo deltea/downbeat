@@ -16,6 +16,7 @@
   } = $props();
 
   let fileInput: HTMLInputElement;
+  let dropElement: HTMLButtonElement;
 
   function fileInputChange(e: Event) {
     const target = e.target as HTMLInputElement;
@@ -31,6 +32,7 @@
 
   function onDrop(e: DragEvent) {
     e.preventDefault();
+    onDragLeave();
     const files = e.dataTransfer?.files;
     if (files && files.length > 0) {
       if (validFileTypes.includes(files[0].type)) {
@@ -43,12 +45,27 @@
       console.error("no file dropped");
     }
   }
+
+  function onDrag(e: DragEvent) {
+    e.preventDefault();
+    dropElement.classList.add("border-text-bright!");
+    dropElement.classList.add("text-text-bright!");
+  }
+
+  function onDragLeave() {
+    dropElement.classList.remove("border-text-bright!");
+    dropElement.classList.remove("text-text-bright!");
+  }
 </script>
 
 <button
+  bind:this={dropElement}
   onclick={() => fileInput.click()}
   ondrop={onDrop}
-  ondragover={e => e.preventDefault()}
+  ondragover={onDrag}
+  ondragenter={onDrag}
+  ondragleave={onDragLeave}
+  ondragend={onDragLeave}
   class="border-2 border-border border-dashed w-full h-24 flex gap-4 items-center rounded-sm cursor-pointer group hover:border-text-dim hover:text-text-bright text-text p-2 outline-none duration-100 bg-bg"
 >
   {#if previewSrc}

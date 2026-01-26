@@ -3,15 +3,13 @@
   import { onMount } from "svelte";
   import { loop } from "$lib/utils";
 
-  let { frameDuration, offset, frames, zoom = 1, canvas = $bindable() }: {
+  let { frameDuration, offset, frames, canvas = $bindable() }: {
     frameDuration: number,
     offset: number,
     frames: ParsedFrame[],
-    zoom?: number,
     canvas: HTMLCanvasElement
   } = $props();
 
-  // let canvas: HTMLCanvasElement;
   let ctx: CanvasRenderingContext2D;
 
   let frameIndex = $state(0);
@@ -23,7 +21,6 @@
 
   $effect(() => {
     if (!frames) return;
-
     updateGif();
   });
 

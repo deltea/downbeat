@@ -271,7 +271,6 @@
           frameDuration={1 / (bpm / 60) / gifFrames.length / (speedMultiplier == 0 ? autoSpeedMultiplier : speedMultiplier) * 1000}
           offset={frameOffset}
           frames={gifFrames}
-          {zoom}
           bind:canvas={gifPlayerCanvas}
         />
       </div>
@@ -307,14 +306,15 @@
       <button
         aria-label="mute toggle"
         onclick={() => $muted = !$muted}
-        class="flex justify-center items-center border-2 rounded-sm border-border hover:border-text-dim text-text hover:text-text-bright size-10 cursor-pointer"
+        class="flex justify-center items-center border-2 rounded-sm border-border hover:bg-border text-text hover:text-text-bright size-10 cursor-pointer"
       >
         <iconify-icon icon={$muted ? "material-symbols:volume-off-outline" : "material-symbols:volume-up-outline"} class="text-xl"></iconify-icon>
       </button>
 
       <a
-        href="#"
-        class="flex justify-center items-center border-2 rounded-sm border-border hover:border-text-dim text-text hover:text-text-bright size-10 cursor-pointer"
+        aria-label="info"
+        href="/#"
+        class="flex justify-center items-center border-2 rounded-sm border-border hover:bg-border text-text hover:text-text-bright size-10 cursor-pointer"
       >
         <iconify-icon icon="material-symbols:info-outline" class="text-xl"></iconify-icon>
       </a>
