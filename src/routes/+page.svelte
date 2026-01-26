@@ -282,14 +282,16 @@
       </div>
     {/if}
 
-    <p class="flex absolute bottom-6 left-6 text-text-dim backdrop-blur-xl rounded-sm px-3 py-1">
-      scroll to zoom + drag to pan
-    </p>
+    {#if gifFile && bpm}
+      <p class="flex absolute bottom-6 left-6 text-text-dim backdrop-blur-xl rounded-sm px-3 py-1">
+        scroll to zoom + drag to pan
+      </p>
+    {/if}
 
-    <div class="flex items-center absolute bottom-6 right-6 bg-surface h-10 rounded-sm">
+    <div class="flex items-center absolute bottom-6 right-6">
       <button
         onclick={() => setZoom(zoom - 0.25)}
-        class="cursor-pointer aspect-square rounded-l-sm text-text-dim h-full hover:text-text-bright hover:bg-border"
+        class="cursor-pointer aspect-square flex justify-center items-center text-text-dim size-8 hover:text-text-bright"
       >-</button>
       <button
         onclick={() => setZoom(1)}
@@ -297,8 +299,18 @@
       >{Math.round(zoom * 100)}%</button>
       <button
         onclick={() => setZoom(zoom + 0.25)}
-        class="cursor-pointer aspect-square rounded-r-sm text-text-dim h-full hover:text-text-bright hover:bg-border"
+        class="cursor-pointer aspect-square flex justify-center items-center text-text-dim size-8 hover:text-text-bright"
       >+</button>
+    </div>
+
+    <div class="flex items-center absolute top-6 left-6">
+      <button
+        aria-label="mute toggle"
+        onclick={() => $muted = !$muted}
+        class="flex justify-center items-center border-2 rounded-sm border-border hover:border-text-dim text-text hover:text-text-bright size-12 cursor-pointer"
+      >
+        <iconify-icon icon={$muted ? "material-symbols:volume-off" : "material-symbols:volume-up"} class="text-xl"></iconify-icon>
+      </button>
     </div>
   </div>
 </div>
