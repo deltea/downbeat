@@ -174,7 +174,7 @@
     </h2>
 
     <div class="flex flex-col gap-10 overflow-y-auto p-6 grow w-full">
-      <Setting name="Audio Track">
+      <Setting name="Audio Source">
         <FilePicker
           previewSrc={musicCoverSrc}
           placeholderIcon="material-symbols:music-note"
