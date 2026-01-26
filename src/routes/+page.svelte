@@ -305,6 +305,7 @@
     <div class="flex items-center absolute gap-3 top-6 left-6">
       <button
         aria-label="mute toggle"
+        title="Toggle Mute"
         onclick={() => $muted = !$muted}
         class="flex justify-center items-center border-2 rounded-sm border-border hover:bg-border text-text hover:text-text-bright size-10 cursor-pointer"
       >
@@ -313,6 +314,7 @@
 
       <a
         aria-label="info"
+        title="About"
         href="/#"
         class="flex justify-center items-center border-2 rounded-sm border-border hover:bg-border text-text hover:text-text-bright size-10 cursor-pointer"
       >

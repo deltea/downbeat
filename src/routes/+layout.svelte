@@ -8,6 +8,9 @@
 
 <svelte:head>
   <title>downbeat</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+	<meta name="title" content="downbeat" />
+	<meta name="description" content="sync gifs to the beat!" />
 </svelte:head>
 
 <main class="h-screen flex flex-col items-center">
