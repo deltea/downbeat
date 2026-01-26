@@ -303,14 +303,21 @@
       >+</button>
     </div>
 
-    <div class="flex items-center absolute top-6 left-6">
+    <div class="flex items-center absolute gap-3 top-6 left-6">
       <button
         aria-label="mute toggle"
         onclick={() => $muted = !$muted}
-        class="flex justify-center items-center border-2 rounded-sm border-border hover:border-text-dim text-text hover:text-text-bright size-12 cursor-pointer"
+        class="flex justify-center items-center border-2 rounded-sm border-border hover:border-text-dim text-text hover:text-text-bright size-10 cursor-pointer"
       >
-        <iconify-icon icon={$muted ? "material-symbols:volume-off" : "material-symbols:volume-up"} class="text-xl"></iconify-icon>
+        <iconify-icon icon={$muted ? "material-symbols:volume-off-outline" : "material-symbols:volume-up-outline"} class="text-xl"></iconify-icon>
       </button>
+
+      <a
+        href="#"
+        class="flex justify-center items-center border-2 rounded-sm border-border hover:border-text-dim text-text hover:text-text-bright size-10 cursor-pointer"
+      >
+        <iconify-icon icon="material-symbols:info-outline" class="text-xl"></iconify-icon>
+      </a>
     </div>
   </div>
 </div>
