@@ -1,5 +1,5 @@
 import type { ParsedFrame } from "gifuct-js";
-import { AudioBufferSource, BufferTarget, CanvasSource, Mp4OutputFormat, Output, QUALITY_MEDIUM, QUALITY_VERY_HIGH } from "mediabunny";
+import { AudioBufferSource, BufferTarget, CanvasSource, Mp4OutputFormat, Output, Quality, QUALITY_MEDIUM } from "mediabunny";
 
 export async function exportToVideo(
   width: number,
@@ -8,7 +8,8 @@ export async function exportToVideo(
   audioFile: File,
   gifFrames: ParsedFrame[],
   frameDuration: number,
-  offset: number
+  offset: number,
+  quality: Quality
 ): Promise<Blob> {
   const canvas = new OffscreenCanvas(width, height);
   const ctx = canvas.getContext("2d") as OffscreenCanvasRenderingContext2D;
@@ -91,7 +92,7 @@ export async function exportToVideo(
 
   const videoSource = new CanvasSource(canvas, {
     codec: "avc",
-    bitrate: QUALITY_VERY_HIGH,
+    bitrate: quality,
   });
 
   const audioSource = new AudioBufferSource({ codec: "aac", bitrate: QUALITY_MEDIUM });

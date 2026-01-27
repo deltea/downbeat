@@ -12,8 +12,8 @@
   import { clamp } from "$lib/utils";
   import { Slider } from "bits-ui";
   import { decompressFrames, parseGIF, type ParsedFrame } from "gifuct-js";
-  import { QUALITY_MEDIUM, QUALITY_VERY_HIGH, QUALITY_VERY_LOW } from "mediabunny";
-  import { onDestroy, onMount } from "svelte";
+  import { QUALITY_HIGH, QUALITY_MEDIUM, QUALITY_VERY_HIGH, QUALITY_VERY_LOW } from "mediabunny";
+  import { onMount } from "svelte";
 
   const SPEEDS = [
     { value: 0, label: "auto" },
@@ -24,8 +24,9 @@
   ];
 
   const QUALITY = [
-    { value: QUALITY_VERY_LOW, label: "low" },
-    { value: QUALITY_MEDIUM, label: "medium" },
+    { value: QUALITY_VERY_LOW, label: "dogsh*t" },
+    { value: QUALITY_MEDIUM, label: "low" },
+    { value: QUALITY_HIGH, label: "medium" },
     { value: QUALITY_VERY_HIGH, label: "high" }
   ];
 
@@ -44,6 +45,7 @@
   let musicCoverSrc: string | null = $state(null);
   let isLoadingBPM = $state(false);
   let bpm: number | null = $state(null);
+  let isExporting = $state(false);
 
   let gifFile: File | null = $state(null);
   let gifSrc: string | null = $state(null);
@@ -63,8 +65,7 @@
   let speedMultiplier = $state(0);
   let speed = $derived(speedMultiplier == 0 ? autoSpeedMultiplier : speedMultiplier);
   let frameOffset = $state(0);
-  let qualityValue = $state(QUALITY_MEDIUM);
-  let codecValue = $state<"av1" | "avc" | "hevc" | "vp9" | "vp8">("av1");
+  let qualityValue = $state(QUALITY_HIGH);
 
   muted.subscribe(value => {
     if (audioElement) audioElement.muted = value;
@@ -126,6 +127,7 @@
     if (!gifFile || !bpm) return;
 
     console.log("exporting...");
+    isExporting = true;
 
     const secondsPerBeat = 60 / bpm / speed;
     const exportedBlob = await exportToVideo(
@@ -135,10 +137,12 @@
       musicFile!,
       gifFrames,
       secondsPerBeat / gifFrames.length,
-      frameOffset
+      frameOffset,
+      qualityValue
     );
 
     console.log("done exporting!");
+    isExporting = false;
 
     // download the blob
     const url = URL.createObjectURL(exportedBlob);
@@ -281,19 +285,22 @@
       <Setting name="Export Quality">
         <Radio items={QUALITY} name="quality" bind:value={qualityValue} />
       </Setting>
-
-      <Setting name="Video Codec">
-        <Radio items={CODECS} name="codec" bind:value={codecValue} />
-      </Setting>
     </div>
 
     <div class="border-t-2 border-border p-4">
       <button
-        disabled={!gifFile || !bpm}
+        disabled={!gifFile || !bpm || isExporting}
         onclick={exportVideo}
-        class="text-bg bg-accent disabled:opacity-30 disabled:cursor-not-allowed w-full py-2 font-bold rounded-sm hover:bg-text-bright hover:cursor-pointer active:scale-98 duration-100"
+        class="text-bg bg-accent disabled:opacity-30 disabled:cursor-not-allowed w-full h-10 font-bold rounded-sm hover:bg-text-bright hover:cursor-pointer active:scale-98 duration-100"
       >
-        Export to MP4
+        {#if isExporting}
+          <span class="inline-flex items-center gap-4">
+            <iconify-icon icon="tdesign:loading" class="animate-spin text-base"></iconify-icon>
+            exporting...
+          </span>
+        {:else}
+          Export to MP4
+        {/if}
       </button>
     </div>
 

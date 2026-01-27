@@ -1,5 +1,6 @@
 # todo
 
+- [ ] export progress bar
 - [ ] music and gif samples (caramelldansen)
 - [ ] better speed multiplier adjustments
 
