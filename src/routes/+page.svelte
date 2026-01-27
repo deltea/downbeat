@@ -7,12 +7,12 @@
   import Setting from "$components/Setting.svelte";
 
   import { extractBPM, extractCoverImage } from "$lib";
-    import { exportToVideo } from "$lib/export";
+  import { exportToVideo } from "$lib/export";
   import { muted } from "$lib/stores";
   import { clamp } from "$lib/utils";
-  import { Button, Slider } from "bits-ui";
+  import { Slider } from "bits-ui";
   import { decompressFrames, parseGIF, type ParsedFrame } from "gifuct-js";
-  import { ALL_FORMATS, BlobSource, BufferTarget, Conversion, Input, Mp4OutputFormat, Output, QUALITY_MEDIUM, QUALITY_VERY_HIGH, QUALITY_VERY_LOW } from "mediabunny";
+  import { QUALITY_MEDIUM, QUALITY_VERY_HIGH, QUALITY_VERY_LOW } from "mediabunny";
   import { onDestroy, onMount } from "svelte";
 
   const SPEEDS = [
@@ -56,6 +56,8 @@
   let zoom = $state(1);
   let canvasOffset = $state({ x: 0, y: 0 });
   let isPanning = $state(false);
+  let lastX: number;
+  let lastY: number;
 
   let autoSpeedMultiplier = $state(0);
   let speedMultiplier = $state(0);
@@ -144,6 +146,35 @@
     URL.revokeObjectURL(url);
   }
 
+  function onWheel(e: WheelEvent) {
+    setZoom(zoom + (e.deltaY < 0 ? 0.1 : -0.1));
+  }
+
+  function onMouseDown(e: MouseEvent) {
+    isPanning = true;
+    lastX = e.clientX;
+    lastY = e.clientY;
+    resultElement.style.cursor = "grabbing";
+  }
+
+  function onMouseUp(e: MouseEvent) {
+    isPanning = false;
+    resultElement.style.cursor = "default";
+  }
+
+  function onMouseMove(e: MouseEvent) {
+    if (isPanning) {
+      const deltaX = (e.clientX - lastX) / zoom;
+      const deltaY = (e.clientY - lastY) / zoom;
+      canvasOffset = {
+        x: canvasOffset.x + deltaX,
+        y: canvasOffset.y + deltaY
+      };
+      lastX = e.clientX;
+      lastY = e.clientY;
+    }
+  }
+
   onMount(() => {
     audioElement = document.createElement("audio");
     audioElement.volume = 0.4;
@@ -153,38 +184,19 @@
     source = audioCtx.createMediaElementSource(audioElement);
     source.connect(audioCtx.destination);
 
-    resultElement.addEventListener("wheel", (e) => {
-      setZoom(zoom + (e.deltaY < 0 ? 0.1 : -0.1));
-    });
+    resultElement.addEventListener("wheel", onWheel);
+    resultElement.addEventListener("mousedown", onMouseDown);
+    document.addEventListener("mouseup", onMouseUp);
+    document.addEventListener("mousemove", onMouseMove);
 
-    let lastX: number;
-    let lastY: number;
-    resultElement.addEventListener("mousedown", (e) => {
-      isPanning = true;
-      lastX = e.clientX;
-      lastY = e.clientY;
-      resultElement.style.cursor = "grabbing";
-    });
-    document.addEventListener("mouseup", () => {
-      isPanning = false;
-      resultElement.style.cursor = "default";
-    });
-    document.addEventListener("mousemove", (e) => {
-      if (isPanning) {
-        const deltaX = (e.clientX - lastX) / zoom;
-        const deltaY = (e.clientY - lastY) / zoom;
-        canvasOffset = {
-          x: canvasOffset.x + deltaX,
-          y: canvasOffset.y + deltaY
-        };
-        lastX = e.clientX;
-        lastY = e.clientY;
-      }
-    });
-  });
+    return () => {
+      if (audioCtx) audioCtx.close();
 
-  onDestroy(() => {
-    if (audioCtx) audioCtx.close();
+      resultElement.removeEventListener("wheel", onWheel);
+      resultElement.removeEventListener("mousedown", onMouseDown);
+      document.removeEventListener("mouseup", onMouseUp);
+      document.removeEventListener("mousemove", onMouseMove);
+    }
   });
 </script>
 
@@ -270,7 +282,7 @@
       </Setting>
     </div>
 
-    <div class="border-t2 border-border p-4">
+    <div class="border-t-2 border-border p-4">
       <button
         disabled={!gifFile || !bpm}
         onclick={exportVideo}
