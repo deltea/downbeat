@@ -9,7 +9,7 @@ export const musicSamples = [
 export const gifSamples = [
   { name: "Banana Dance", img: "/gifs/banana.gif", path: "/gifs/banana.gif" },
   { name: "Helltaker", img: "/gifs/helltaker.gif", path: "/gifs/helltaker.gif" },
-  { name: "Kirby", img: "/gifs/kirby.gif", path: "/gifs/kirby.gif" },
+  { name: "Triangle", img: "/gifs/triangle.gif", path: "/gifs/triangle.gif" },
   { name: "Miku", img: "/gifs/miku.gif", path: "/gifs/miku.gif" },
   { name: "Spamton", img: "/gifs/spamton.gif", path: "/gifs/spamton.gif" },
 ]

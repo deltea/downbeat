@@ -1,6 +1,6 @@
 <script lang="ts">
   import { Dialog, DropdownMenu, RadioGroup } from "bits-ui";
-  import { onMount, type Snippet } from "svelte";
+  import type { Snippet } from "svelte";
 
   let {
     children,

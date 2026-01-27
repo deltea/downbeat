@@ -1,5 +1,5 @@
 import type { ParsedFrame } from "gifuct-js";
-import { AudioBufferSource, BufferTarget, CanvasSource, Mp4OutputFormat, Output, Quality, QUALITY_MEDIUM } from "mediabunny";
+import { AudioBufferSource, BufferTarget, CanvasSource, getFirstEncodableVideoCodec, Mp4OutputFormat, Output, Quality, QUALITY_MEDIUM } from "mediabunny";
 
 export async function exportToVideo(
   width: number,
@@ -90,8 +90,12 @@ export async function exportToVideo(
     target: new BufferTarget(),
   });
 
+  const codec = await getFirstEncodableVideoCodec(
+    ["avc", "hevc", "vp8"],
+    { width, height, bitrate: quality },
+  );
   const videoSource = new CanvasSource(canvas, {
-    codec: "avc",
+    codec: codec ?? "avc",
     bitrate: quality,
   });
 
