@@ -19,8 +19,7 @@ export async function exportToVideo(
 
   // blend a patch over full frame respecting alpha
   function blendPatch(full: ImageData, patch: ImageData, x: number, y: number) {
-    const fw = full.width;
-    const fh = full.height;
+    const fw = full.width
     const pw = patch.width;
     const ph = patch.height;
     const fullData = full.data;

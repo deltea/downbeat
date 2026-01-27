@@ -30,35 +30,30 @@
     const now = performance.now();
     const elapsed = now - startTime;
 
-    const targetFrameIndex = Math.floor(elapsed / frameDuration) % frames.length;
+    frameIndex = (Math.floor(elapsed / (frameDuration * 1000)) + offset) % frames.length;
+    const frame = frames[loop(frameIndex + offset, 0, frames.length)];
 
-    if (targetFrameIndex !== frameIndex) {
-      frameIndex = targetFrameIndex;
+    if (needsDisposal || (frameIndex + offset) % frames.length === 0) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      needsDisposal = false;
+    }
 
-      const frame = frames[loop(frameIndex + offset, 0, frames.length)];
+    if (!frameImageData || frameImageData.width !== frame.dims.width || frameImageData.height !== frame.dims.height) {
+      bufferCanvas.width = frame.dims.width;
+      bufferCanvas.height = frame.dims.height;
+      frameImageData = bufferCtx.createImageData(frame.dims.width, frame.dims.height);
+    }
 
-      if (needsDisposal || (frameIndex + offset) % frames.length === 0) {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        needsDisposal = false;
-      }
+    frameImageData.data.set(frame.patch);
+    bufferCtx.putImageData(frameImageData, 0, 0);
+    ctx.drawImage(bufferCanvas, frame.dims.left, frame.dims.top);
 
-      if (!frameImageData || frameImageData.width !== frame.dims.width || frameImageData.height !== frame.dims.height) {
-        bufferCanvas.width = frame.dims.width;
-        bufferCanvas.height = frame.dims.height;
-        frameImageData = bufferCtx.createImageData(frame.dims.width, frame.dims.height);
-      }
+    if (frame.disposalType === 2) {
+      needsDisposal = true;
+    }
 
-      frameImageData.data.set(frame.patch);
-      bufferCtx.putImageData(frameImageData, 0, 0);
-      ctx.drawImage(bufferCanvas, frame.dims.left, frame.dims.top);
-
-      if (frame.disposalType === 2) {
-        needsDisposal = true;
-      }
-
-      if (frameIndex >= frames.length) {
-        frameIndex = 0;
-      }
+    if (frameIndex >= frames.length) {
+      frameIndex = 0;
     }
 
     requestAnimationFrame(renderFrame);

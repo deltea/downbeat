@@ -1,10 +1,10 @@
 # todo
 
-- [ ] fix export issues
 - [ ] music and gif samples (caramelldansen)
 - [ ] better speed multiplier adjustments
 
 ### done
+- [x] fix export issues
 - [x] fix gif preview
 - [x] drag and drop interactions
 - [x] mute button

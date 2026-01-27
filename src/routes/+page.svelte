@@ -61,6 +61,7 @@
 
   let autoSpeedMultiplier = $state(0);
   let speedMultiplier = $state(0);
+  let speed = $derived(speedMultiplier == 0 ? autoSpeedMultiplier : speedMultiplier);
   let frameOffset = $state(0);
   let qualityValue = $state(QUALITY_MEDIUM);
   let codecValue = $state<"av1" | "avc" | "hevc" | "vp9" | "vp8">("av1");
@@ -122,7 +123,11 @@
   }
 
   async function exportVideo() {
-    const secondsPerBeat = 60 / bpm! / autoSpeedMultiplier;
+    if (!gifFile || !bpm) return;
+
+    console.log("exporting...");
+
+    const secondsPerBeat = 60 / bpm / speed;
     const exportedBlob = await exportToVideo(
       gifPlayerCanvas.width,
       gifPlayerCanvas.height,
@@ -306,7 +311,7 @@
       >
         <GifPlayer
           bind:this={gifPlayer}
-          frameDuration={1 / (bpm / 60) / gifFrames.length / (speedMultiplier == 0 ? autoSpeedMultiplier : speedMultiplier) * 1000}
+          frameDuration={60 / bpm / speed / gifFrames.length}
           offset={frameOffset}
           frames={gifFrames}
           bind:canvas={gifPlayerCanvas}
