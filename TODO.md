@@ -1,9 +1,12 @@
 # todo
 
-- [ ] music and gif samples (caramelldansen)
+- [ ] sync gif with current song time
+- [ ] add frame offset indicator
+- [ ] export progress bar
 - [ ] better speed multiplier adjustments
 
 ### done
+- [x] music and gif samples (caramelldansen)
 - [x] export progress bar
 - [x] fix export issues
 - [x] fix gif preview
