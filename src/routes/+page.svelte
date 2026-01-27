@@ -248,15 +248,15 @@
           min={0}
           step={1}
           max={gifFrames.length}
-          class="relative flex items-center w-full hover:cursor-grab active:cursor-grabbing group mt-4"
+          class="relative flex items-center w-full hover:cursor-ew-resize group mt-4"
         >
-          <span class="h-1 w-full bg-border rounded-sm duration-100">
-            <Slider.Range class="bg-text-dim h-full absolute rounded-sm duration-100" />
+          <span class="h-1 w-full bg-border rounded-sm">
+            <Slider.Range class="bg-text-dim h-full absolute rounded-sm" />
           </span>
 
           <Slider.Thumb
             index={0}
-            class="size-4 bg-accent outline-none rounded-full duration-100 z10"
+            class="size-4 bg-accent outline-none rounded-full z10"
           />
         </Slider.Root>
       </Setting>
