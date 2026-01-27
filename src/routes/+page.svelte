@@ -8,6 +8,7 @@
 
   import { extractBPM, extractCoverImage } from "$lib";
   import { exportToVideo } from "$lib/export";
+  import { gifSamples, musicSamples } from "$lib/samples";
   import { muted } from "$lib/stores";
   import { clamp } from "$lib/utils";
   import { Slider } from "bits-ui";
@@ -218,6 +219,7 @@
           placeholderIcon="material-symbols:music-note"
           onUpload={onMusicUpload}
           validFileTypes={["audio/mpeg", "audio/wav", "audio/ogg"]}
+          samples={musicSamples}
         >
           <div class="flex flex-col gap-2 w-full">
             <span>
@@ -241,6 +243,7 @@
           placeholderIcon="material-symbols:image-outline-sharp"
           onUpload={onGifUpload}
           validFileTypes={["image/gif", "image/png", "image/jpeg"]}
+          samples={gifSamples}
         >
           <div class="flex flex-col gap-2 w-full">
             <span>frames = {gifFrames.length > 0 ? gifFrames.length : "?"}</span>
@@ -335,7 +338,7 @@
     <div class="flex items-center absolute bottom-6 right-6">
       <button
         onclick={() => setZoom(zoom - 0.25)}
-        class="cursor-pointer aspect-square flex justify-center items-center text-text-dim size-8 hover:text-text-bright"
+        class="cursor-pointer aspect-square flex justify-center items-center text-lg text-text-dim size-8 hover:text-text-bright"
       >-</button>
       <button
         onclick={() => setZoom(1)}
@@ -343,7 +346,7 @@
       >{Math.round(zoom * 100)}%</button>
       <button
         onclick={() => setZoom(zoom + 0.25)}
-        class="cursor-pointer aspect-square flex justify-center items-center text-text-dim size-8 hover:text-text-bright"
+        class="cursor-pointer aspect-square flex justify-center items-center text-lg text-text-dim size-8 hover:text-text-bright"
       >+</button>
     </div>
 

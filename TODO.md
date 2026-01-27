@@ -1,10 +1,10 @@
 # todo
 
-- [ ] export progress bar
 - [ ] music and gif samples (caramelldansen)
 - [ ] better speed multiplier adjustments
 
 ### done
+- [x] export progress bar
 - [x] fix export issues
 - [x] fix gif preview
 - [x] drag and drop interactions
