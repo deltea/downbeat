@@ -30,11 +30,6 @@
     { value: QUALITY_VERY_HIGH, label: "high" }
   ];
 
-  const CODECS = [
-    { value: "av1", label: "AV1" },
-    { value: "avc", label: "AVC" }
-  ];
-
   const idealBeatDuration = 500;
 
   let audioElement: HTMLAudioElement;
