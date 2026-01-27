@@ -7,11 +7,12 @@
   import Setting from "$components/Setting.svelte";
 
   import { extractBPM, extractCoverImage } from "$lib";
+    import { exportToVideo } from "$lib/export";
   import { muted } from "$lib/stores";
   import { clamp } from "$lib/utils";
   import { Button, Slider } from "bits-ui";
   import { decompressFrames, parseGIF, type ParsedFrame } from "gifuct-js";
-  import { QUALITY_MEDIUM, QUALITY_VERY_HIGH, QUALITY_VERY_LOW } from "mediabunny";
+  import { ALL_FORMATS, BlobSource, BufferTarget, Conversion, Input, Mp4OutputFormat, Output, QUALITY_MEDIUM, QUALITY_VERY_HIGH, QUALITY_VERY_LOW } from "mediabunny";
   import { onDestroy, onMount } from "svelte";
 
   const SPEEDS = [
@@ -118,6 +119,31 @@
     zoom = clamp(value, 0.1, 5);
   }
 
+  async function exportVideo() {
+    const secondsPerBeat = 60 / bpm! / autoSpeedMultiplier;
+    const exportedBlob = await exportToVideo(
+      gifPlayerCanvas.width,
+      gifPlayerCanvas.height,
+      30,
+      musicFile!,
+      gifFrames,
+      secondsPerBeat / gifFrames.length,
+      frameOffset
+    );
+
+    console.log("done exporting!");
+
+    // download the blob
+    const url = URL.createObjectURL(exportedBlob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "downbeat_export.mp4";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
   onMount(() => {
     audioElement = document.createElement("audio");
     audioElement.volume = 0.4;
@@ -128,11 +154,7 @@
     source.connect(audioCtx.destination);
 
     resultElement.addEventListener("wheel", (e) => {
-      if (e.deltaY < 0) {
-        setZoom(zoom + 0.1);
-      } else {
-        setZoom(zoom - 0.1);
-      }
+      setZoom(zoom + (e.deltaY < 0 ? 0.1 : -0.1));
     });
 
     let lastX: number;
@@ -249,7 +271,11 @@
     </div>
 
     <div class="border-t2 border-border p-4">
-      <button disabled class="text-bg bg-accent disabled:opacity-30 disabled:cursor-not-allowed w-full py-2 font-bold rounded-sm hover:bg-text-bright hover:cursor-pointer active:scale-98 duration-100">
+      <button
+        disabled={!gifFile || !bpm}
+        onclick={exportVideo}
+        class="text-bg bg-accent disabled:opacity-30 disabled:cursor-not-allowed w-full py-2 font-bold rounded-sm hover:bg-text-bright hover:cursor-pointer active:scale-98 duration-100"
+      >
         Export to MP4
       </button>
     </div>
