@@ -135,7 +135,7 @@
     const exportedBlob = await exportToVideo(
       gifPlayerCanvas.width,
       gifPlayerCanvas.height,
-      30,
+      60,
       musicFile!,
       gifFrames,
       secondsPerBeat / gifFrames.length,
