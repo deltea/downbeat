@@ -117,7 +117,7 @@
 <Dialog.Root open={isDialogOpen} onOpenChange={(open) => isDialogOpen = open}>
   <Dialog.Portal>
     <Dialog.Overlay class="fixed inset-0 z-50 bg-bg/80" />
-    <Dialog.Content class="sm:max-w-4xl w-full h-96 rounded-sm border-2 border-border bg-surface shadow-lg outline-none z-50 fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex justify-center items-center">
+    <Dialog.Content class="sm:max-w-4xl w-full h-96 rounded-sm border-2 border-border bg-surface shadow-lg outline-none z-50 fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col gap-8 justify-center items-center">
       <Dialog.Close class="outline-none absolute right-4 top-4 cursor-pointer">
         <iconify-icon icon="material-symbols:close" class="text-lg"></iconify-icon>
       </Dialog.Close>
@@ -135,6 +135,8 @@
           </RadioGroup.Item>
         {/each}
       </RadioGroup.Root>
+
+      <p>{selectedSample}</p>
 
       <Dialog.Close
         disabled={!selectedSample}
