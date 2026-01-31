@@ -15,6 +15,7 @@ export async function exportToVideo(
   // full accumulated frame buffer
   const fullFrameImageData = new ImageData(width, height);
   let previousFullFrame: ImageData | null = null;
+  let lastFrameDisposalType = 0;
 
   // cache all patches to avoid recreating them
   const patchDataCache = new Map<number, ImageData>();
@@ -72,27 +73,21 @@ export async function exportToVideo(
     const index = (Math.floor(time / frameDuration) + offset) % gifFrames.length;
     const frame = gifFrames[index];
 
+    // apply disposal from PREVIOUS frame before rendering current frame
     // disposal = 3: restore previous full frame
-    if (frame.disposalType === 3 && previousFullFrame) {
+    if (lastFrameDisposalType === 3 && previousFullFrame) {
       fullFrameImageData.data.set(previousFullFrame.data);
     }
 
-    // save full frame before drawing if current frame uses disposal 3
-    if (frame.disposalType === 3) {
-      previousFullFrame = new ImageData(
-        new Uint8ClampedArray(fullFrameImageData.data),
-        fullFrameImageData.width,
-        fullFrameImageData.height
-      );
-    }
-
-    // disposal = 2: clear frame rectangle to transparent
-    if (frame.disposalType === 2) {
+    // disposal = 2: clear previous frame rectangle to transparent
+    if (lastFrameDisposalType === 2) {
+      const prevIndex = index === 0 ? gifFrames.length - 1 : index - 1;
+      const prevFrame = gifFrames[prevIndex];
       const fullData = fullFrameImageData.data;
-      const left = frame.dims.left;
-      const top = frame.dims.top;
-      const fwidth = frame.dims.width;
-      const fheight = frame.dims.height;
+      const left = prevFrame.dims.left;
+      const top = prevFrame.dims.top;
+      const fwidth = prevFrame.dims.width;
+      const fheight = prevFrame.dims.height;
       const canvasWidth = width;
 
       for (let py = 0; py < fheight; py++) {
@@ -102,9 +97,21 @@ export async function exportToVideo(
       }
     }
 
+    // save full frame before drawing if we'll need to restore it next time
+    if (frame.disposalType === 3) {
+      previousFullFrame = new ImageData(
+        new Uint8ClampedArray(fullFrameImageData.data),
+        fullFrameImageData.width,
+        fullFrameImageData.height
+      );
+    }
+
     // blend patch over full frame (use cached patch data)
     const patchData = patchDataCache.get(index)!;
     blendPatch(fullFrameImageData, patchData, frame.dims.left, frame.dims.top);
+
+    // update disposal type for next frame
+    lastFrameDisposalType = frame.disposalType;
 
     // create sample directly from pixel data
     const timestamp = Math.floor(time * 1_000_000);

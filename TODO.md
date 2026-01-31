@@ -1,9 +1,10 @@
 # todo
 
-- [ ] add frame offset indicator
+- [ ] add disposal methods to export
 - [ ] better speed multiplier adjustments
 
 ### done
+- [x] add frame offset indicator
 - [x] export progress bar
 - [x] sync gif with current song time
 - [x] music and gif samples (caramelldansen)
