@@ -16,32 +16,58 @@ export async function exportToVideo(
   const fullFrameImageData = new ImageData(width, height);
   let previousFullFrame: ImageData | null = null;
 
+  // cache all patches to avoid recreating them
+  const patchDataCache = new Map<number, ImageData>();
+  for (let i = 0; i < gifFrames.length; i++) {
+    const frame = gifFrames[i];
+    const patchData = new ImageData(frame.dims.width, frame.dims.height);
+    patchData.data.set(frame.patch);
+    patchDataCache.set(i, patchData);
+  }
+
   // blend a patch over full frame respecting alpha
   function blendPatch(full: ImageData, patch: ImageData, x: number, y: number) {
-    const fw = full.width
+    const fw = full.width;
     const pw = patch.width;
     const ph = patch.height;
     const fullData = full.data;
     const patchData = patch.data;
 
+    // process row by row for better cache locality
     for (let py = 0; py < ph; py++) {
-      for (let px = 0; px < pw; px++) {
-        const patchIdx = (py * pw + px) * 4;
-        const fullIdx = ((py + y) * fw + (px + x)) * 4;
+      const fullRowStart = ((py + y) * fw + x) * 4;
+      const patchRowStart = py * pw * 4;
 
-        const alpha = patchData[patchIdx + 3] / 255;
+      for (let px = 0; px < pw; px++) {
+        const patchIdx = patchRowStart + px * 4;
+        const fullIdx = fullRowStart + px * 4;
+
+        const alpha = patchData[patchIdx + 3];
+
+        // skip fully transparent pixels
         if (alpha === 0) continue;
 
-        const invAlpha = 1 - alpha;
-        fullData[fullIdx + 0] = patchData[patchIdx + 0] * alpha + fullData[fullIdx + 0] * invAlpha;
-        fullData[fullIdx + 1] = patchData[patchIdx + 1] * alpha + fullData[fullIdx + 1] * invAlpha;
-        fullData[fullIdx + 2] = patchData[patchIdx + 2] * alpha + fullData[fullIdx + 2] * invAlpha;
-        fullData[fullIdx + 3] = Math.max(patchData[patchIdx + 3], fullData[fullIdx + 3]);
+        // fast path for fully opaque pixels
+        if (alpha === 255) {
+          fullData[fullIdx] = patchData[patchIdx];
+          fullData[fullIdx + 1] = patchData[patchIdx + 1];
+          fullData[fullIdx + 2] = patchData[patchIdx + 2];
+          fullData[fullIdx + 3] = 255;
+          continue;
+        }
+
+        // alpha blending for semi-transparent pixels
+        const alphaRatio = alpha / 255;
+        const invAlpha = 1 - alphaRatio;
+        fullData[fullIdx] = patchData[patchIdx] * alphaRatio + fullData[fullIdx] * invAlpha;
+        fullData[fullIdx + 1] = patchData[patchIdx + 1] * alphaRatio + fullData[fullIdx + 1] * invAlpha;
+        fullData[fullIdx + 2] = patchData[patchIdx + 2] * alphaRatio + fullData[fullIdx + 2] * invAlpha;
+        fullData[fullIdx + 3] = Math.max(alpha, fullData[fullIdx + 3]);
       }
     }
   }
 
-  // render a frame at a given time in seconds and return videosample
+  // render a frame at a given time in seconds and return sample
   function createVideoSample(time: number): VideoSample {
     const index = (Math.floor(time / frameDuration) + offset) % gifFrames.length;
     const frame = gifFrames[index];
@@ -62,23 +88,25 @@ export async function exportToVideo(
 
     // disposal = 2: clear frame rectangle to transparent
     if (frame.disposalType === 2) {
-      for (let py = 0; py < frame.dims.height; py++) {
-        for (let px = 0; px < frame.dims.width; px++) {
-          const idx = ((py + frame.dims.top) * width + (px + frame.dims.left)) * 4;
-          fullFrameImageData.data[idx + 0] = 0;
-          fullFrameImageData.data[idx + 1] = 0;
-          fullFrameImageData.data[idx + 2] = 0;
-          fullFrameImageData.data[idx + 3] = 0;
-        }
+      const fullData = fullFrameImageData.data;
+      const left = frame.dims.left;
+      const top = frame.dims.top;
+      const fwidth = frame.dims.width;
+      const fheight = frame.dims.height;
+      const canvasWidth = width;
+
+      for (let py = 0; py < fheight; py++) {
+        const rowStart = ((py + top) * canvasWidth + left) * 4;
+        const rowEnd = rowStart + fwidth * 4;
+        fullData.fill(0, rowStart, rowEnd);
       }
     }
 
-    // blend patch over full frame
-    const patchData = new ImageData(frame.dims.width, frame.dims.height);
-    patchData.data.set(frame.patch);
+    // blend patch over full frame (use cached patch data)
+    const patchData = patchDataCache.get(index)!;
     blendPatch(fullFrameImageData, patchData, frame.dims.left, frame.dims.top);
 
-    // create videosample directly from pixel data
+    // create sample directly from pixel data
     const timestamp = Math.floor(time * 1_000_000);
     const duration = Math.floor((1 / fps) * 1_000_000);
 
@@ -90,7 +118,6 @@ export async function exportToVideo(
       codedHeight: height,
     });
 
-    // wrap videoframe in videosample
     return new VideoSample(videoFrame);
   }
 
