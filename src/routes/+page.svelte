@@ -262,7 +262,7 @@
         <NumberPicker bind:value={bpm} />
       </Setting>
 
-      <Setting name="Speed Multiplier">
+      <Setting name="Speed Scale">
         <Radio items={SPEEDS} name="speed-multiplier" bind:value={speedMultiplier} />
       </Setting>
 
