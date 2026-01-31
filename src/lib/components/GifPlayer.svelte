@@ -1,7 +1,6 @@
 <script lang="ts">
   import type { ParsedFrame } from "gifuct-js";
   import { onMount } from "svelte";
-  import { loop } from "$lib/utils";
 
   let { frameDuration, offset, frames, canvas = $bindable() }: {
     frameDuration: number,
@@ -28,10 +27,11 @@
     if (!canvas || !frames || frames.length === 0) return;
 
     const now = performance.now();
-    const elapsed = now - startTime;
+    // elapsed time in seconds
+    const elapsed = (now - startTime) / 1000;
 
-    frameIndex = (Math.floor(elapsed / (frameDuration * 1000)) + offset) % frames.length;
-    const frame = frames[loop(frameIndex + offset, 0, frames.length)];
+    frameIndex = (Math.floor(elapsed / frameDuration) + offset) % frames.length;
+    const frame = frames[frameIndex];
 
     if (needsDisposal || (frameIndex + offset) % frames.length === 0) {
       ctx.clearRect(0, 0, canvas.width, canvas.height);

@@ -106,13 +106,19 @@
     bpm = await extractBPM(audioCtx, file);
     console.log("bpm found: ", bpm);
     isLoadingBPM = false;
-
   }
 
   async function onGifUpload(file: File): Promise<void> {
     gifFile = file;
     gifSrc = URL.createObjectURL(file);
     gifFrames = await readGif(file);
+
+    // restart audio
+    if (audioElement.src) {
+      await audioCtx.resume();
+      audioElement.currentTime = 0;
+      audioElement.play();
+    }
   }
 
   function setZoom(value: number) {

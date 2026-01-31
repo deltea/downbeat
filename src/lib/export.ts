@@ -43,7 +43,7 @@ export async function exportToVideo(
     }
   }
 
-  // render a frame at a given time
+  // render a frame at a given time in seconds
   function renderFrame(time: number) {
     const index = (Math.floor(time / frameDuration) + offset) % gifFrames.length;
     const frame = gifFrames[index];
@@ -113,12 +113,12 @@ export async function exportToVideo(
 
   // add video frames
   const totalFrames = Math.ceil(audioBuffer.duration * fps);
-  const frameDurationSec = 1 / fps;
+  const secondsPerFrame = 1 / fps;
 
   for (let i = 0; i < totalFrames; i++) {
-    const timestamp = Math.min(i * frameDurationSec, audioBuffer.duration);
+    const timestamp = Math.min(i * secondsPerFrame, audioBuffer.duration);
     renderFrame(timestamp);
-    await videoSource.add(timestamp, frameDurationSec);
+    await videoSource.add(timestamp, secondsPerFrame);
   }
 
   await output.finalize();
