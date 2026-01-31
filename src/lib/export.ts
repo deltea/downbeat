@@ -1,5 +1,6 @@
 import type { ParsedFrame } from "gifuct-js";
 import { AudioBufferSource, BufferTarget, getFirstEncodableVideoCodec, Mp4OutputFormat, Output, Quality, QUALITY_MEDIUM, VideoSampleSource, VideoSample } from "mediabunny";
+import { exportProgress } from "./stores";
 
 export async function exportToVideo(
   width: number,
@@ -128,6 +129,7 @@ export async function exportToVideo(
     const timestamp = Math.min(i * secondsPerFrame, audioBuffer.duration);
     const videoSample = createVideoSample(timestamp);
     await videoSource.add(videoSample);
+    exportProgress.set((i + 1) / totalFrames);
     videoSample.close();
   }
 

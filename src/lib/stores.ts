@@ -1,9 +1,11 @@
 import { browser } from "$app/environment";
+import { writable } from "svelte/store";
 import { persistent } from "./persistent";
 import { availableThemes, themes } from "./themes";
 
 export const muted = persistent("muted", false);
 export const theme = persistent("theme", 0);
+export const exportProgress = writable(0);
 
 theme.subscribe(value => {
   if (!browser) return;

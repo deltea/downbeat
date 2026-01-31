@@ -9,9 +9,9 @@
   import { extractBPM, extractCoverImage } from "$lib";
   import { exportToVideo } from "$lib/export";
   import { gifSamples, musicSamples } from "$lib/samples";
-  import { muted } from "$lib/stores";
+  import { exportProgress, muted } from "$lib/stores";
   import { clamp } from "$lib/utils";
-  import { Slider } from "bits-ui";
+  import { Progress, Slider } from "bits-ui";
   import { decompressFrames, parseGIF, type ParsedFrame } from "gifuct-js";
   import { QUALITY_HIGH, QUALITY_MEDIUM, QUALITY_VERY_HIGH, QUALITY_VERY_LOW } from "mediabunny";
   import { onMount } from "svelte";
@@ -131,6 +131,7 @@
 
     console.log("exporting...");
     isExporting = true;
+    exportProgress.set(0);
 
     const secondsPerBeat = 60 / bpm / speed;
     const exportedBlob = await exportToVideo(
@@ -292,6 +293,18 @@
         <Radio items={QUALITY} name="quality" bind:value={qualityValue} />
       </Setting>
     </div>
+
+    {#if isExporting}
+      <div class="border-t-2 border-border p-4 flex items-center gap-4">
+        <span class="text-text-dim">{Math.round($exportProgress / 1 * 100)}%</span>
+        <Progress.Root value={$exportProgress * 100} max={100} class="grow h-2 overflow-hidden rounded-full relative bg-border">
+          <div
+            class="bg-text w-full h-full flex-1 rounded-full"
+            style="transform: translateX(-{100 - ($exportProgress * 100)}%)"
+          ></div>
+        </Progress.Root>
+      </div>
+    {/if}
 
     <div class="border-t-2 border-border p-4">
       <button
