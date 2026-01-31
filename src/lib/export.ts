@@ -1,5 +1,5 @@
 import type { ParsedFrame } from "gifuct-js";
-import { AudioBufferSource, BufferTarget, CanvasSource, getFirstEncodableVideoCodec, Mp4OutputFormat, Output, Quality, QUALITY_MEDIUM } from "mediabunny";
+import { AudioBufferSource, BufferTarget, getFirstEncodableVideoCodec, Mp4OutputFormat, Output, Quality, QUALITY_MEDIUM, VideoSampleSource, VideoSample } from "mediabunny";
 
 export async function exportToVideo(
   width: number,
@@ -11,11 +11,8 @@ export async function exportToVideo(
   offset: number,
   quality: Quality
 ): Promise<Blob> {
-  const canvas = new OffscreenCanvas(width, height);
-  const ctx = canvas.getContext("2d") as OffscreenCanvasRenderingContext2D;
-
   // full accumulated frame buffer
-  const fullFrameImageData = ctx.createImageData(width, height);
+  const fullFrameImageData = new ImageData(width, height);
   let previousFullFrame: ImageData | null = null;
 
   // blend a patch over full frame respecting alpha
@@ -43,8 +40,8 @@ export async function exportToVideo(
     }
   }
 
-  // render a frame at a given time in seconds
-  function renderFrame(time: number) {
+  // render a frame at a given time in seconds and return VideoSample
+  function createVideoSample(time: number): VideoSample {
     const index = (Math.floor(time / frameDuration) + offset) % gifFrames.length;
     const frame = gifFrames[index];
 
@@ -76,12 +73,24 @@ export async function exportToVideo(
     }
 
     // blend patch over full frame
-    const patchData = ctx.createImageData(frame.dims.width, frame.dims.height);
+    const patchData = new ImageData(frame.dims.width, frame.dims.height);
     patchData.data.set(frame.patch);
     blendPatch(fullFrameImageData, patchData, frame.dims.left, frame.dims.top);
 
-    // draw composited full frame to canvas
-    ctx.putImageData(fullFrameImageData, 0, 0);
+    // create videosample directly from pixel data
+    const timestamp = Math.floor(time * 1_000_000);
+    const duration = Math.floor((1 / fps) * 1_000_000);
+
+    const videoFrame = new VideoFrame(fullFrameImageData.data.buffer, {
+      timestamp,
+      duration,
+      format: 'RGBA',
+      codedWidth: width,
+      codedHeight: height,
+    });
+
+    // wrap videoframe in videosample
+    return new VideoSample(videoFrame);
   }
 
   // setup mp4 output
@@ -94,7 +103,7 @@ export async function exportToVideo(
     ["avc", "hevc", "vp8"],
     { width, height, bitrate: quality },
   );
-  const videoSource = new CanvasSource(canvas, {
+  const videoSource = new VideoSampleSource({
     codec: codec ?? "avc",
     bitrate: quality,
   });
@@ -117,8 +126,9 @@ export async function exportToVideo(
 
   for (let i = 0; i < totalFrames; i++) {
     const timestamp = Math.min(i * secondsPerFrame, audioBuffer.duration);
-    renderFrame(timestamp);
-    await videoSource.add(timestamp, secondsPerFrame);
+    const videoSample = createVideoSample(timestamp);
+    await videoSource.add(videoSample);
+    videoSample.close();
   }
 
   await output.finalize();
