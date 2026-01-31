@@ -371,7 +371,7 @@
       <a
         aria-label="info"
         title="About"
-        href="/#"
+        href="/about"
         class="flex justify-center items-center border-2 rounded-sm bg-bg border-border hover:bg-border text-text hover:text-text-bright size-10 cursor-pointer"
       >
         <iconify-icon icon="material-symbols:info-outline" class="text-xl"></iconify-icon>
