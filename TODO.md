@@ -1,10 +1,10 @@
 # todo
 
 - [ ] add frame offset indicator
-- [ ] export progress bar
 - [ ] better speed multiplier adjustments
 
 ### done
+- [x] export progress bar
 - [x] sync gif with current song time
 - [x] music and gif samples (caramelldansen)
 - [x] export progress bar

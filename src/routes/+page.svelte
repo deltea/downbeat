@@ -60,7 +60,7 @@
   let autoSpeedMultiplier = $state(0);
   let speedMultiplier = $state(0);
   let speed = $derived(speedMultiplier == 0 ? autoSpeedMultiplier : speedMultiplier);
-  let frameOffset = $state(0);
+  let frameOffset = $state(2);
   let qualityValue = $state(QUALITY_HIGH);
 
   muted.subscribe(value => {
@@ -112,6 +112,7 @@
     gifFile = file;
     gifSrc = URL.createObjectURL(file);
     gifFrames = await readGif(file);
+    frameOffset = 0;
 
     // restart audio
     if (audioElement.src) {
@@ -266,14 +267,15 @@
         <Radio items={SPEEDS} name="speed-multiplier" bind:value={speedMultiplier} />
       </Setting>
 
-      <Setting name="Frame Offset">
+      <Setting name="Frame Offset {gifFrames.length > 0 ? `(+${frameOffset})` : ""}">
         <Slider.Root
           type="single"
           bind:value={frameOffset}
           min={0}
           step={1}
-          max={gifFrames.length}
-          class="relative flex items-center w-full hover:cursor-ew-resize group mt-4"
+          disabled={gifFrames.length === 0}
+          max={gifFrames.length === 0 ? 4 : gifFrames.length}
+          class="relative flex items-center w-full hover:cursor-grab active:cursor-grabbing group mt-4 data-disabled:opacity-50"
         >
           <span class="h-1 w-full bg-border rounded-sm">
             <Slider.Range class="bg-text-dim h-full absolute rounded-sm" />
@@ -281,7 +283,7 @@
 
           <Slider.Thumb
             index={0}
-            class="size-4 bg-accent outline-none rounded-full z10"
+            class="size-4 bg-accent outline-none rounded-full"
           />
         </Slider.Root>
       </Setting>

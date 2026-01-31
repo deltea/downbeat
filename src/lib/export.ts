@@ -40,7 +40,7 @@ export async function exportToVideo(
     }
   }
 
-  // render a frame at a given time in seconds and return VideoSample
+  // render a frame at a given time in seconds and return videosample
   function createVideoSample(time: number): VideoSample {
     const index = (Math.floor(time / frameDuration) + offset) % gifFrames.length;
     const frame = gifFrames[index];

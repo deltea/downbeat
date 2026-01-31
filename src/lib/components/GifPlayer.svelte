@@ -55,7 +55,7 @@
 
     const newIndex = (Math.floor(elapsed / frameDuration) + offset) % frames.length;
 
-    // Only process if we're on a new frame
+    // only process if its a new frame
     if (newIndex !== frameIndex) {
       frameIndex = newIndex;
       const frame = frames[frameIndex];
@@ -105,12 +105,12 @@
     canvas.width = frames[0].dims.width + frames[0].dims.left;
     canvas.height = frames[0].dims.height + frames[0].dims.top;
 
-    // Initialize full frame buffer
+    // initialize full frame buffer
     fullFrameImageData = ctx.createImageData(canvas.width, canvas.height);
     previousFullFrame = null;
 
-    // Start at the first frame (matching export which starts at i=0)
-    frameIndex = -1; // Set to -1 so first render triggers at index 0
+    // start at the first frame (matching export which starts at i=0)
+    frameIndex = -1;
     startTime = performance.now();
 
     requestAnimationFrame(renderFrame);
@@ -122,7 +122,6 @@
     previousFullFrame = null;
 
     if (fullFrameImageData) {
-      // Clear the full frame buffer
       fullFrameImageData.data.fill(0);
     }
     ctx.clearRect(0, 0, canvas.width, canvas.height);
