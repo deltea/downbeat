@@ -1,5 +1,5 @@
 import type { ParsedFrame } from "gifuct-js";
-import { AudioBufferSource, BufferTarget, getFirstEncodableVideoCodec, Mp4OutputFormat, Output, Quality, QUALITY_MEDIUM, VideoSampleSource, VideoSample } from "mediabunny";
+import { AudioBufferSource, BufferTarget, getFirstEncodableVideoCodec, Mp4OutputFormat, Output, Quality, QUALITY_MEDIUM, VideoSampleSource, VideoSample, getFirstEncodableAudioCodec } from "mediabunny";
 import { exportProgress } from "./stores";
 
 export async function exportToVideo(
@@ -135,15 +135,20 @@ export async function exportToVideo(
   });
 
   const codec = await getFirstEncodableVideoCodec(
-    ["avc", "hevc", "vp8"],
+    output.format.getSupportedVideoCodecs(),
     { width, height, bitrate: quality },
-  );
+  ) ?? "avc";
+  console.log(codec);
   const videoSource = new VideoSampleSource({
-    codec: codec ?? "avc",
+    codec: codec,
     bitrate: quality,
   });
 
-  const audioSource = new AudioBufferSource({ codec: "aac", bitrate: QUALITY_MEDIUM });
+  const audioCodec = await getFirstEncodableAudioCodec(
+    output.format.getSupportedAudioCodecs(),
+    { numberOfChannels: 2, bitrate: 128000, sampleRate: 8000 }
+  ) ?? "aac";
+  const audioSource = new AudioBufferSource({ codec: audioCodec, bitrate: QUALITY_MEDIUM });
 
   output.addVideoTrack(videoSource, { frameRate: fps });
   output.addAudioTrack(audioSource);
